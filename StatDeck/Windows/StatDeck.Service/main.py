@@ -120,6 +120,18 @@ class StatDeckService:
             # Pi is requesting current configuration
             self.send_config()
         
+        elif msg_type == 'layout_response':
+            # Received layout from Pi
+            layout = message.get('layout', {})
+            if layout:
+                logger.info(f"Received layout from Pi with {len(layout.get('tiles', []))} tiles")
+                # Update config with new layout
+                self.config['layout'] = layout
+                # Update action executor with new layout (don't recreate it)
+                self.action_executor.update_layout(layout)
+            else:
+                logger.warning("Received empty layout from Pi")
+        
         elif msg_type == 'status':
             # Status heartbeat from Pi
             logger.debug(f"Pi status: {message}")
@@ -150,6 +162,15 @@ class StatDeckService:
         # Connect to Pi
         if not self.usb.connect():
             logger.error("Failed to connect to Pi. Retrying...")
+        else:
+            # Request current layout from Pi
+            logger.info("Requesting layout from Pi...")
+            self.usb.send_message({
+                'type': 'get_layout',
+                'timestamp': int(datetime.now().timestamp() * 1000)
+            })
+            # Give Pi a moment to respond
+            time.sleep(0.5)
         
         self.running = True
         last_update = 0

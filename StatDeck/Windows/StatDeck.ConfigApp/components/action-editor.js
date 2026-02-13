@@ -127,7 +127,21 @@ class ActionEditor {
             this.currentTile.actions[this.currentActionType] = action;
         }
         
-        this.app.propertiesPanel.updateActionPreviews();
+        // CRITICAL: Also update the tile in the main layout array
+        const layoutTile = this.app.layout.tiles.find(t => t.id === this.currentTile.id);
+        if (layoutTile) {
+            layoutTile.actions = { ...this.currentTile.actions };
+        }
+        
+        // Update the preview in properties panel
+        if (this.app.propertiesPanel && this.app.propertiesPanel.updateActionPreview) {
+            this.app.propertiesPanel.updateActionPreview(
+                this.currentActionType, 
+                this.currentTile.actions[this.currentActionType]
+            );
+        }
+        
+        console.log('Action saved:', this.currentActionType, this.currentTile.actions[this.currentActionType]);
         this.app.markModified();
         this.close();
     }
