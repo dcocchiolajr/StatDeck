@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatDeck Configuration Designer</title>
+    <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Top Toolbar -->
+        <div id="toolbar">
+            <div class="toolbar-section">
+                <button id="btn-new" class="btn-icon" title="New Layout (Ctrl+N)">
+                    <span>📄</span> New
+                </button>
+                <button id="btn-open" class="btn-icon" title="Open Layout (Ctrl+O)">
+                    <span>📂</span> Open
+                </button>
+                <button id="btn-save" class="btn-icon" title="Save Layout (Ctrl+S)">
+                    <span>💾</span> Save
+                </button>
+                <div class="toolbar-separator"></div>
+                <button id="btn-undo" class="btn-icon" title="Undo (Ctrl+Z)" disabled>
+                    <span>↶</span>
+                </button>
+                <button id="btn-redo" class="btn-icon" title="Redo (Ctrl+Y)" disabled>
+                    <span>↷</span>
+                </button>
+            </div>
+            
+            <div class="toolbar-section toolbar-center">
+                <span class="toolbar-label">Grid:</span>
+                <select id="grid-cols" class="toolbar-select">
+                    <option value="3">3 cols</option>
+                    <option value="4" selected>4 cols</option>
+                    <option value="5">5 cols</option>
+                    <option value="6">6 cols</option>
+                </select>
+                <span>×</span>
+                <select id="grid-rows" class="toolbar-select">
+                    <option value="2">2 rows</option>
+                    <option value="3" selected>3 rows</option>
+                    <option value="4">4 rows</option>
+                    <option value="5">5 rows</option>
+                </select>
+                
+                <div class="toolbar-separator"></div>
+                
+                <label class="toolbar-checkbox">
+                    <input type="checkbox" id="toggle-grid" checked>
+                    <span>Show Grid</span>
+                </label>
+                
+                <label class="toolbar-checkbox">
+                    <input type="checkbox" id="toggle-snap" checked>
+                    <span>Snap to Grid</span>
+                </label>
+            </div>
+            
+            <div class="toolbar-section">
+                <button id="btn-export" class="btn-primary" title="Export to Pi (Ctrl+E)">
+                    <span>📤</span> Push to Pi
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="main-content">
+            <!-- Left Sidebar - Tile Palette -->
+            <div id="tile-palette" class="panel">
+                <div class="panel-header">
+                    <h3>Tile Palette</h3>
+                </div>
+                <div class="panel-content">
+                    <div class="palette-category">
+                        <h4>📊 Graphs</h4>
+                        <div class="palette-tiles">
+                            <div class="palette-tile" data-type="cpu_graph" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-graph"></div>
+                                </div>
+                                <div class="palette-tile-label">CPU Graph</div>
+                            </div>
+                            <div class="palette-tile" data-type="network_graph" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-graph dual"></div>
+                                </div>
+                                <div class="palette-tile-label">Network Graph</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="palette-category">
+                        <h4>📈 Meters</h4>
+                        <div class="palette-tiles">
+                            <div class="palette-tile" data-type="gauge" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-gauge"></div>
+                                </div>
+                                <div class="palette-tile-label">Gauge</div>
+                            </div>
+                            <div class="palette-tile" data-type="text_display" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-text">42%</div>
+                                </div>
+                                <div class="palette-tile-label">Text Display</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="palette-category">
+                        <h4>🎮 Controls</h4>
+                        <div class="palette-tiles">
+                            <div class="palette-tile" data-type="button" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-button">⚙️</div>
+                                </div>
+                                <div class="palette-tile-label">Button</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center - Grid Canvas -->
+            <div id="canvas-container" class="panel">
+                <div class="panel-header">
+                    <h3>Layout Designer</h3>
+                    <div class="canvas-info">
+                        <span id="canvas-dimensions">800 × 600 px</span>
+                        <span class="separator">|</span>
+                        <span id="tile-count">0 tiles</span>
+                    </div>
+                </div>
+                <div class="panel-content canvas-wrapper">
+                    <div id="grid-canvas" class="grid-canvas"></div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Properties Panel -->
+            <div id="properties-panel" class="panel">
+                <div class="panel-header">
+                    <h3>Properties</h3>
+                </div>
+                <div class="panel-content">
+                    <div id="no-selection" class="empty-state">
+                        <div class="empty-icon">🎯</div>
+                        <p>Select a tile to edit its properties</p>
+                    </div>
+                    
+                    <div id="tile-properties" class="properties-form" style="display: none;">
+                        <!-- Tile Info -->
+                        <div class="property-section">
+                            <h4>Tile Information</h4>
+                            <div class="property-group">
+                                <label>Type</label>
+                                <input type="text" id="prop-type" readonly>
+                            </div>
+                            <div class="property-group">
+                                <label>Tile ID</label>
+                                <input type="text" id="prop-id" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Position & Size -->
+                        <div class="property-section">
+                            <h4>Position & Size</h4>
+                            <div class="property-row">
+                                <div class="property-group">
+                                    <label>X Position</label>
+                                    <input type="number" id="prop-x" min="0">
+                                </div>
+                                <div class="property-group">
+                                    <label>Y Position</label>
+                                    <input type="number" id="prop-y" min="0">
+                                </div>
+                            </div>
+                            <div class="property-row">
+                                <div class="property-group">
+                                    <label>Width (cells)</label>
+                                    <input type="number" id="prop-width" min="1" max="6">
+                                </div>
+                                <div class="property-group">
+                                    <label>Height (cells)</label>
+                                    <input type="number" id="prop-height" min="1" max="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Source -->
+                        <div class="property-section">
+                            <h4>Data Source</h4>
+                            <div class="property-group">
+                                <label>Source</label>
+                                <select id="prop-data-source">
+                                    <option value="">-- Select Data --</option>
+                                    <optgroup label="CPU">
+                                        <option value="cpu.usage">CPU Usage %</option>
+                                        <option value="cpu.temp">CPU Temperature</option>
+                                        <option value="cpu.cores">CPU Cores</option>
+                                    </optgroup>
+                                    <optgroup label="GPU">
+                                        <option value="gpu.usage">GPU Usage %</option>
+                                        <option value="gpu.temp">GPU Temperature</option>
+                                        <option value="gpu.vram_used">VRAM Used</option>
+                                    </optgroup>
+                                    <optgroup label="Memory">
+                                        <option value="ram.percent">RAM Usage %</option>
+                                        <option value="ram.used">RAM Used (MB)</option>
+                                    </optgroup>
+                                    <optgroup label="Disk">
+                                        <option value="disk.usage_percent">Disk Usage %</option>
+                                        <option value="disk.read_speed">Disk Read Speed</option>
+                                        <option value="disk.write_speed">Disk Write Speed</option>
+                                    </optgroup>
+                                    <optgroup label="Network">
+                                        <option value="network">Network (Both)</option>
+                                        <option value="network.upload_speed">Upload Speed</option>
+                                        <option value="network.download_speed">Download Speed</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Styling -->
+                        <div class="property-section">
+                            <h4>Styling</h4>
+                            <div class="property-group">
+                                <label>Color</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" id="prop-color" value="#00ff88">
+                                    <input type="text" id="prop-color-hex" value="#00ff88">
+                                </div>
+                            </div>
+                            <div class="property-group">
+                                <label>Background</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" id="prop-background" value="#1a1a2e">
+                                    <input type="text" id="prop-background-hex" value="#1a1a2e">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tile-Specific Config -->
+                        <div class="property-section" id="tile-config-section">
+                            <h4>Configuration</h4>
+                            <div id="tile-config-container"></div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="property-section">
+                            <h4>Actions</h4>
+                            <div class="property-group">
+                                <label>On Tap</label>
+                                <button id="btn-edit-tap" class="btn-secondary">Edit Action...</button>
+                                <div id="action-tap-preview" class="action-preview">None</div>
+                            </div>
+                            <div class="property-group">
+                                <label>On Long Press</label>
+                                <button id="btn-edit-longpress" class="btn-secondary">Edit Action...</button>
+                                <div id="action-longpress-preview" class="action-preview">None</div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Button -->
+                        <div class="property-section">
+                            <button id="btn-delete-tile" class="btn-danger">🗑️ Delete Tile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div id="status-bar">
+            <div class="status-section">
+                <span id="status-message">Ready</span>
+            </div>
+            <div class="status-section">
+                <span id="status-file">Untitled Layout</span>
+            </div>
+            <div class="status-section">
+                <span id="status-usb">USB: Disconnected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Editor Modal -->
+    <div id="action-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Action</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-group">
+                    <label>Action Type</label>
+                    <select id="action-type">
+                        <option value="">None</option>
+                        <option value="launch_app">Launch Application</option>
+                        <option value="hotkey">Send Hotkey</option>
+                        <option value="run_script">Run Script</option>
+                        <option value="open_url">Open URL</option>
+                    </select>
+                </div>
+                
+                <div id="action-config" class="action-config"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-action-cancel" class="btn-secondary">Cancel</button>
+                <button id="btn-action-save" class="btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="components/grid-canvas.js"></script>
+    <script src="components/tile-palette.js"></script>
+    <script src="components/properties-panel.js"></script>
+    <script src="components/action-editor.js"></script>
+    <script src="utils/usb-manager.js"></script>
+    <script src="utils/config-loader.js"></script>
+    <script src="utils/undo-manager.js"></script>
+    <script src="renderer.js"></script>
+</body>
+</html>

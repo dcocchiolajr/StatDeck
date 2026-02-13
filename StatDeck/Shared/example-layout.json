@@ -1,0 +1,166 @@
+{
+  "version": "1.0",
+  "grid": {
+    "cols": 4,
+    "rows": 3,
+    "cell_width": 180,
+    "cell_height": 120,
+    "gap": 10
+  },
+  "tiles": [
+    {
+      "id": "cpu_main",
+      "type": "cpu_graph",
+      "position": {"x": 0, "y": 0},
+      "size": {"w": 2, "h": 2},
+      "data_source": "cpu.usage",
+      "style": {
+        "color": "#00ff88",
+        "background": "#1a1a2e",
+        "fill": true
+      },
+      "config": {
+        "history_seconds": 60,
+        "show_cores": false
+      },
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Windows\\System32\\taskmgr.exe"
+        }
+      }
+    },
+    {
+      "id": "cpu_temp",
+      "type": "gauge",
+      "position": {"x": 2, "y": 0},
+      "size": {"w": 1, "h": 1},
+      "data_source": "cpu.temp",
+      "style": {
+        "color": "#00aaff",
+        "warning_color": "#ffaa00",
+        "critical_color": "#ff0000"
+      },
+      "config": {
+        "min": 0,
+        "max": 100,
+        "units": "°C",
+        "threshold_warning": 70,
+        "threshold_critical": 85
+      },
+      "actions": {}
+    },
+    {
+      "id": "gpu_temp",
+      "type": "gauge",
+      "position": {"x": 3, "y": 0},
+      "size": {"w": 1, "h": 1},
+      "data_source": "gpu.temp",
+      "style": {
+        "color": "#ff6b6b"
+      },
+      "config": {
+        "min": 0,
+        "max": 100,
+        "units": "°C",
+        "threshold_warning": 75,
+        "threshold_critical": 90
+      },
+      "actions": {}
+    },
+    {
+      "id": "ram_display",
+      "type": "text_display",
+      "position": {"x": 2, "y": 1},
+      "size": {"w": 1, "h": 1},
+      "data_source": "ram.percent",
+      "style": {
+        "color": "#a78bfa",
+        "background": "#1a1a2e"
+      },
+      "config": {
+        "label": "RAM",
+        "units": "%",
+        "decimals": 1,
+        "font_size": "large"
+      },
+      "actions": {}
+    },
+    {
+      "id": "network_graph",
+      "type": "network_graph",
+      "position": {"x": 0, "y": 2},
+      "size": {"w": 2, "h": 1},
+      "data_source": "network",
+      "style": {
+        "upload_color": "#ff6b6b",
+        "download_color": "#4ecdc4",
+        "background": "#1a1a2e"
+      },
+      "config": {
+        "history_seconds": 60,
+        "show_upload": true,
+        "show_download": true,
+        "units": "MB/s"
+      },
+      "actions": {}
+    },
+    {
+      "id": "task_manager_btn",
+      "type": "button",
+      "position": {"x": 3, "y": 1},
+      "size": {"w": 1, "h": 1},
+      "config": {
+        "label": "Task Mgr",
+        "icon": "settings",
+        "show_label": true
+      },
+      "style": {
+        "background": "#2d3748",
+        "color": "#ffffff"
+      },
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Windows\\System32\\taskmgr.exe"
+        }
+      }
+    },
+    {
+      "id": "gpu_usage",
+      "type": "text_display",
+      "position": {"x": 2, "y": 2},
+      "size": {"w": 1, "h": 1},
+      "data_source": "gpu.usage",
+      "style": {
+        "color": "#f59e0b",
+        "background": "#1a1a2e"
+      },
+      "config": {
+        "label": "GPU",
+        "units": "%",
+        "decimals": 0,
+        "font_size": "large"
+      },
+      "actions": {}
+    },
+    {
+      "id": "disk_usage",
+      "type": "text_display",
+      "position": {"x": 3, "y": 2},
+      "size": {"w": 1, "h": 1},
+      "data_source": "disk.usage_percent",
+      "style": {
+        "color": "#8b5cf6",
+        "background": "#1a1a2e"
+      },
+      "config": {
+        "label": "Disk",
+        "units": "%",
+        "decimals": 0,
+        "font_size": "large"
+      },
+      "actions": {}
+    }
+  ]
+}
