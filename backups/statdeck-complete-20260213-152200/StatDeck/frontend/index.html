@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>StatDeck</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/fonts.css">
+    <link rel="stylesheet" href="styles/themes.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="tile-grid"></div>
+        <div id="disconnected-overlay" class="hidden">
+            <div class="disconnected-message">
+                <div class="status-icon">⚠️</div>
+                <h2>Disconnected from PC</h2>
+                <p>Attempting to reconnect...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core -->
+    <script src="core/usb-client.js"></script>
+    <script src="core/layout-engine.js"></script>
+    <script src="core/touch-handler.js"></script>
+    <script src="core/tile-manager.js"></script>
+    
+    <!-- Tiles -->
+    <script src="tiles/base-tile.js"></script>
+    <script src="tiles/cpu-graph-tile.js"></script>
+    <script src="tiles/gauge-tile.js"></script>
+    <script src="tiles/text-display-tile.js"></script>
+    <script src="tiles/button-tile.js"></script>
+    <script src="tiles/network-graph-tile.js"></script>
+    
+    <!-- Main app -->
+    <script src="core/app.js"></script>
+</body>
+</html>
