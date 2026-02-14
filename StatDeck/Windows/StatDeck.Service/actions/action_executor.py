@@ -9,6 +9,7 @@ from .launch_app_action import LaunchAppAction
 from .hotkey_action import HotkeyAction
 from .run_script_action import RunScriptAction
 from .open_url_action import OpenURLAction
+from .open_folder_action import OpenFolderAction
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,8 @@ class ActionExecutor:
             'launch_app': LaunchAppAction(),
             'hotkey': HotkeyAction(),
             'run_script': RunScriptAction(),
-            'open_url': OpenURLAction()
+            'open_url': OpenURLAction(),
+            'open_folder': OpenFolderAction()
         }
     
     def execute(self, tile_id, action_type):
