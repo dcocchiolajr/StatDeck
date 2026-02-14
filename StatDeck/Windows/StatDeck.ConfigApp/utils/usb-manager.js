@@ -1,96 +1,175 @@
 /**
- * USB Manager
- * Handles USB serial communication with Raspberry Pi
+ * USB Manager v2
+ * 
+ * Instead of opening the COM port directly (which conflicts with main.py),
+ * this connects to the StatDeck Service via TCP on localhost:5555.
+ * The Service acts as a relay to/from the Pi over USB serial.
+ * 
+ * Pi side requires ZERO changes - serial protocol is unchanged.
+ * 
+ * Config App -> TCP localhost:5555 -> Service -> USB Serial -> Pi
  */
 
 class USBManager {
     constructor(app) {
         this.app = app;
-        this.port = null;
+        this.socket = null;
         this.connected = false;
+        this.buffer = '';
+        this.pendingCallbacks = new Map(); // For request/response pairing
         this.init();
     }
     
     init() {
-        // Try to auto-connect to common COM ports
-        this.autoConnect();
+        this.connectToService();
     }
     
-    async autoConnect() {
-        // Try likely Pi ports first (COM7-COM10), then scan rest
-        const priorityPorts = [7, 8, 9, 10];
-        const allPorts = [...priorityPorts];
+    /**
+     * Connect to the StatDeck Service via TCP on localhost:5555
+     */
+    async connectToService() {
+        const net = require('net');
         
-        // Add remaining ports (20→1, skipping already tried)
-        for (let i = 20; i >= 1; i--) {
-            if (!priorityPorts.includes(i)) {
-                allPorts.push(i);
-            }
-        }
-        
-        for (const portNum of allPorts) {
-            const portPath = `COM${portNum}`;
-            console.log(`Trying ${portPath}...`);
+        return new Promise((resolve) => {
+            console.log('Connecting to StatDeck Service on localhost:5555...');
             
-            const success = await this.connect(portPath);
-            if (success) {
-                // Wait a moment for connection to stabilize
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Verify it's still connected
-                if (this.port && this.port.isOpen) {
-                    console.log(`Auto-connected to ${portPath}`);
-                    return true;
+            this.socket = new net.Socket();
+            
+            // Connection timeout
+            const connectTimeout = setTimeout(() => {
+                if (!this.connected) {
+                    console.warn('Service connection timeout - is main.py running?');
+                    this.updateStatus();
+                    resolve(false);
                 }
-            }
-        }
-        
-        console.log('No Pi device found on any COM port');
-        this.updateStatus();
-        return false;
-    }
-    
-    async connect(portPath) {
-        try {
-            const { SerialPort } = require('serialport');
+            }, 5000);
             
-            this.port = new SerialPort({
-                path: portPath,
-                baudRate: 115200
-            });
-            
-            this.port.on('open', () => {
+            this.socket.connect(5555, '127.0.0.1', () => {
+                clearTimeout(connectTimeout);
                 this.connected = true;
                 this.updateStatus();
-                console.log('USB connected');
+                console.log('Connected to StatDeck Service');
+                resolve(true);
             });
             
-            this.port.on('close', () => {
+            // Handle incoming data from Service
+            this.socket.on('data', (data) => {
+                this.buffer += data.toString();
+                
+                // Process complete lines (newline-delimited JSON)
+                while (this.buffer.includes('\n')) {
+                    const newlineIdx = this.buffer.indexOf('\n');
+                    const line = this.buffer.substring(0, newlineIdx).trim();
+                    this.buffer = this.buffer.substring(newlineIdx + 1);
+                    
+                    if (line) {
+                        try {
+                            const message = JSON.parse(line);
+                            this._handleServiceMessage(message);
+                        } catch (err) {
+                            console.error('Error parsing Service message:', err);
+                        }
+                    }
+                }
+            });
+            
+            this.socket.on('close', () => {
+                console.log('Disconnected from StatDeck Service');
                 this.connected = false;
                 this.updateStatus();
-                console.log('USB disconnected');
+                
+                // Auto-reconnect after 3 seconds
+                setTimeout(() => {
+                    if (!this.connected) {
+                        console.log('Attempting to reconnect to Service...');
+                        this.connectToService();
+                    }
+                }, 3000);
             });
             
-            this.port.on('error', (err) => {
-                console.error('USB error:', err);
+            this.socket.on('error', (err) => {
+                clearTimeout(connectTimeout);
+                
+                if (err.code === 'ECONNREFUSED') {
+                    console.warn('Service not running - start main.py first');
+                } else {
+                    console.error('Service connection error:', err.message);
+                }
+                
+                this.connected = false;
+                this.updateStatus();
+                resolve(false);
             });
+        });
+    }
+    
+    /**
+     * Handle messages received from the Service
+     */
+    _handleServiceMessage(message) {
+        const msgType = message.type;
+        
+        if (msgType === 'layout_data') {
+            // Response to get_layout request
+            const callback = this.pendingCallbacks.get('get_layout');
+            if (callback) {
+                this.pendingCallbacks.delete('get_layout');
+                callback.resolve(message.layout);
+            }
+        }
+        else if (msgType === 'config_ack') {
+            // Response to config push
+            const callback = this.pendingCallbacks.get('config');
+            if (callback) {
+                this.pendingCallbacks.delete('config');
+                callback.resolve(message.success);
+            }
             
+            if (message.success) {
+                console.log('Config successfully pushed to Pi');
+            } else {
+                console.warn('Config push failed:', message.error || 'unknown error');
+            }
+        }
+        else if (msgType === 'status') {
+            // Status response
+            const callback = this.pendingCallbacks.get('get_status');
+            if (callback) {
+                this.pendingCallbacks.delete('get_status');
+                callback.resolve(message);
+            }
+        }
+        else {
+            console.log('Unknown message from Service:', msgType);
+        }
+    }
+    
+    /**
+     * Send a JSON message to the Service via TCP
+     */
+    _sendToService(message) {
+        if (!this.connected || !this.socket) {
+            console.warn('Cannot send - not connected to Service');
+            return false;
+        }
+        
+        try {
+            const data = JSON.stringify(message) + '\n';
+            this.socket.write(data);
             return true;
         } catch (err) {
-            console.error('Failed to connect USB:', err);
+            console.error('Error sending to Service:', err);
             return false;
         }
     }
     
-    disconnect() {
-        if (this.port && this.port.isOpen) {
-            this.port.close();
-        }
-    }
-    
+    /**
+     * Push layout config to Pi (through the Service relay)
+     * This replaces the old direct-serial sendConfig()
+     */
     sendConfig(layout) {
         if (!this.isConnected()) {
-            console.warn('Cannot send config - not connected');
+            console.warn('Cannot send config - not connected to Service');
             return false;
         }
         
@@ -99,69 +178,55 @@ class USBManager {
             layout: layout
         };
         
-        const data = JSON.stringify(message) + '\n';
-        this.port.write(data);
-        
-        return true;
+        return this._sendToService(message);
     }
     
     /**
-     * Request current layout from Pi
+     * Request current layout from Pi (through the Service relay)
+     * This replaces the old direct-serial getLayoutFromPi()
      */
     async getLayoutFromPi() {
         return new Promise((resolve, reject) => {
             if (!this.isConnected()) {
-                reject(new Error('Not connected to Pi'));
+                reject(new Error('Not connected to Service'));
                 return;
             }
-
-            // Set up one-time listener for layout response
-            const timeout = setTimeout(() => {
-                this.port.removeListener('data', handleData);
-                reject(new Error('Timeout waiting for layout from Pi'));
-            }, 10000); // Increased to 10 seconds
-
-            let buffer = '';
-            const handleData = (data) => {
-                try {
-                    buffer += data.toString();
-                    
-                    // Check if we have a complete message (ends with newline)
-                    if (buffer.includes('\n')) {
-                        const lines = buffer.split('\n');
-                        buffer = lines.pop(); // Keep incomplete line in buffer
-                        
-                        for (const line of lines) {
-                            if (line.trim()) {
-                                const message = JSON.parse(line);
-                                
-                                if (message.type === 'layout_response') {
-                                    clearTimeout(timeout);
-                                    this.port.removeListener('data', handleData);
-                                    console.log('Received layout from Pi');
-                                    resolve(message.layout);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                } catch (err) {
-                    console.error('Parse error:', err);
-                    // Continue listening, might be partial data
-                }
-            };
-
-            this.port.on('data', handleData);
-
-            // Send request to Pi
-            const request = JSON.stringify({
-                type: 'get_layout',
-                timestamp: Date.now()
-            }) + '\n';
             
-            console.log('Sending get_layout request to Pi');
-            this.port.write(request);
+            // Set up timeout
+            const timeout = setTimeout(() => {
+                this.pendingCallbacks.delete('get_layout');
+                reject(new Error('Timeout waiting for layout from Service'));
+            }, 10000);
+            
+            // Register callback
+            this.pendingCallbacks.set('get_layout', {
+                resolve: (layout) => {
+                    clearTimeout(timeout);
+                    console.log('Received layout from Service');
+                    resolve(layout);
+                },
+                reject: (err) => {
+                    clearTimeout(timeout);
+                    reject(err);
+                }
+            });
+            
+            // Send request to Service
+            console.log('Requesting layout from Service...');
+            this._sendToService({ type: 'get_layout' });
         });
+    }
+    
+    /**
+     * Disconnect from the Service
+     */
+    disconnect() {
+        if (this.socket) {
+            this.socket.destroy();
+            this.socket = null;
+        }
+        this.connected = false;
+        this.updateStatus();
     }
     
     isConnected() {
@@ -169,7 +234,10 @@ class USBManager {
     }
     
     updateStatus() {
-        const status = this.connected ? 'Connected' : 'Disconnected';
-        document.getElementById('status-usb').textContent = `USB: ${status}`;
+        const statusEl = document.getElementById('status-usb');
+        if (statusEl) {
+            const status = this.connected ? 'Connected (via Service)' : 'Disconnected';
+            statusEl.textContent = `USB: ${status}`;
+        }
     }
 }
