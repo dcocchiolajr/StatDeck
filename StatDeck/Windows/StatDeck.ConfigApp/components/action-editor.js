@@ -94,6 +94,15 @@ class ActionEditor {
                     </div>
                 `;
                 break;
+            
+            case 'open_folder':
+                html = `
+                    <div class="property-group">
+                        <label>Folder Path</label>
+                        <input type="text" id="action-folder" value="${existing.folder || ''}" placeholder="C:\\Users\\Username\\Documents">
+                    </div>
+                `;
+                break;
         }
         
         container.innerHTML = html;
@@ -121,6 +130,9 @@ class ActionEditor {
                     break;
                 case 'open_url':
                     action.url = document.getElementById('action-url').value;
+                    break;
+                case 'open_folder':
+                    action.folder = document.getElementById('action-folder').value;
                     break;
             }
             

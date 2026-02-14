@@ -493,19 +493,19 @@ class PropertiesPanel {
         
         let text = '';
         
-        // Check if config exists before accessing properties
+        // Read properties directly from action (not action.config)
         switch (action.type) {
             case 'launch_app':
-                text = action.config?.target ? `Launch: ${action.config.target}` : 'Launch App';
+                text = action.target ? `Launch: ${action.target}` : 'Launch App';
                 break;
             case 'hotkey':
-                text = action.config?.keys ? `Hotkey: ${action.config.keys}` : 'Hotkey';
+                text = action.keys ? `Hotkey: ${action.keys}` : 'Hotkey';
                 break;
             case 'run_script':
-                text = action.config?.script_path ? `Script: ${action.config.script_path}` : 'Run Script';
+                text = action.script ? `Script: ${action.script}` : 'Run Script';
                 break;
             case 'open_url':
-                text = action.config?.url ? `URL: ${action.config.url}` : 'Open URL';
+                text = action.url ? `URL: ${action.url}` : 'Open URL';
                 break;
             default:
                 text = action.type;
