@@ -1,6 +1,8 @@
 /**
- * Theme Manager
+ * Theme Manager for StatDeck Config App
  * Handles theme switching and application
+ * 
+ * VERSION: With 3D Classic Theme Added
  */
 
 class ThemeManager {
@@ -130,7 +132,7 @@ class ThemeManager {
                     border: '#00ff00'
                 },
                 fonts: {
-                    main: "'Teko', 'Arial', sans-serif",
+                    main: "'Inter', sans-serif",
                     mono: "'Courier New', monospace"
                 },
                 effects: {
@@ -145,8 +147,8 @@ class ThemeManager {
                     primary: '#00ff41',
                     secondary: '#008f11',
                     accent: '#00ff41',
-                    background: '#0d0208',
-                    surface: '#1a1a1a',
+                    background: '#000000',
+                    surface: '#0a0f0a',
                     text: '#00ff41',
                     textSecondary: '#008f11',
                     border: '#00ff41'
@@ -225,6 +227,28 @@ class ThemeManager {
                     glow: false,
                     scanlines: true,
                     pixelated: true
+                }
+            },
+            '3d': {
+                name: '3D Classic',
+                colors: {
+                    primary: '#4a90d9',
+                    secondary: '#6aa3e0',
+                    accent: '#ff9500',
+                    background: '#c0c0c0',
+                    surface: '#d4d4d4',
+                    text: '#000000',
+                    textSecondary: '#404040',
+                    border: '#808080'
+                },
+                fonts: {
+                    main: "'Segoe UI', 'Tahoma', 'Arial', sans-serif",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: false,
+                    scanlines: false,
+                    pixelated: false
                 }
             }
         };

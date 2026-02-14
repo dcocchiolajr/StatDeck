@@ -171,7 +171,7 @@ class LivePreviewBridge {
     // ===== CPU GRAPH RENDERING (with new styles) =====
     
     renderCPUGraph(preview, config, value, tileId) {
-        const color = config.style.color || '#00ff88';
+        const color = config.style.color || 'var(--color-primary)';
         const history = this.historyData.get(tileId) || [value];
         const label = this.getDataLabel(config.data_source);
         
@@ -195,7 +195,7 @@ class LivePreviewBridge {
         }).join('');
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;letter-spacing:0.5px;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
@@ -211,7 +211,7 @@ class LivePreviewBridge {
         const path = this.createSmoothPath(history, width, height);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
@@ -229,7 +229,7 @@ class LivePreviewBridge {
         const gradId = 'grad-' + Math.random().toString(36).substr(2, 9);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
@@ -275,7 +275,7 @@ class LivePreviewBridge {
         const history = this.historyData.get(tileId) || [];
         
         if (history.length === 0) {
-            preview.innerHTML = '<div style="color:#666;text-align:center;padding:20px">Loading...</div>';
+            preview.innerHTML = '<div style="color:var(--color-text-secondary);text-align:center;padding:20px">Loading...</div>';
             return;
         }
         
@@ -304,7 +304,7 @@ class LivePreviewBridge {
         }).join('');
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;display:flex;gap:10px;font-size:11px;font-weight:600;z-index:2">
                 <span style="color:${upColor}">↑${latest.upload.toFixed(0)}</span>
                 <span style="color:${downColor}">↓${latest.download.toFixed(0)}</span>
@@ -325,7 +325,7 @@ class LivePreviewBridge {
         const downPath = this.createNetworkPath(history.map(h => h.download), maxSpeed, width, height);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;display:flex;gap:10px;font-size:11px;font-weight:600;z-index:2">
                 <span style="color:${upColor}">↑${latest.upload.toFixed(0)}</span>
                 <span style="color:${downColor}">↓${latest.download.toFixed(0)}</span>
@@ -356,7 +356,7 @@ class LivePreviewBridge {
     // ===== GAUGE RENDERING (with new styles) =====
     
     renderGauge(preview, config, value, stats, dataSource) {
-        const color = config.style.color || '#00aaff';
+        const color = config.style.color || 'var(--color-secondary)';
         const label = this.getDataLabel(dataSource);
         
         let displayValue = value;
@@ -386,7 +386,7 @@ class LivePreviewBridge {
         const offset = circumference * (1 - percent / 100);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;padding-top:10px">
                 <svg width="80" height="80" viewBox="0 0 100 100" style="transform:rotate(-135deg)">
                     <circle cx="50" cy="50" r="40" fill="none" stroke="#333" stroke-width="8"/>
@@ -408,7 +408,7 @@ class LivePreviewBridge {
         const degrees = (percent / 100) * 180 - 90;
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:10">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:10">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding-top:15px;gap:4px">
                 <svg width="100%" height="60" viewBox="0 0 120 70" style="max-width:120px">
                     <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="#333" stroke-width="8" stroke-linecap="round"/>
@@ -430,7 +430,7 @@ class LivePreviewBridge {
         const percent = Math.min(100, Math.max(0, value || 0));
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;gap:12px">
                 <div style="font-size:32px;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
@@ -445,7 +445,7 @@ class LivePreviewBridge {
     // ===== TEXT DISPLAY RENDERING (with new styles) =====
     
     renderText(preview, config, value, stats, dataSource, tileId) {
-        const color = config.style.color || '#00ff88';
+        const color = config.style.color || 'var(--color-primary)';
         const label = this.getDataLabel(dataSource);
         
         let displayValue = value;
@@ -485,7 +485,7 @@ class LivePreviewBridge {
     
     renderBigNumber(preview, displayValue, unit, color, label) {
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4px">
                 <div style="font-size:48px;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
@@ -508,7 +508,7 @@ class LivePreviewBridge {
             }).join(' ') : '';
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
                 <svg style="position:absolute;bottom:0;left:0;right:0;height:50%;opacity:0.3" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                     <path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>
@@ -537,7 +537,7 @@ class LivePreviewBridge {
         }
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
                 <div style="font-size:48px;opacity:0.3">${icon}</div>
                 <div style="font-size:36px;font-weight:700;color:${color};line-height:1;margin-top:-20px">
@@ -565,13 +565,13 @@ class LivePreviewBridge {
         }
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:#666;text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4px;padding:15px">
                 <div style="font-size:36px;font-weight:700;color:${color};line-height:1">
                     ${primary}
                 </div>
                 ${secondary ? `<div style="font-size:18px;font-weight:600;color:${color};opacity:0.7">${secondary}</div>` : ''}
-                ${tertiary ? `<div style="font-size:12px;color:#999">${tertiary}</div>` : ''}
+                ${tertiary ? `<div style="font-size:12px;color:var(--color-text-secondary)">${tertiary}</div>` : ''}
             </div>
         `;
     }
@@ -612,7 +612,7 @@ class LivePreviewBridge {
         preview.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
                 ${iconHTML}
-                ${showLabel && label ? `<div style="font-size:14px;color:#aaa;font-weight:500">${label}</div>` : ''}
+                ${showLabel && label ? `<div style="font-size:14px;color:var(--color-text-secondary);font-weight:500">${label}</div>` : ''}
             </div>
         `;
     }
