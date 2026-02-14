@@ -110,7 +110,7 @@ class GridCanvas {
             data_source: '',
             style: {
                 color: '#00ff88',
-                background: '#1a1a2e'
+                background: ''
             },
             config: {},
             actions: {}
@@ -149,10 +149,11 @@ class GridCanvas {
         // Make draggable
         tile.draggable = true;
         
-        // Events
+        // Events - use dataset.tileId to avoid closure issues
         tile.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.selectTile(config.id);
+            const tileId = e.currentTarget.dataset.tileId;
+            this.selectTile(tileId);
         });
         
         tile.addEventListener('dragstart', (e) => {
@@ -206,7 +207,7 @@ class GridCanvas {
         }
         
         // Update styling
-        if (config.style.background) {
+        if (false) {
             element.style.background = config.style.background;
         }
     }

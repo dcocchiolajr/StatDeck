@@ -60,10 +60,12 @@ class StatDeckApp {
                 try {
                     this.setStatus('Loading layout from Pi...');
                     console.log('Requesting layout from Pi...');
-                    const layout = await this.usbManager.getLayoutFromPi();
-                    console.log('Received layout:', layout);
+                    const rawLayout = await this.usbManager.getLayoutFromPi();
+                    console.log('Received layout:', rawLayout);
                     
-                    if (layout && layout.tiles) {
+                    if (rawLayout && rawLayout.tiles) {
+                        // Use configLoader to validate and fix any issues
+                        const layout = this.configLoader.load(rawLayout);
                         this.layout = layout;
                         this.gridCanvas.loadLayout(layout);
                         
@@ -288,7 +290,8 @@ class StatDeckApp {
         
         if (result.success) {
             try {
-                const layout = JSON.parse(result.data);
+                // Use configLoader to parse and validate/fix the layout
+                const layout = this.configLoader.load(result.data);
                 this.layout = layout;
                 this.currentFile = filepath;
                 this.modified = false;
@@ -320,7 +323,8 @@ class StatDeckApp {
     }
     
     async saveToFile(filepath) {
-        const data = JSON.stringify(this.layout, null, 2);
+        // Use configLoader to serialize (which also validates)
+        const data = this.configLoader.save(this.layout);
         const result = await ipcRenderer.invoke('write-file', filepath, data);
         
         if (result.success) {
@@ -365,11 +369,13 @@ class StatDeckApp {
         try {
             if (fs.existsSync(examplePath)) {
                 const data = fs.readFileSync(examplePath, 'utf8');
-                this.layout = JSON.parse(data);
-                this.gridCanvas.loadLayout(this.layout);
+                // Use configLoader to parse and validate/fix the layout
+                const layout = this.configLoader.load(data);
+                this.layout = layout;
+                this.gridCanvas.loadLayout(layout);
             }
         } catch (err) {
-            console.log('No example layout found, using default');
+            console.log('No example layout found or error loading, using default:', err.message);
         }
     }
     

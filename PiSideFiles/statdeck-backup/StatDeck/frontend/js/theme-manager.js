@@ -1,6 +1,8 @@
 /**
- * Theme Manager
+ * Theme Manager for StatDeck Config App
  * Handles theme switching and application
+ * 
+ * VERSION: With 3D Classic Theme Added
  */
 
 class ThemeManager {
@@ -113,6 +115,138 @@ class ThemeManager {
                 },
                 effects: {
                     glow: true,
+                    scanlines: false,
+                    pixelated: false
+                }
+            },
+            neon: {
+                name: 'Neon',
+                colors: {
+                    primary: '#00ff00',
+                    secondary: '#ff00ff',
+                    accent: '#00ffff',
+                    background: '#000000',
+                    surface: '#0a0a0a',
+                    text: '#00ff00',
+                    textSecondary: '#ff00ff',
+                    border: '#00ff00'
+                },
+                fonts: {
+                    main: "'Inter', sans-serif",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: true,
+                    scanlines: false,
+                    pixelated: false
+                }
+            },
+            matrix: {
+                name: 'Matrix',
+                colors: {
+                    primary: '#00ff41',
+                    secondary: '#008f11',
+                    accent: '#00ff41',
+                    background: '#000000',
+                    surface: '#0a0f0a',
+                    text: '#00ff41',
+                    textSecondary: '#008f11',
+                    border: '#00ff41'
+                },
+                fonts: {
+                    main: "'Courier New', monospace",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: true,
+                    scanlines: false,
+                    pixelated: false
+                }
+            },
+            nord: {
+                name: 'Nord',
+                colors: {
+                    primary: '#88c0d0',
+                    secondary: '#81a1c1',
+                    accent: '#bf616a',
+                    background: '#2e3440',
+                    surface: '#3b4252',
+                    text: '#eceff4',
+                    textSecondary: '#d8dee9',
+                    border: '#4c566a'
+                },
+                fonts: {
+                    main: "'Inter', sans-serif",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: false,
+                    scanlines: false,
+                    pixelated: false
+                }
+            },
+            sunset: {
+                name: 'Sunset',
+                colors: {
+                    primary: '#ff6b6b',
+                    secondary: '#feca57',
+                    accent: '#ee5a6f',
+                    background: '#2d132c',
+                    surface: '#3d1e36',
+                    text: '#ffffff',
+                    textSecondary: '#feca57',
+                    border: '#ff6b6b'
+                },
+                fonts: {
+                    main: "'Inter', sans-serif",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: true,
+                    scanlines: false,
+                    pixelated: false
+                }
+            },
+            gameboy: {
+                name: 'GameBoy',
+                colors: {
+                    primary: '#0f380f',
+                    secondary: '#306230',
+                    accent: '#8bac0f',
+                    background: '#9bbc0f',
+                    surface: '#8bac0f',
+                    text: '#0f380f',
+                    textSecondary: '#306230',
+                    border: '#0f380f'
+                },
+                fonts: {
+                    main: "'Press Start 2P', 'Courier New', monospace",
+                    mono: "'Press Start 2P', monospace"
+                },
+                effects: {
+                    glow: false,
+                    scanlines: true,
+                    pixelated: true
+                }
+            },
+            '3d': {
+                name: '3D Classic',
+                colors: {
+                    primary: '#4a90d9',
+                    secondary: '#6aa3e0',
+                    accent: '#ff9500',
+                    background: '#c0c0c0',
+                    surface: '#d4d4d4',
+                    text: '#000000',
+                    textSecondary: '#404040',
+                    border: '#808080'
+                },
+                fonts: {
+                    main: "'Segoe UI', 'Tahoma', 'Arial', sans-serif",
+                    mono: "'Courier New', monospace"
+                },
+                effects: {
+                    glow: false,
                     scanlines: false,
                     pixelated: false
                 }

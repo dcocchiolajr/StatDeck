@@ -17,7 +17,7 @@
       },
       "size": {
         "w": 2,
-        "h": 2
+        "h": 1
       },
       "data_source": "cpu.usage",
       "style": {
@@ -32,7 +32,13 @@
       "actions": {
         "tap": {
           "type": "launch_app",
-          "target": "C:\\Windows\\System32\\taskmgr.exe"
+          "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+          "arguments": ""
+        },
+        "long_press": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\MaxScripts",
+          "arguments": ""
         }
       }
     },
@@ -47,11 +53,12 @@
         "w": 1,
         "h": 1
       },
-      "data_source": "cpu.temp",
+      "data_source": "cpu.usage",
       "style": {
         "color": "#00aaff",
         "warning_color": "#ffaa00",
-        "critical_color": "#ff0000"
+        "critical_color": "#ff0000",
+        "gaugeStyle": "semi"
       },
       "config": {
         "min": 0,
@@ -84,7 +91,13 @@
         "threshold_warning": 75,
         "threshold_critical": 90
       },
-      "actions": {}
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+          "arguments": ""
+        }
+      }
     },
     {
       "id": "ram_display",
@@ -109,7 +122,13 @@
         "decimals": 1,
         "font_size": "large"
       },
-      "actions": {}
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+          "arguments": ""
+        }
+      }
     },
     {
       "id": "network_graph",
@@ -195,15 +214,66 @@
         "w": 1,
         "h": 1
       },
-      "data_source": "",
+      "data_source": "cpu.usage",
       "style": {
         "color": "#00ff88",
         "background": "#1a1a2e",
-        "gaugeStyle": "linear"
+        "gaugeStyle": "linear",
+        "fontScale": 150
+      },
+      "config": {},
+      "actions": {
+        "tap": {
+          "type": "open_folder",
+          "folder": "C:\\Users\\dcocc\\Desktop\\cad"
+        }
+      }
+    },
+    {
+      "id": "tile_100",
+      "type": "text_display",
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "gpu.usage",
+      "style": {
+        "color": "#00ff88",
+        "background": "#1a1a2e",
+        "fontScale": 150
+      },
+      "config": {},
+      "actions": {
+        "tap": {
+          "type": "open_folder",
+          "folder": "C:\\Users\\dcocc\\Desktop\\cad"
+        }
+      }
+    },
+    {
+      "id": "tile_2",
+      "type": "text_display",
+      "position": {
+        "x": 1,
+        "y": 1
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "ram.percent",
+      "style": {
+        "color": "#00ff88",
+        "background": "#1a1a2e",
+        "displayStyle": "sparkline"
       },
       "config": {},
       "actions": {}
     }
   ],
-  "theme": "light"
+  "theme": "synthwave"
 }
