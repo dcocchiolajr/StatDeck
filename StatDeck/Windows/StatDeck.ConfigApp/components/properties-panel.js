@@ -420,7 +420,7 @@ class PropertiesPanel {
         if (!this.currentTile) return;
         
         this.currentTile.position[axis] = value;
-        this.app.gridCanvas.updateTileElement(this.currentTile);
+        this.app.gridCanvas.updateTileElement(this.currentTile.id);
         this.app.markModified();
     }
     
@@ -428,8 +428,13 @@ class PropertiesPanel {
         if (!this.currentTile) return;
         
         this.currentTile.size[dim] = value;
-        this.app.gridCanvas.updateTileElement(this.currentTile);
+        this.app.gridCanvas.updateTileElement(this.currentTile.id);
         this.app.markModified();
+    }
+    
+    updateSizeInputs(width, height) {
+        document.getElementById('prop-width').value = width;
+        document.getElementById('prop-height').value = height;
     }
     
     updateZIndex(value) {

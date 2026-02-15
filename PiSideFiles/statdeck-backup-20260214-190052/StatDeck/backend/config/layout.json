@@ -21,8 +21,8 @@
       },
       "data_source": "cpu.usage",
       "style": {
-        "color": "#00ff88",
-        "background": "#1a1a2e",
+        "color": "",
+        "background": "",
         "fill": true
       },
       "config": {
@@ -55,10 +55,11 @@
       },
       "data_source": "cpu.usage",
       "style": {
-        "color": "#00aaff",
+        "color": "",
         "warning_color": "#ffaa00",
         "critical_color": "#ff0000",
-        "gaugeStyle": "semi"
+        "gaugeStyle": "semi",
+        "background": ""
       },
       "config": {
         "min": 0,
@@ -112,8 +113,8 @@
       },
       "data_source": "ram.percent",
       "style": {
-        "color": "#a78bfa",
-        "background": "#1a1a2e",
+        "color": "",
+        "background": "",
         "displayStyle": "multi"
       },
       "config": {
@@ -131,31 +132,6 @@
       }
     },
     {
-      "id": "network_graph",
-      "type": "network_graph",
-      "position": {
-        "x": 0,
-        "y": 2
-      },
-      "size": {
-        "w": 2,
-        "h": 1
-      },
-      "data_source": "network",
-      "style": {
-        "upload_color": "#ff6b6b",
-        "download_color": "#4ecdc4",
-        "background": "#1a1a2e"
-      },
-      "config": {
-        "history_seconds": 60,
-        "show_upload": true,
-        "show_download": true,
-        "units": "MB/s"
-      },
-      "actions": {}
-    },
-    {
       "id": "gpu_usage",
       "type": "text_display",
       "position": {
@@ -168,8 +144,9 @@
       },
       "data_source": "gpu.usage",
       "style": {
-        "color": "#f59e0b",
-        "background": "#1a1a2e"
+        "color": "",
+        "background": "",
+        "fontScale": 100
       },
       "config": {
         "label": "GPU",
@@ -192,8 +169,8 @@
       },
       "data_source": "disk.usage_percent",
       "style": {
-        "color": "#8b5cf6",
-        "background": "#1a1a2e"
+        "color": "",
+        "background": ""
       },
       "config": {
         "label": "Disk",
@@ -230,46 +207,20 @@
       }
     },
     {
-      "id": "tile_100",
-      "type": "text_display",
+      "id": "tile_2",
+      "type": "network_graph",
       "position": {
         "x": 0,
         "y": 1
       },
       "size": {
-        "w": 1,
+        "w": 2,
         "h": 1
       },
-      "data_source": "gpu.usage",
+      "data_source": "",
       "style": {
         "color": "#00ff88",
-        "background": "#1a1a2e",
-        "fontScale": 150
-      },
-      "config": {},
-      "actions": {
-        "tap": {
-          "type": "open_folder",
-          "folder": "C:\\Users\\dcocc\\Desktop\\cad"
-        }
-      }
-    },
-    {
-      "id": "tile_2",
-      "type": "text_display",
-      "position": {
-        "x": 1,
-        "y": 1
-      },
-      "size": {
-        "w": 1,
-        "h": 1
-      },
-      "data_source": "ram.percent",
-      "style": {
-        "color": "#00ff88",
-        "background": "#1a1a2e",
-        "displayStyle": "sparkline"
+        "background": ""
       },
       "config": {},
       "actions": {}

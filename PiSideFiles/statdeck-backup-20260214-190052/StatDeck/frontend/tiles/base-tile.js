@@ -25,15 +25,13 @@ class BaseTile {
         
         // Set grid span
         const size = this.config.size;
+        const pos = this.config.position;
+        this.element.style.gridColumn = `${pos.x + 1} / span ${size.w}`;
+        this.element.style.gridRow = `${pos.y + 1} / span ${size.h}`;
         this.element.style.setProperty('--tile-width', size.w);
         this.element.style.setProperty('--tile-height', size.h);
         this.element.dataset.width = size.w;
         this.element.dataset.height = size.h;
-        
-        // Set grid position (x, y are 0-indexed, CSS grid is 1-indexed)
-        const pos = this.config.position;
-        this.element.style.gridColumn = `${pos.x + 1} / span ${size.w}`;
-        this.element.style.gridRow = `${pos.y + 1} / span ${size.h}`;
         
         // Add long-press indicator
         const indicator = document.createElement('div');
@@ -42,11 +40,20 @@ class BaseTile {
     }
     
     applyStyles() {
+        // Apply background (if custom set)
         if (this.style.background) {
             this.element.style.background = this.style.background;
         }
+        
+        // Apply color (if custom set)
         if (this.style.color) {
             this.element.style.color = this.style.color;
+        }
+        
+        // Apply font scale - NEW
+        if (this.style.fontScale && this.style.fontScale !== 100) {
+            const scale = this.style.fontScale / 100;
+            this.element.style.fontSize = `${scale}em`;
         }
     }
     
