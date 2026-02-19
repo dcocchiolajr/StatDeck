@@ -6,6 +6,7 @@
     <title>StatDeck Configuration Designer</title>
     <link rel="stylesheet" href="styles/app.css">
     <link rel="stylesheet" href="styles/themes.css">
+    <link rel="stylesheet" href="styles/theme-builder.css">
 </head>
 <body>
     <div id="app">
@@ -68,18 +69,11 @@
                 <div class="theme-selector-container">
                     <label for="theme-selector">Theme:</label>
                     <select id="theme-selector" class="toolbar-select">
-                        <option value="dark">🌙 Dark</option>
-                        <option value="light">☀️ Light</option>
-                        <option value="synthwave">🌆 Synthwave</option>
-                        <option value="cyberpunk">🤖 Cyberpunk</option>
-                        <option value="pixel">🎮 8-Bit</option>
-                        <option value="neon">💚 Neon</option>
-                        <option value="matrix">🟢 Matrix</option>
-                        <option value="nord">🔵 Nord</option>
-                        <option value="sunset">🌅 Sunset</option>
-                        <option value="gameboy">🕹️ GameBoy</option>
-                        <option value="3d">🔲 3D Classic</option>
+                        <!-- Populated dynamically by theme-manager.js -->
                     </select>
+                    <button id="btn-theme-new" class="btn-icon btn-theme-toolbar" title="Create New Theme">+</button>
+                    <button id="btn-theme-edit" class="btn-icon btn-theme-toolbar" title="Edit Theme">✏️</button>
+                    <button id="btn-theme-import" class="btn-icon btn-theme-toolbar" title="Import Theme">📥</button>
                 </div>
             </div>
             
@@ -142,6 +136,23 @@
                                     <div class="preview-button">⚙️</div>
                                 </div>
                                 <div class="palette-tile-label">Button</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="palette-category">
+                        <h4>📄 Page Navigation</h4>
+                        <div class="palette-tiles">
+                            <div class="palette-tile" data-type="page_prev" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-button" style="font-size:32px">◀</div>
+                                </div>
+                                <div class="palette-tile-label">Page Prev</div>
+                            </div>
+                            <div class="palette-tile" data-type="page_next" draggable="true">
+                                <div class="palette-tile-preview">
+                                    <div class="preview-button" style="font-size:32px">▶</div>
+                                </div>
+                                <div class="palette-tile-label">Page Next</div>
                             </div>
                         </div>
                     </div>
@@ -254,7 +265,7 @@
                         <div class="property-section">
                             <h4>Styling</h4>
                             <div class="property-group">
-                                <label>Color</label>
+                                <label>Value Color</label>
                                 <div class="color-picker-wrapper">
                                     <input type="color" id="prop-color" value="#00ff88">
                                     <input type="text" id="prop-color-hex" value="#00ff88">
@@ -267,10 +278,23 @@
                                     <input type="text" id="prop-background-hex" value="#1a1a2e">
                                 </div>
                             </div>
+                            
+                            <div class="property-group">
+                                <label>Label Color</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" id="prop-label-color" value="#a0aec0">
+                                    <input type="text" id="prop-label-color-hex" value="#a0aec0">
+                                </div>
+                            </div>
                             <div class="property-group">
                                 <label>Font Scale: <span id="font-scale-value">100%</span></label>
                                 <input type="range" id="prop-font-scale" min="50" max="200" value="100" step="10">
                                 <div style="font-size:10px;color:#666;margin-top:2px">Adjust text size (50% - 200%)</div>
+                            </div>
+                            <div class="property-group">
+                                <button id="btn-reset-theme" class="btn-secondary" style="width:100%;margin-top:8px">
+                                    🎨 Reset to Theme Colors
+                                </button>
                             </div>
                         </div>
 
@@ -347,6 +371,11 @@
         </div>
     </div>
 
+    <!-- Theme Builder Panel -->
+    <div id="theme-builder-panel">
+        <div id="theme-builder-content"></div>
+    </div>
+
     <!-- Scripts -->
     <script src="utils/icon-loader.js"></script>
     <script src="utils/theme-manager.js"></script>
@@ -354,6 +383,7 @@
     <script src="components/tile-palette.js"></script>
     <script src="components/properties-panel.js"></script>
     <script src="components/action-editor.js"></script>
+    <script src="components/theme-builder.js"></script>
     <script src="utils/usb-manager.js"></script>
     <script src="utils/config-loader.js"></script>
     <script src="utils/undo-manager.js"></script>

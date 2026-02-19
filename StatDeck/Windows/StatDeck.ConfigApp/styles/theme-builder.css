@@ -1,0 +1,340 @@
+/**
+ * Theme Builder Panel CSS
+ * NEW FILE - add to Config App styles/ folder
+ */
+
+/* ============================================
+   THEME BUILDER OVERLAY PANEL
+   ============================================ */
+#theme-builder-panel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background: #1a1a2e;
+    border-left: 2px solid #333;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+#theme-builder-panel.open {
+    right: 0;
+}
+
+/* Header */
+.tb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #0f0f23;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.tb-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.tb-close-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+.tb-close-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+/* Body - scrollable */
+.tb-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.tb-body::-webkit-scrollbar {
+    width: 6px;
+}
+.tb-body::-webkit-scrollbar-track {
+    background: #0f0f23;
+}
+.tb-body::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+/* Sections */
+.tb-section {
+    margin-bottom: 20px;
+}
+
+.tb-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin: 0 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #333;
+}
+
+.tb-label {
+    font-size: 12px;
+    color: #aaa;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.tb-input {
+    width: 100%;
+    background: #0f0f23;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+}
+.tb-input:focus {
+    border-color: #00ff88;
+}
+
+.tb-select {
+    width: 100%;
+    background: #0f0f23;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+.tb-select:focus {
+    border-color: #00ff88;
+}
+
+/* Color Grid */
+.tb-color-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.tb-color-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tb-color-label {
+    font-size: 11px;
+    color: #999;
+}
+
+.tb-color-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tb-color-picker {
+    width: 36px;
+    height: 28px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+}
+.tb-color-picker::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+.tb-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.tb-hex-input {
+    flex: 1;
+    background: #0f0f23;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 4px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    outline: none;
+}
+.tb-hex-input:focus {
+    border-color: #00ff88;
+}
+
+/* Font Row */
+.tb-font-row {
+    margin-bottom: 10px;
+}
+
+/* Effects Grid */
+.tb-effects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.tb-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #ccc;
+    padding: 6px 8px;
+    background: #0f0f23;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+.tb-toggle:hover {
+    border-color: #555;
+}
+
+.tb-toggle input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+/* Preview */
+.tb-preview-section {
+    margin-bottom: 0;
+}
+
+.tb-preview-box {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #0a0e27;
+}
+
+.tb-preview-tile {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #2d3748;
+    background: #1a1a2e;
+    text-align: center;
+}
+
+.tb-preview-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a0aec0;
+    margin-bottom: 6px;
+}
+
+.tb-preview-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Footer */
+.tb-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #0f0f23;
+    border-top: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.tb-footer-left,
+.tb-footer-right {
+    display: flex;
+    gap: 8px;
+}
+
+.tb-btn {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+}
+
+.tb-btn-primary {
+    background: #00ff88;
+    color: #000;
+}
+.tb-btn-primary:hover {
+    background: #00dd77;
+}
+
+.tb-btn-secondary {
+    background: #2d3748;
+    color: #ccc;
+    border: 1px solid #444;
+}
+.tb-btn-secondary:hover {
+    background: #3d4758;
+}
+
+.tb-btn-danger {
+    background: #ff4444;
+    color: #fff;
+}
+.tb-btn-danger:hover {
+    background: #dd3333;
+}
+
+/* ============================================
+   THEME BUILDER TOOLBAR BUTTONS
+   ============================================ */
+.theme-builder-buttons {
+    display: flex;
+    gap: 4px;
+    margin-left: 4px;
+}
+
+.tb-toolbar-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #ccc;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.15s;
+}
+.tb-toolbar-btn:hover {
+    background: #2d3748;
+    border-color: #666;
+}
+.tb-toolbar-btn[title]:hover {
+    color: #fff;
+}

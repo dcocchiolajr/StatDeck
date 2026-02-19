@@ -1,7 +1,6 @@
 /**
  * Live Preview Bridge - ENHANCED with new styles
- * CAREFULLY adds: Line graphs, Area graphs, Semi-circle gauges, Sparklines, etc.
- * WITHOUT breaking existing functionality
+ * Updated to better match Pi's theme color handling
  */
 
 class LivePreviewBridge {
@@ -13,6 +12,30 @@ class LivePreviewBridge {
         this.historyData = new Map();
         this.pollInterval = 500;
         this.apiUrl = 'http://localhost:8080/stats';
+        
+        // Default colors that should be treated as "use theme color"
+        this.defaultColors = ['#00ff88', 'var(--color-value, var(--color-primary))', '#4ecdc4', '#ff6b6b', ''];
+    }
+    
+    /**
+     * Get the color to use for VALUES - respects custom colors, falls back to theme SECONDARY
+     */
+    getColor(config) {
+        const customColor = config.style?.color;
+        
+        // If no custom color set, or it's a default color, use theme SECONDARY (for values)
+        if (!customColor || this.defaultColors.includes(customColor)) {
+            return 'var(--color-value, var(--color-primary))';
+        }
+        
+        return customColor;
+    }
+    
+    /**
+     * Get primary color (for labels, borders)
+     */
+    getPrimaryColor() {
+        return 'var(--color-primary)';
     }
     
     enable() {
@@ -85,7 +108,11 @@ class LivePreviewBridge {
             
             const value = this.getValueFromStats(stats, config.data_source);
             
-            if (value !== null && value !== undefined) {
+            if (config.type === 'page_prev' || config.type === 'page_next') {
+                this.updateTilePreview(element, config, 0, stats, tileId); // render regardless
+            } else if (config.type === 'page_prev' || config.type === 'page_next') {
+                this.updateTilePreview(element, config, 0, stats, tileId);
+            } else if (value !== null && value !== undefined) {
                 this.updateTilePreview(element, config, value, stats, tileId);
             }
         });
@@ -162,7 +189,11 @@ class LivePreviewBridge {
                 this.renderText(preview, config, value, fullStats, config.data_source, tileId);
                 break;
             
-            case 'button':
+                        case 'page_prev':
+            case 'page_next':
+                this.renderPageNav(preview, config);
+                break;
+                        case 'button':
                 this.renderButton(preview, config);
                 break;
         }
@@ -171,12 +202,12 @@ class LivePreviewBridge {
     // ===== CPU GRAPH RENDERING (with new styles) =====
     
     renderCPUGraph(preview, config, value, tileId) {
-        const color = config.style.color || 'var(--color-primary)';
+        const color = this.getColor(config);
         const history = this.historyData.get(tileId) || [value];
         const label = this.getDataLabel(config.data_source);
         
         // Check for style preference (graphStyle property)
-        const graphStyle = config.style.graphStyle || 'bar';
+        const graphStyle = config.style?.graphStyle || 'bar';
         
         if (graphStyle === 'line') {
             this.renderLineGraph(preview, history, color, value, label);
@@ -195,8 +226,8 @@ class LivePreviewBridge {
         }).join('');
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;z-index:2">${label}</div>` : ''}
-            <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;letter-spacing:0.5px;z-index:2">${label}</div>` : ''}
+            <div style="position:absolute;top:8px;left:8px;font-size:1.25em;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
             <div style="position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;padding:35px 8px 8px">
@@ -211,8 +242,8 @@ class LivePreviewBridge {
         const path = this.createSmoothPath(history, width, height);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
-            <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            <div style="position:absolute;top:8px;left:8px;font-size:1.25em;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
             <svg style="position:absolute;inset:0;width:100%;height:100%;padding:35px 8px 8px" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
@@ -229,8 +260,8 @@ class LivePreviewBridge {
         const gradId = 'grad-' + Math.random().toString(36).substr(2, 9);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
-            <div style="position:absolute;top:8px;left:8px;font-size:20px;font-weight:700;color:${color};z-index:2">
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            <div style="position:absolute;top:8px;left:8px;font-size:1.25em;font-weight:700;color:${color};z-index:2">
                 ${value.toFixed(1)}%
             </div>
             <svg style="position:absolute;inset:0;width:100%;height:100%;padding:35px 8px 8px" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
@@ -270,18 +301,18 @@ class LivePreviewBridge {
     // ===== NETWORK GRAPH RENDERING (with dual line option) =====
     
     renderNetworkGraph(preview, config, stats, tileId) {
-        const upColor = config.style.upload_color || '#ff6b6b';
-        const downColor = config.style.download_color || '#4ecdc4';
+        const upColor = config.style?.upload_color || 'var(--color-accent, #ff6b6b)';
+        const downColor = config.style?.download_color || 'var(--color-secondary, #4ecdc4)';
         const history = this.historyData.get(tileId) || [];
         
         if (history.length === 0) {
-            preview.innerHTML = '<div style="color:var(--color-text-secondary);text-align:center;padding:20px">Loading...</div>';
+            preview.innerHTML = '<div style="color:var(--color-primary);text-align:center;padding:20px">Loading...</div>';
             return;
         }
         
         const latest = history[history.length - 1];
         const label = this.getDataLabel(config.data_source);
-        const networkStyle = config.style.networkStyle || 'bar';
+        const networkStyle = config.style?.networkStyle || 'bar';
         
         if (networkStyle === 'dual_line') {
             this.renderDualLineGraph(preview, history, upColor, downColor, latest, label);
@@ -294,17 +325,17 @@ class LivePreviewBridge {
         const maxSpeed = Math.max(...history.map(h => Math.max(h.upload, h.download)), 50);
         
         const upBars = history.map(h => {
-            const pct = Math.max(2, (h.upload / maxSpeed) * 85); // Minimum 2% height
+            const pct = Math.max(2, (h.upload / maxSpeed) * 85);
             return `<div style="flex:1;background:${upColor};height:${pct}%;opacity:0.8;border-radius:1px;transition:height 0.3s"></div>`;
         }).join('');
         
         const downBars = history.map(h => {
-            const pct = Math.max(2, (h.download / maxSpeed) * 85); // Minimum 2% height
+            const pct = Math.max(2, (h.download / maxSpeed) * 85);
             return `<div style="flex:1;background:${downColor};height:${pct}%;opacity:0.8;border-radius:1px;transition:height 0.3s"></div>`;
         }).join('');
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;display:flex;gap:10px;font-size:11px;font-weight:600;z-index:2">
                 <span style="color:${upColor}">↑${latest.upload.toFixed(0)}</span>
                 <span style="color:${downColor}">↓${latest.download.toFixed(0)}</span>
@@ -325,7 +356,7 @@ class LivePreviewBridge {
         const downPath = this.createNetworkPath(history.map(h => h.download), maxSpeed, width, height);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:absolute;top:8px;left:8px;display:flex;gap:10px;font-size:11px;font-weight:600;z-index:2">
                 <span style="color:${upColor}">↑${latest.upload.toFixed(0)}</span>
                 <span style="color:${downColor}">↓${latest.download.toFixed(0)}</span>
@@ -356,7 +387,7 @@ class LivePreviewBridge {
     // ===== GAUGE RENDERING (with new styles) =====
     
     renderGauge(preview, config, value, stats, dataSource) {
-        const color = config.style.color || 'var(--color-secondary)';
+        const color = this.getColor(config);
         const label = this.getDataLabel(dataSource);
         
         let displayValue = value;
@@ -369,7 +400,7 @@ class LivePreviewBridge {
             displayValue = value.toFixed(0);
         }
         
-        const gaugeStyle = config.style.gaugeStyle || 'circle';
+        const gaugeStyle = config.style?.gaugeStyle || 'circle';
         
         if (gaugeStyle === 'semi') {
             this.renderSemiCircleGauge(preview, value, color, displayValue, unit, label);
@@ -386,17 +417,17 @@ class LivePreviewBridge {
         const offset = circumference * (1 - percent / 100);
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;padding-top:10px">
                 <svg width="80" height="80" viewBox="0 0 100 100" style="transform:rotate(-135deg)">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#333" stroke-width="8"/>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-border, #333)" stroke-width="8"/>
                     <circle cx="50" cy="50" r="40" fill="none" stroke="${color}" stroke-width="8" 
                             stroke-dasharray="${circumference}" 
                             stroke-dashoffset="${offset}"
                             stroke-linecap="round"
                             style="transition:stroke-dashoffset 0.3s"/>
                 </svg>
-                <div style="font-size:28px;font-weight:700;color:${color};line-height:1">
+                <div style="font-size:1.75em;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
                 </div>
             </div>
@@ -408,10 +439,10 @@ class LivePreviewBridge {
         const degrees = (percent / 100) * 180 - 90;
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:10">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:10">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding-top:15px;gap:4px">
                 <svg width="100%" height="60" viewBox="0 0 120 70" style="max-width:120px">
-                    <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="#333" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="var(--color-border, #333)" stroke-width="8" stroke-linecap="round"/>
                     <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="${color}" stroke-width="8" 
                           stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="${157 * (1 - percent/100)}"
                           style="transition:stroke-dashoffset 0.3s"/>
@@ -419,7 +450,7 @@ class LivePreviewBridge {
                     <line x1="60" y1="65" x2="60" y2="25" stroke="${color}" stroke-width="2.5" 
                           style="transform-origin:60px 65px;transform:rotate(${degrees}deg);transition:transform 0.3s"/>
                 </svg>
-                <div style="font-size:20px;font-weight:700;color:${color};line-height:1">
+                <div style="font-size:1.25em;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
                 </div>
             </div>
@@ -430,12 +461,12 @@ class LivePreviewBridge {
         const percent = Math.min(100, Math.max(0, value || 0));
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;gap:12px">
-                <div style="font-size:32px;font-weight:700;color:${color};line-height:1">
+                <div style="font-size:2em;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
                 </div>
-                <div style="width:100%;height:12px;background:#333;border-radius:6px;overflow:hidden;position:relative">
+                <div style="width:100%;height:12px;background:var(--color-border, #333);border-radius:6px;overflow:hidden;position:relative">
                     <div style="position:absolute;left:0;top:0;height:100%;background:${color};width:${percent}%;transition:width 0.3s;border-radius:6px"></div>
                 </div>
             </div>
@@ -445,7 +476,7 @@ class LivePreviewBridge {
     // ===== TEXT DISPLAY RENDERING (with new styles) =====
     
     renderText(preview, config, value, stats, dataSource, tileId) {
-        const color = config.style.color || 'var(--color-primary)';
+        const color = this.getColor(config);
         const label = this.getDataLabel(dataSource);
         
         let displayValue = value;
@@ -470,7 +501,7 @@ class LivePreviewBridge {
             }
         }
         
-        const displayStyle = config.style.displayStyle || 'number';
+        const displayStyle = config.style?.displayStyle || 'number';
         
         if (displayStyle === 'sparkline') {
             this.renderSparkline(preview, tileId, value, displayValue, unit, color, label);
@@ -485,9 +516,9 @@ class LivePreviewBridge {
     
     renderBigNumber(preview, displayValue, unit, color, label) {
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4px">
-                <div style="font-size:48px;font-weight:700;color:${color};line-height:1">
+                <div style="font-size:3em;font-weight:700;color:${color};line-height:1">
                     ${displayValue}${unit}
                 </div>
             </div>
@@ -508,7 +539,7 @@ class LivePreviewBridge {
             }).join(' ') : '';
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase;z-index:2">${label}</div>` : ''}
             <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
                 <svg style="position:absolute;bottom:0;left:0;right:0;height:50%;opacity:0.3" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                     <path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>
@@ -537,10 +568,10 @@ class LivePreviewBridge {
         }
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
-                <div style="font-size:48px;opacity:0.3">${icon}</div>
-                <div style="font-size:36px;font-weight:700;color:${color};line-height:1;margin-top:-20px">
+                <div style="font-size:3em;opacity:0.3">${icon}</div>
+                <div style="font-size:2.25em;font-weight:700;color:${color};line-height:1;margin-top:-20px">
                     ${displayValue}${unit}
                 </div>
             </div>
@@ -565,13 +596,13 @@ class LivePreviewBridge {
         }
         
         preview.innerHTML = `
-            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-text-secondary);text-transform:uppercase">${label}</div>` : ''}
+            ${label ? `<div style="position:absolute;top:4px;right:8px;font-size:9px;color:var(--color-primary);text-transform:uppercase">${label}</div>` : ''}
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:4px;padding:15px">
-                <div style="font-size:36px;font-weight:700;color:${color};line-height:1">
+                <div style="font-size:2.25em;font-weight:700;color:${color};line-height:1">
                     ${primary}
                 </div>
-                ${secondary ? `<div style="font-size:18px;font-weight:600;color:${color};opacity:0.7">${secondary}</div>` : ''}
-                ${tertiary ? `<div style="font-size:12px;color:var(--color-text-secondary)">${tertiary}</div>` : ''}
+                ${secondary ? `<div style="font-size:1.125em;font-weight:600;color:${color};opacity:0.7">${secondary}</div>` : ''}
+                ${tertiary ? `<div style="font-size:12px;color:var(--color-primary)">${tertiary}</div>` : ''}
             </div>
         `;
     }
@@ -583,19 +614,15 @@ class LivePreviewBridge {
         let iconHTML = '';
         
         if (iconType === 'file' && buttonConfig.icon_path) {
-            // Try to load custom icon
             const iconLoader = window.iconLoader || new IconLoader();
             const iconData = await iconLoader.getFileIcon(buttonConfig.icon_path, buttonConfig.icon);
             
             if (iconData.startsWith('data:')) {
-                // It's an image data URL
                 iconHTML = `<img src="${iconData}" style="width:48px;height:48px;object-fit:contain">`;
             } else {
-                // It's an emoji fallback
-                iconHTML = `<div style="font-size:48px">${iconData}</div>`;
+                iconHTML = `<div style="font-size:3em">${iconData}</div>`;
             }
         } else {
-            // Use emoji icon
             const icons = {
                 'settings': '⚙️', 'app': '📱', 'folder': '📁', 'browser': '🌐',
                 'terminal': '💻', 'play': '▶️', 'stop': '⏹️', 'refresh': '🔄',
@@ -603,7 +630,7 @@ class LivePreviewBridge {
                 'photo': '📷', 'file': '📄'
             };
             const emoji = icons[buttonConfig.icon] || '📌';
-            iconHTML = `<div style="font-size:48px">${emoji}</div>`;
+            iconHTML = `<div style="font-size:3em">${emoji}</div>`;
         }
         
         const showLabel = buttonConfig.show_label !== false;
@@ -612,7 +639,7 @@ class LivePreviewBridge {
         preview.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px">
                 ${iconHTML}
-                ${showLabel && label ? `<div style="font-size:14px;color:var(--color-text-secondary);font-weight:500">${label}</div>` : ''}
+                ${showLabel && label ? `<div style="font-size:14px;color:var(--color-primary);font-weight:500">${label}</div>` : ''}
             </div>
         `;
     }

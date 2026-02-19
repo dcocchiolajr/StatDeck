@@ -1,0 +1,26 @@
+{
+  "dark_red": {
+    "name": "Dark Red",
+    "builtin": false,
+    "colors": {
+      "primary": "#ff0000",
+      "secondary": "#ff0000",
+      "accent": "#ffffff",
+      "background": "#000000",
+      "surface": "#000000",
+      "text": "#ffffff",
+      "textSecondary": "#ffffff",
+      "border": "#ffffff"
+    },
+    "fonts": {
+      "main": "'Rajdhani', 'Arial', sans-serif",
+      "mono": "'Press Start 2P', 'Courier New', monospace"
+    },
+    "effects": {
+      "glow": true,
+      "scanlines": false,
+      "pixelated": false,
+      "bevel": false
+    }
+  }
+}

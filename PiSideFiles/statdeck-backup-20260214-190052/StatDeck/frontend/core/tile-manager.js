@@ -36,7 +36,9 @@ class TileManager {
             'gauge': GaugeTile,
             'text_display': TextDisplayTile,
             'button': ButtonTile,
-            'network_graph': NetworkGraphTile
+            'network_graph': NetworkGraphTile,
+            'page_prev': PagePrevTile,
+            'page_next': PageNextTile
         };
         
         const TileClass = tileClasses[type];

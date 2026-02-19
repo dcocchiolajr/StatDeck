@@ -109,13 +109,22 @@ class GridCanvas {
             size: { w: 1, h: 1 },
             data_source: '',
             style: {
-                color: '#00ff88',
+                color: '',
                 background: ''
             },
             config: {},
             actions: {}
         };
         
+        
+        // Page nav tile defaults
+        if (tileType === 'page_prev' || tileType === 'page_next') {
+            tileConfig.data_source = '';
+            tileConfig.style.color = '';
+            tileConfig.style.navStyle = 'arrow';
+            tileConfig.config = { label: '' };
+        }
+
         // Add to layout
         this.app.layout.tiles.push(tileConfig);
         this.addTile(tileConfig);

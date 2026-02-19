@@ -763,3 +763,8 @@ input[type="range"]::-moz-range-thumb {
     opacity: 1 !important;
     cursor: pointer !important;
 }
+
+
+/* preview-font-scaling v3.2.2 */
+#grid-canvas .tile .tile-live-preview { font-size: 8px; }
+/* end preview-font-scaling */

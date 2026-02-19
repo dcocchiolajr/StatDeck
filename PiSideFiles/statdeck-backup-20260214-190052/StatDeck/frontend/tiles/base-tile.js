@@ -1,6 +1,11 @@
 /**
- * Base Tile Class
- * All tile types inherit from this
+ * Base Tile Class - Pi Display
+ * VERSION: v3.2
+ * 
+ * Font scaling architecture:
+ *   Grid density → --grid-font-scale (auto, set by LayoutEngine)
+ *   Per-tile slider → --tile-font-scale (user, 0.5 to 2.0)
+ *   CSS combines both: font-size: calc(Xem * var(--grid-font-scale) * var(--tile-font-scale))
  */
 
 class BaseTile {
@@ -23,38 +28,44 @@ class BaseTile {
         this.element.id = `tile-${this.id}`;
         this.element.dataset.tileId = this.id;
         
-        // Set grid span
         const size = this.config.size;
-        const pos = this.config.position;
-        this.element.style.gridColumn = `${pos.x + 1} / span ${size.w}`;
-        this.element.style.gridRow = `${pos.y + 1} / span ${size.h}`;
         this.element.style.setProperty('--tile-width', size.w);
         this.element.style.setProperty('--tile-height', size.h);
         this.element.dataset.width = size.w;
         this.element.dataset.height = size.h;
         
-        // Add long-press indicator
+        const pos = this.config.position;
+        if (pos) {
+            this.element.style.gridColumn = `${pos.x + 1} / span ${size.w}`;
+            this.element.style.gridRow = `${pos.y + 1} / span ${size.h}`;
+        }
+        
         const indicator = document.createElement('div');
         indicator.className = 'long-press-indicator';
         this.element.appendChild(indicator);
     }
     
     applyStyles() {
-        // Apply background (if custom set)
         if (this.style.background) {
             this.element.style.background = this.style.background;
         }
-        
-        // Apply color (if custom set)
         if (this.style.color) {
             this.element.style.color = this.style.color;
         }
         
-        // Apply font scale - NEW
-        if (this.style.fontScale && this.style.fontScale !== 100) {
-            const scale = this.style.fontScale / 100;
-            this.element.style.fontSize = `${scale}em`;
+        // Font scale: slider is 50-200, convert to factor 0.5-2.0
+        const rawScale = parseInt(this.style.fontScale);
+        if (rawScale && rawScale !== 100) {
+            this.element.style.setProperty('--tile-font-scale', (rawScale / 100).toFixed(2));
         }
+    }
+    
+    getLabelColor() {
+        return this.style.labelColor || '';
+    }
+    
+    getValueColor() {
+        return this.style.color || '';
     }
     
     updateData(statsData) {
@@ -62,20 +73,20 @@ class BaseTile {
     }
     
     getValue(statsData) {
-        if (!this.dataSource) return null;
+        if (!this.dataSource || !statsData) return null;
         
-        // Parse dot-notation path
         const path = this.dataSource.split('.');
         let value = statsData;
         
         for (const key of path) {
-            if (value && value.hasOwnProperty(key)) {
+            if (value != null && typeof value === 'object' && key in value) {
                 value = value[key];
             } else {
                 return null;
             }
         }
         
+        if (value == null) return null;
         return value;
     }
 }

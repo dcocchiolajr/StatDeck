@@ -1,5 +1,5 @@
 /**
- * StatDeck Config App - Main Renderer Process (WITH LIVE PREVIEW)
+ * StatDeck Config App - Main Renderer Process (WITH LIVE PREVIEW + THEME BUILDER)
  * Coordinates all components and handles app state
  */
 
@@ -27,6 +27,7 @@ class StatDeckApp {
         this.configLoader = new ConfigLoader(this);
         this.undoManager = new UndoManager(this);
         this.livePreview = new LivePreviewBridge(this);
+        this.themeBuilder = new ThemeBuilder(this);
         
         this.init();
     }
@@ -215,6 +216,9 @@ class StatDeckApp {
             this.gridCanvas.toggleGridLines(toggleGrid.checked);
         });
         
+        // Populate theme dropdown dynamically
+        this.themeManager.populateDropdown('theme-selector');
+        
         // Theme selector
         const themeSelector = document.getElementById('theme-selector');
         themeSelector.addEventListener('change', async () => {
@@ -242,6 +246,20 @@ class StatDeckApp {
             this.themeManager.setTheme(newTheme);
             this.layout.theme = newTheme;
             this.markModified();
+        });
+        
+        // Theme builder toolbar buttons
+        document.getElementById('btn-theme-new').addEventListener('click', () => {
+            this.themeBuilder.open();
+        });
+        
+        document.getElementById('btn-theme-edit').addEventListener('click', () => {
+            const currentId = themeSelector.value;
+            this.themeBuilder.open(currentId);
+        });
+        
+        document.getElementById('btn-theme-import').addEventListener('click', () => {
+            this.themeBuilder.importTheme();
         });
         
         // Apply saved theme from layout
@@ -352,10 +370,11 @@ class StatDeckApp {
             return;
         }
         
-        // Add theme to layout before sending
+        // Add theme AND full theme data to layout before sending
         const layoutWithTheme = {
             ...this.layout,
-            theme: this.themeManager.currentTheme
+            theme: this.themeManager.currentTheme,
+            themeData: this.themeManager.getThemeDataForPush()
         };
         this.usbManager.sendConfig(layoutWithTheme);
         this.setStatus('Configuration sent to Pi');

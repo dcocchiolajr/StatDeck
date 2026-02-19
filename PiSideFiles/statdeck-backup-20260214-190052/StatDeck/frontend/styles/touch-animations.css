@@ -1,0 +1,274 @@
+/* =============================================================================
+   StatDeck Touch Animations - Enhanced v2
+   =============================================================================
+   IMPORTANT: Uses doubled selectors (.tile.tile.tap-flash) to override
+   the dynamically injected theme CSS from injectThemeCSS() which sets
+   box-shadow !important on all tiles. Without doubled specificity,
+   the theme's static box-shadow overrides our animation box-shadow.
+   ============================================================================= */
+
+/* =============================================================
+   BASE TRANSITION
+   ============================================================= */
+.tile {
+    transition: box-shadow 0.15s ease, transform 0.08s ease, opacity 0.1s ease;
+}
+
+/* =============================================================
+   TAP FLASH
+   ============================================================= */
+
+@keyframes tap-burst {
+    0%   { transform: scale(0.92); opacity: 0.85; }
+    40%  { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.tile.tile.tap-flash {
+    animation: tap-burst 0.3s ease-out;
+}
+
+/* Glow themes */
+.tile.tile.tap-flash.glow-theme {
+    box-shadow:
+        0 0 30px var(--theme-accent, var(--color-accent, rgba(255,0,255,0.8))),
+        0 0 60px var(--theme-primary, var(--color-primary, rgba(0,255,255,0.5))),
+        0 0 8px var(--theme-secondary, var(--color-secondary, rgba(255,255,255,0.3))),
+        0 4px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Non-glow themes */
+.tile.tile.tap-flash:not(.glow-theme) {
+    box-shadow:
+        0 0 20px var(--theme-accent, var(--color-accent, rgba(0,255,136,0.6))),
+        0 0 40px var(--theme-primary, var(--color-primary, rgba(0,255,136,0.3))),
+        0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* =============================================================
+   LONG PRESSING
+   ============================================================= */
+
+.tile.tile.long-pressing {
+    transform: scale(0.94);
+    opacity: 0.8;
+}
+
+.tile.tile.long-pressing.glow-theme {
+    box-shadow:
+        0 0 20px var(--theme-primary, var(--color-primary, rgba(255,0,255,0.5))),
+        0 0 40px var(--theme-secondary, var(--color-secondary, rgba(0,255,255,0.2))),
+        0 4px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.tile.tile.long-pressing:not(.glow-theme) {
+    box-shadow:
+        0 0 12px var(--theme-primary, var(--color-primary, rgba(0,255,136,0.3))),
+        0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+
+/* =============================================================
+   LONG PRESS READY
+   ============================================================= */
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 1; transform: scale(0.94); }
+    50% { opacity: 0.65; transform: scale(0.92); }
+}
+
+.tile.tile.long-press-ready {
+    animation: glow-pulse 0.6s ease-in-out infinite;
+}
+
+.tile.tile.long-press-ready.glow-theme {
+    box-shadow:
+        0 0 35px var(--theme-accent, var(--color-accent, rgba(255,0,255,0.9))),
+        0 0 70px var(--theme-primary, var(--color-primary, rgba(0,255,255,0.6))),
+        0 4px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.tile.tile.long-press-ready:not(.glow-theme) {
+    box-shadow:
+        0 0 25px var(--theme-accent, var(--color-accent, rgba(0,255,136,0.6))),
+        0 0 50px var(--theme-primary, var(--color-primary, rgba(0,255,136,0.3))),
+        0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* =============================================================
+   THEME-SPECIFIC TAP OVERRIDES
+   Double body selector for max specificity over injectThemeCSS
+   ============================================================= */
+
+/* --- Cyberpunk: Glitch jitter + tri-color flash --- */
+@keyframes cyberpunk-tap {
+    0%   { transform: scale(0.90) translateX(0); }
+    15%  { transform: scale(0.93) translateX(2px); }
+    30%  { transform: scale(0.95) translateX(-3px); }
+    50%  { transform: scale(1.02) translateX(1px); }
+    70%  { transform: scale(1.01) translateX(-1px); }
+    100% { transform: scale(1) translateX(0); }
+}
+
+body[data-theme="cyberpunk"] .tile.tile.tap-flash {
+    animation: cyberpunk-tap 0.35s ease-out;
+    box-shadow:
+        0 0 30px rgba(0, 255, 249, 0.9),
+        0 0 60px rgba(255, 46, 151, 0.7),
+        0 0 15px rgba(255, 237, 0, 0.5),
+        inset 0 0 20px rgba(0, 255, 249, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.8) !important;
+}
+
+body[data-theme="cyberpunk"] .tile.tile.long-press-ready {
+    box-shadow:
+        0 0 35px rgba(255, 46, 151, 0.9),
+        0 0 70px rgba(0, 255, 249, 0.6),
+        0 0 15px rgba(255, 237, 0, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* --- Synthwave: Neon strobe burst --- */
+@keyframes synthwave-tap {
+    0%   { transform: scale(0.90); }
+    30%  { transform: scale(1.03); }
+    60%  { transform: scale(0.98); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="synthwave"] .tile.tile.tap-flash {
+    animation: synthwave-tap 0.3s ease-out;
+    box-shadow:
+        0 0 35px rgba(255, 0, 255, 0.9),
+        0 0 70px rgba(0, 255, 255, 0.6),
+        inset 0 0 15px rgba(255, 0, 255, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* --- Matrix: Green digital flash --- */
+@keyframes matrix-tap {
+    0%   { transform: scale(0.90); }
+    35%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="matrix"] .tile.tile.tap-flash {
+    animation: matrix-tap 0.25s ease-out;
+    box-shadow:
+        0 0 30px rgba(0, 255, 65, 0.9),
+        0 0 60px rgba(0, 255, 65, 0.5),
+        inset 0 0 15px rgba(0, 255, 65, 0.1) !important;
+}
+
+/* --- Neon: Multi-color flash --- */
+body[data-theme="neon"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 30px rgba(57, 255, 20, 0.9),
+        0 0 60px rgba(255, 0, 255, 0.6),
+        0 0 10px rgba(255, 255, 0, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Ember: Warm fire burst --- */
+@keyframes ember-tap {
+    0%   { transform: scale(0.92); }
+    40%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="ember"] .tile.tile.tap-flash {
+    animation: ember-tap 0.3s ease-out;
+    box-shadow:
+        0 0 30px rgba(251, 146, 60, 0.8),
+        0 0 60px rgba(239, 68, 68, 0.5),
+        inset 0 0 10px rgba(251, 146, 60, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Arctic: Cool ice flash --- */
+body[data-theme="arctic"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 25px rgba(34, 211, 238, 0.8),
+        0 0 50px rgba(96, 165, 250, 0.5),
+        inset 0 0 10px rgba(34, 211, 238, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* --- Pixel: Sharp retro outline --- */
+@keyframes pixel-tap {
+    0%   { transform: scale(0.92); }
+    33%  { transform: scale(0.96); }
+    66%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="pixel"] .tile.tile.tap-flash {
+    animation: pixel-tap 0.25s steps(4);
+    box-shadow:
+        0 0 0 4px rgba(139, 172, 15, 0.9),
+        0 0 0 8px rgba(155, 188, 15, 0.4),
+        6px 6px 0 rgba(15, 56, 15, 0.8) !important;
+}
+
+/* --- 3D/Raised: Deep press --- */
+body[data-theme="3d"] .tile.tile.tap-flash {
+    transform: scale(0.93) translateY(3px);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.5),
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --- Ocean Deep --- */
+body[data-theme="ocean_deep"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 30px rgba(0, 188, 212, 0.8),
+        0 0 60px rgba(0, 105, 148, 0.5),
+        inset 0 0 15px rgba(0, 188, 212, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Dracula --- */
+body[data-theme="dracula"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 30px rgba(189, 147, 249, 0.8),
+        0 0 60px rgba(80, 250, 123, 0.5),
+        inset 0 0 10px rgba(189, 147, 249, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* --- Amber Terminal --- */
+body[data-theme="amber_terminal"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 30px rgba(255, 176, 0, 0.8),
+        0 0 60px rgba(255, 140, 0, 0.5),
+        inset 0 0 10px rgba(255, 176, 0, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Midnight --- */
+body[data-theme="midnight"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 25px rgba(99, 102, 241, 0.7),
+        0 0 50px rgba(139, 92, 246, 0.4),
+        inset 0 0 10px rgba(99, 102, 241, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* --- Dark (default) --- */
+body[data-theme="dark"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 20px rgba(0, 255, 136, 0.6),
+        0 0 40px rgba(78, 205, 196, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* --- Light --- */
+body[data-theme="light"] .tile.tile.tap-flash {
+    box-shadow:
+        0 0 20px rgba(59, 130, 246, 0.5),
+        0 0 40px rgba(139, 92, 246, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}

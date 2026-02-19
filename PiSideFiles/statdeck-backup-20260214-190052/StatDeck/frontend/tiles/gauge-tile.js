@@ -1,48 +1,58 @@
 /**
- * Gauge Tile
- * Displays a value as a circular gauge with style options
+ * Gauge Tile - Pi Display
+ * VERSION: v3.2
+ * Null-safe, efficient DOM updates, auto-labels, all 3 styles, theme colors
  */
 
 class GaugeTile extends BaseTile {
     constructor(config) {
         super(config);
         this.currentValue = 0;
-        this.gaugeStyle = this.style.gaugeStyle || 'circle'; // circle, semi, linear
+        this.gaugeStyle = this.style.gaugeStyle || 'circle';
         this.createGauge();
     }
 
     createElement() {
         super.createElement();
 
-        // Add label
         const label = document.createElement('div');
         label.className = 'tile-label gauge-label';
-        label.textContent = this.tileConfig.label || '';
+        label.textContent = this.tileConfig.label || this.getAutoLabel() || '';
+        const lc = this.getLabelColor();
+        if (lc) label.style.color = lc;
         this.element.appendChild(label);
+        this.labelElement = label;
 
-        // Add gauge container
         const container = document.createElement('div');
         container.className = 'gauge-container';
         this.element.appendChild(container);
         this.container = container;
 
-        // Add value display
         const valueDiv = document.createElement('div');
         valueDiv.className = 'tile-value gauge-value';
+        const vc = this.getValueColor();
+        if (vc) valueDiv.style.color = vc;
         this.element.appendChild(valueDiv);
         this.valueElement = valueDiv;
     }
 
+    getAutoLabel() {
+        const ds = this.dataSource;
+        if (!ds) return '';
+        const labels = {
+            'cpu.usage': 'CPU', 'cpu.temp': 'CPU TEMP', 'cpu.core_count': 'CORES',
+            'gpu.usage': 'GPU', 'gpu.temp': 'GPU TEMP',
+            'ram.percent': 'RAM', 'ram.used': 'RAM USED',
+            'disk.usage_percent': 'DISK', 'disk.read_speed': 'READ', 'disk.write_speed': 'WRITE',
+            'network.upload_speed': 'UPLOAD', 'network.download_speed': 'DOWNLOAD'
+        };
+        return labels[ds] || '';
+    }
+
     createGauge() {
-        const style = this.gaugeStyle;
-        
-        if (style === 'linear') {
-            this.createLinearGauge();
-        } else if (style === 'semi') {
-            this.createSemiCircleGauge();
-        } else {
-            this.createCircleGauge();
-        }
+        if (this.gaugeStyle === 'linear') this.createLinearGauge();
+        else if (this.gaugeStyle === 'semi') this.createSemiCircleGauge();
+        else this.createCircleGauge();
     }
 
     createCircleGauge() {
@@ -50,35 +60,22 @@ class GaugeTile extends BaseTile {
         svg.classList.add('gauge-svg');
         svg.setAttribute('viewBox', '0 0 100 100');
 
-        // Background arc
-        const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        bgCircle.setAttribute('cx', '50');
-        bgCircle.setAttribute('cy', '50');
-        bgCircle.setAttribute('r', '40');
-        bgCircle.setAttribute('fill', 'none');
-        bgCircle.setAttribute('stroke', '#333');
-        bgCircle.setAttribute('stroke-width', '8');
-        svg.appendChild(bgCircle);
+        const bg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        bg.setAttribute('cx', '50'); bg.setAttribute('cy', '50'); bg.setAttribute('r', '40');
+        bg.setAttribute('fill', 'none'); bg.setAttribute('stroke', '#333'); bg.setAttribute('stroke-width', '8');
+        svg.appendChild(bg);
 
-        // Value arc
-        const valueCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        valueCircle.setAttribute('cx', '50');
-        valueCircle.setAttribute('cy', '50');
-        valueCircle.setAttribute('r', '40');
-        valueCircle.setAttribute('fill', 'none');
-        valueCircle.setAttribute('stroke', this.style.color || '#00aaff');
-        valueCircle.setAttribute('stroke-width', '8');
-        valueCircle.setAttribute('stroke-linecap', 'round');
-        valueCircle.setAttribute('transform', 'rotate(-90 50 50)');
+        const vc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        vc.setAttribute('cx', '50'); vc.setAttribute('cy', '50'); vc.setAttribute('r', '40');
+        vc.setAttribute('fill', 'none'); vc.setAttribute('stroke', this.style.color || '#00aaff');
+        vc.setAttribute('stroke-width', '8'); vc.setAttribute('stroke-linecap', 'round');
+        vc.setAttribute('transform', 'rotate(-90 50 50)');
 
-        const circumference = 2 * Math.PI * 40;
-        valueCircle.setAttribute('stroke-dasharray', circumference);
-        valueCircle.setAttribute('stroke-dashoffset', circumference);
-
-        svg.appendChild(valueCircle);
-        this.valueCircle = valueCircle;
-        this.circumference = circumference;
-
+        const circ = 2 * Math.PI * 40;
+        vc.setAttribute('stroke-dasharray', circ); vc.setAttribute('stroke-dashoffset', circ);
+        svg.appendChild(vc);
+        this.valueCircle = vc;
+        this.circumference = circ;
         this.container.appendChild(svg);
     }
 
@@ -87,115 +84,79 @@ class GaugeTile extends BaseTile {
         svg.classList.add('gauge-svg');
         svg.setAttribute('viewBox', '0 0 100 60');
 
-        // Background arc (semi-circle)
-        const bgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        bgPath.setAttribute('d', 'M 10 50 A 40 40 0 0 1 90 50');
-        bgPath.setAttribute('fill', 'none');
-        bgPath.setAttribute('stroke', '#333');
-        bgPath.setAttribute('stroke-width', '8');
-        svg.appendChild(bgPath);
+        const bg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        bg.setAttribute('d', 'M 10 50 A 40 40 0 0 1 90 50');
+        bg.setAttribute('fill', 'none'); bg.setAttribute('stroke', '#333'); bg.setAttribute('stroke-width', '8');
+        svg.appendChild(bg);
 
-        // Value arc (semi-circle)
-        const valuePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        valuePath.setAttribute('fill', 'none');
-        valuePath.setAttribute('stroke', this.style.color || '#00aaff');
-        valuePath.setAttribute('stroke-width', '8');
-        valuePath.setAttribute('stroke-linecap', 'round');
-
-        svg.appendChild(valuePath);
-        this.valuePath = valuePath;
-
+        const vp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        vp.setAttribute('fill', 'none'); vp.setAttribute('stroke', this.style.color || '#00aaff');
+        vp.setAttribute('stroke-width', '8'); vp.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(vp);
+        this.valuePath = vp;
         this.container.appendChild(svg);
     }
 
     createLinearGauge() {
-        const container = document.createElement('div');
-        container.style.width = '100%';
-        container.style.height = '20px';
-        container.style.background = '#333';
-        container.style.borderRadius = '10px';
-        container.style.overflow = 'hidden';
-        container.style.position = 'relative';
-
+        const outer = document.createElement('div');
+        outer.style.cssText = 'width:100%;height:20px;background:#333;border-radius:10px;overflow:hidden;position:relative';
         const bar = document.createElement('div');
-        bar.style.height = '100%';
-        bar.style.width = '0%';
-        bar.style.background = this.style.color || '#00aaff';
-        bar.style.transition = 'width 0.3s ease';
-        
-        container.appendChild(bar);
-        this.container.appendChild(container);
+        bar.style.cssText = `height:100%;width:0%;background:${this.style.color || '#00aaff'};transition:width 0.3s ease;border-radius:10px`;
+        outer.appendChild(bar);
         this.linearBar = bar;
+        this.container.appendChild(outer);
     }
 
     updateData(statsData) {
         const value = this.getValue(statsData);
-        if (value === null) return;
+        
+        if (value == null || isNaN(value)) {
+            if (this.valueElement.textContent !== '--') this.valueElement.textContent = '--';
+            return;
+        }
 
         this.currentValue = value;
-
-        // Calculate percentage
-        const min = this.tileConfig.min || 0;
         const max = this.tileConfig.max || 100;
-        const percent = Math.max(0, Math.min(1, (value - min) / (max - min)));
+        const percent = Math.min(1, Math.max(0, value / max));
 
-        // Update gauge based on style
-        if (this.gaugeStyle === 'linear') {
-            this.linearBar.style.width = `${percent * 100}%`;
-            
-            // Update color based on thresholds
-            if (this.tileConfig.threshold_critical && value >= this.tileConfig.threshold_critical) {
-                this.linearBar.style.background = this.style.critical_color || '#ff0000';
-            } else if (this.tileConfig.threshold_warning && value >= this.tileConfig.threshold_warning) {
-                this.linearBar.style.background = this.style.warning_color || '#ffaa00';
-            } else {
-                this.linearBar.style.background = this.style.color || '#00aaff';
-            }
-        } else if (this.gaugeStyle === 'semi') {
-            // Semi-circle: 0% = left, 100% = right
-            const angle = percent * 180; // 0-180 degrees
-            const radians = (angle - 90) * (Math.PI / 180);
-            const endX = 50 + 40 * Math.cos(radians);
-            const endY = 50 + 40 * Math.sin(radians);
-            const largeArc = angle > 90 ? 1 : 0;
-            
-            const path = `M 10 50 A 40 40 0 ${largeArc} 1 ${endX} ${endY}`;
-            this.valuePath.setAttribute('d', path);
-            
-            // Update color
-            if (this.tileConfig.threshold_critical && value >= this.tileConfig.threshold_critical) {
-                this.valuePath.setAttribute('stroke', this.style.critical_color || '#ff0000');
-            } else if (this.tileConfig.threshold_warning && value >= this.tileConfig.threshold_warning) {
-                this.valuePath.setAttribute('stroke', this.style.warning_color || '#ffaa00');
-            } else {
-                this.valuePath.setAttribute('stroke', this.style.color || '#00aaff');
-            }
-        } else {
-            // Full circle
-            const offset = this.circumference - (percent * this.circumference);
-            this.valueCircle.setAttribute('stroke-dashoffset', offset);
-            
-            // Update color
-            if (this.tileConfig.threshold_critical && value >= this.tileConfig.threshold_critical) {
-                this.valueCircle.setAttribute('stroke', this.style.critical_color || '#ff0000');
-            } else if (this.tileConfig.threshold_warning && value >= this.tileConfig.threshold_warning) {
-                this.valueCircle.setAttribute('stroke', this.style.warning_color || '#ffaa00');
-            } else {
-                this.valueCircle.setAttribute('stroke', this.style.color || '#00aaff');
-            }
-        }
-
-        // Update value text
-        const units = this.tileConfig.units || '';
-        this.valueElement.innerHTML = `${value.toFixed(0)}<span class="tile-units">${units}</span>`;
-
-        // Apply warning/critical class to text
+        // Color: normal → warning → critical
+        let color = this.style.color || '#00aaff';
         if (this.tileConfig.threshold_critical && value >= this.tileConfig.threshold_critical) {
-            this.valueElement.className = 'tile-value gauge-value critical';
+            color = this.style.critical_color || '#ff0000';
         } else if (this.tileConfig.threshold_warning && value >= this.tileConfig.threshold_warning) {
-            this.valueElement.className = 'tile-value gauge-value warning';
-        } else {
-            this.valueElement.className = 'tile-value gauge-value';
+            color = this.style.warning_color || '#ffaa00';
         }
+
+        // Update gauge visual (only dynamic attributes)
+        if (this.gaugeStyle === 'linear' && this.linearBar) {
+            this.linearBar.style.width = `${percent * 100}%`;
+            this.linearBar.style.background = color;
+        } else if (this.gaugeStyle === 'semi' && this.valuePath) {
+            const angle = percent * Math.PI;
+            const endX = 50 - 40 * Math.cos(angle);
+            const endY = 50 - 40 * Math.sin(angle);
+            this.valuePath.setAttribute('d', `M 10 50 A 40 40 0 ${percent > 0.5 ? 1 : 0} 1 ${endX} ${endY}`);
+            this.valuePath.setAttribute('stroke', color);
+        } else if (this.valueCircle) {
+            this.valueCircle.setAttribute('stroke-dashoffset', this.circumference - (percent * this.circumference));
+            this.valueCircle.setAttribute('stroke', color);
+        }
+
+        // Format value text
+        let text;
+        if (this.dataSource && this.dataSource.includes('temp')) {
+            text = `${value.toFixed(0)}°C`;
+        } else if (this.dataSource === 'ram.used') {
+            text = `${(value / 1024).toFixed(1)} GB`;
+        } else {
+            text = `${value.toFixed(0)}${this.tileConfig.units || ''}`;
+        }
+        if (this.valueElement.textContent !== text) this.valueElement.textContent = text;
+
+        // Warning/critical class
+        const base = 'tile-value gauge-value';
+        const cls = (this.tileConfig.threshold_critical && value >= this.tileConfig.threshold_critical) ? `${base} critical`
+            : (this.tileConfig.threshold_warning && value >= this.tileConfig.threshold_warning) ? `${base} warning` : base;
+        if (this.valueElement.className !== cls) this.valueElement.className = cls;
     }
 }
