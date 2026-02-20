@@ -102,21 +102,21 @@ class ThemeManager {
                 name: '8-Bit',
                 builtin: true,
                 colors: {
-                    primary: '#00ff00',
-                    secondary: '#ffff00',
-                    accent: '#ff0000',
-                    background: '#0f380f',
-                    surface: '#306230',
+                    primary: '#ff71ce',
+                    secondary: '#01cdfe',
+                    accent: '#fffb96',
+                    background: '#0d0221',
+                    surface: '#1a0a3e',
                     text: '#ffffff',
-                    textSecondary: '#9bbc0f',
-                    border: '#8bac0f',
-                    valueColor: '#00ff00'
+                    textSecondary: '#b967ff',
+                    border: '#05ffa1',
+                    valueColor: '#01cdfe'
                 },
                 fonts: {
                     main: "'Press Start 2P', 'Courier New', monospace",
                     mono: "'Press Start 2P', monospace"
                 },
-                effects: { glow: false, scanlines: true, pixelated: true, bevel: false }
+                effects: { glow: true, scanlines: true, pixelated: false, bevel: false }
             },
             neon: {
                 name: 'Neon',
@@ -202,15 +202,15 @@ class ThemeManager {
                 name: 'GameBoy',
                 builtin: true,
                 colors: {
-                    primary: '#0f380f',
-                    secondary: '#306230',
-                    accent: '#8bac0f',
-                    background: '#9bbc0f',
-                    surface: '#8bac0f',
-                    text: '#0f380f',
-                    textSecondary: '#306230',
-                    border: '#0f380f',
-                    valueColor: '#0f380f'
+                    primary: '#9bbc0f',
+                    secondary: '#8bac0f',
+                    accent: '#cadc09',
+                    background: '#0f380f',
+                    surface: '#1e4a1e',
+                    text: '#9bbc0f',
+                    textSecondary: '#8bac0f',
+                    border: '#306230',
+                    valueColor: '#9bbc0f'
                 },
                 fonts: {
                     main: "'Press Start 2P', 'Courier New', monospace",
