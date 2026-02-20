@@ -1,0 +1,438 @@
+/* ============================================================================
+   PAGE TRANSITIONS — Theme-Dependent
+   v4.0 Multi-Page System
+   
+   ARCHITECTURE:
+     app.js adds class to #tile-grid: "page-transition-out" then "page-transition-in"
+     CSS @keyframes runs on GPU (transform + opacity + filter only)
+     Each theme has its own transition personality
+     
+   SAFETY:
+     - NO box-shadow in @keyframes (crashes Pi Chromium)
+     - NO :has() selector (not supported on Pi Chromium)
+     - Only transform, opacity, filter (composite-only, GPU accelerated)
+     - will-change hint on #tile-grid for layer promotion
+     
+   HOW IT WORKS:
+     1. User taps page_next → app.js calls nextPage()
+     2. nextPage() adds .page-exit-[direction] to #tile-grid
+     3. After exit animation (200ms), tiles are rebuilt
+     4. .page-enter-[direction] is added
+     5. After enter animation (300ms), class is removed
+   ============================================================================ */
+
+/* --- GPU Layer Promotion --- */
+#tile-grid {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* ============================================================================
+   DEFAULT TRANSITIONS (used when theme has no specific override)
+   Clean fade + subtle slide
+   ============================================================================ */
+
+/* Exit: slide out + fade */
+@keyframes page-exit-next-default {
+    0%   { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-40px); opacity: 0; }
+}
+@keyframes page-exit-prev-default {
+    0%   { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(40px); opacity: 0; }
+}
+
+/* Enter: slide in + fade */
+@keyframes page-enter-next-default {
+    0%   { transform: translateX(40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes page-enter-prev-default {
+    0%   { transform: translateX(-40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+#tile-grid.page-exit-next {
+    animation: page-exit-next-default 0.18s ease-in forwards;
+}
+#tile-grid.page-exit-prev {
+    animation: page-exit-prev-default 0.18s ease-in forwards;
+}
+#tile-grid.page-enter-next {
+    animation: page-enter-next-default 0.28s ease-out forwards;
+}
+#tile-grid.page-enter-prev {
+    animation: page-enter-prev-default 0.28s ease-out forwards;
+}
+
+
+/* ============================================================================
+   DARK — Clean professional slide
+   ============================================================================ */
+@keyframes dark-exit-next {
+    0%   { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-30px); opacity: 0; }
+}
+@keyframes dark-enter-next {
+    0%   { transform: translateX(30px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes dark-exit-prev {
+    0%   { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(30px); opacity: 0; }
+}
+@keyframes dark-enter-prev {
+    0%   { transform: translateX(-30px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+body[data-theme="dark"] #tile-grid.page-exit-next  { animation: dark-exit-next  0.15s ease-in forwards; }
+body[data-theme="dark"] #tile-grid.page-exit-prev  { animation: dark-exit-prev  0.15s ease-in forwards; }
+body[data-theme="dark"] #tile-grid.page-enter-next { animation: dark-enter-next 0.25s ease-out forwards; }
+body[data-theme="dark"] #tile-grid.page-enter-prev { animation: dark-enter-prev 0.25s ease-out forwards; }
+
+
+/* ============================================================================
+   CYBERPUNK — Glitch shift (jittery horizontal + brightness spike)
+   ============================================================================ */
+@keyframes cyber-exit {
+    0%   { transform: translateX(0) skewX(0deg); opacity: 1; filter: brightness(1); }
+    30%  { transform: translateX(-8px) skewX(-2deg); filter: brightness(1.8); }
+    60%  { transform: translateX(12px) skewX(3deg); filter: brightness(0.4); }
+    100% { transform: translateX(-60px) skewX(-5deg); opacity: 0; filter: brightness(0.2); }
+}
+@keyframes cyber-enter {
+    0%   { transform: translateX(60px) skewX(5deg); opacity: 0; filter: brightness(0.2); }
+    30%  { transform: translateX(-10px) skewX(-2deg); filter: brightness(1.6); }
+    60%  { transform: translateX(5px) skewX(1deg); opacity: 1; filter: brightness(0.8); }
+    100% { transform: translateX(0) skewX(0deg); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="cyberpunk"] #tile-grid.page-exit-next,
+body[data-theme="cyberpunk"] #tile-grid.page-exit-prev {
+    animation: cyber-exit 0.2s steps(4) forwards;
+}
+body[data-theme="cyberpunk"] #tile-grid.page-enter-next,
+body[data-theme="cyberpunk"] #tile-grid.page-enter-prev {
+    animation: cyber-enter 0.3s steps(5) forwards;
+}
+
+
+/* ============================================================================
+   SYNTHWAVE — Neon wipe (scale down + brightness bloom)
+   ============================================================================ */
+@keyframes synth-exit {
+    0%   { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) saturate(1); }
+    50%  { transform: scale(0.95) translateY(5px); filter: brightness(1.5) saturate(1.8); }
+    100% { transform: scale(0.85) translateY(15px); opacity: 0; filter: brightness(2) saturate(2); }
+}
+@keyframes synth-enter {
+    0%   { transform: scale(1.15) translateY(-15px); opacity: 0; filter: brightness(2) saturate(2); }
+    40%  { transform: scale(1.02) translateY(-3px); opacity: 0.8; filter: brightness(1.3) saturate(1.5); }
+    100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) saturate(1); }
+}
+
+body[data-theme="synthwave"] #tile-grid.page-exit-next,
+body[data-theme="synthwave"] #tile-grid.page-exit-prev {
+    animation: synth-exit 0.22s ease-in forwards;
+}
+body[data-theme="synthwave"] #tile-grid.page-enter-next,
+body[data-theme="synthwave"] #tile-grid.page-enter-prev {
+    animation: synth-enter 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   MATRIX — Digital dissolve (rapid flicker + sharp cut)
+   ============================================================================ */
+@keyframes matrix-exit {
+    0%   { transform: translateY(0); opacity: 1; filter: brightness(1); }
+    25%  { opacity: 0.3; filter: brightness(2) contrast(2); }
+    50%  { opacity: 0.7; filter: brightness(0.5); }
+    75%  { opacity: 0.1; filter: brightness(3); }
+    100% { transform: translateY(-10px); opacity: 0; filter: brightness(0); }
+}
+@keyframes matrix-enter {
+    0%   { transform: translateY(10px); opacity: 0; filter: brightness(0); }
+    20%  { opacity: 0.4; filter: brightness(2.5) contrast(1.5); }
+    40%  { opacity: 0.1; filter: brightness(0.3); }
+    60%  { opacity: 0.8; filter: brightness(1.5); }
+    80%  { opacity: 0.5; filter: brightness(2); }
+    100% { transform: translateY(0); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="matrix"] #tile-grid.page-exit-next,
+body[data-theme="matrix"] #tile-grid.page-exit-prev {
+    animation: matrix-exit 0.2s steps(6) forwards;
+}
+body[data-theme="matrix"] #tile-grid.page-enter-next,
+body[data-theme="matrix"] #tile-grid.page-enter-prev {
+    animation: matrix-enter 0.3s steps(8) forwards;
+}
+
+
+/* ============================================================================
+   NEON — Strobe flash (quick opacity blink then slide)
+   ============================================================================ */
+@keyframes neon-exit {
+    0%   { transform: translateX(0); opacity: 1; filter: brightness(1); }
+    15%  { opacity: 0; filter: brightness(3); }
+    30%  { opacity: 0.6; filter: brightness(2); }
+    50%  { opacity: 0; filter: brightness(2.5); }
+    100% { transform: translateX(-30px); opacity: 0; filter: brightness(0.5); }
+}
+@keyframes neon-enter {
+    0%   { transform: translateX(30px); opacity: 0; filter: brightness(0.5); }
+    20%  { opacity: 0.5; filter: brightness(2.5); }
+    40%  { opacity: 0; filter: brightness(3); }
+    60%  { opacity: 0.8; filter: brightness(1.5); }
+    100% { transform: translateX(0); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="neon"] #tile-grid.page-exit-next,
+body[data-theme="neon"] #tile-grid.page-exit-prev {
+    animation: neon-exit 0.2s ease-in forwards;
+}
+body[data-theme="neon"] #tile-grid.page-enter-next,
+body[data-theme="neon"] #tile-grid.page-enter-prev {
+    animation: neon-enter 0.3s ease-out forwards;
+}
+
+
+/* ============================================================================
+   EMBER — Heat shimmer (gentle wobble + warm brightness)
+   ============================================================================ */
+@keyframes ember-exit {
+    0%   { transform: translateX(0) scaleY(1); opacity: 1; filter: brightness(1); }
+    30%  { transform: translateX(-3px) scaleY(0.99); filter: brightness(1.3) sepia(0.3); }
+    60%  { transform: translateX(5px) scaleY(0.98); filter: brightness(1.5) sepia(0.5); }
+    100% { transform: translateX(-20px) scaleY(0.95); opacity: 0; filter: brightness(0.5) sepia(0.8); }
+}
+@keyframes ember-enter {
+    0%   { transform: translateX(20px) scaleY(0.95); opacity: 0; filter: brightness(0.5) sepia(0.8); }
+    40%  { transform: translateX(-3px) scaleY(0.99); opacity: 0.7; filter: brightness(1.4) sepia(0.3); }
+    70%  { transform: translateX(2px) scaleY(1); filter: brightness(1.1); }
+    100% { transform: translateX(0) scaleY(1); opacity: 1; filter: brightness(1) sepia(0); }
+}
+
+body[data-theme="ember"] #tile-grid.page-exit-next,
+body[data-theme="ember"] #tile-grid.page-exit-prev {
+    animation: ember-exit 0.25s ease-in forwards;
+}
+body[data-theme="ember"] #tile-grid.page-enter-next,
+body[data-theme="ember"] #tile-grid.page-enter-prev {
+    animation: ember-enter 0.35s ease-out forwards;
+}
+
+
+/* ============================================================================
+   ARCTIC — Frost breathe (slow gentle scale + cool brightness)
+   ============================================================================ */
+@keyframes arctic-exit {
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1) saturate(1); }
+    50%  { transform: scale(0.97); filter: brightness(1.3) saturate(0.5); }
+    100% { transform: scale(0.92); opacity: 0; filter: brightness(1.6) saturate(0.2); }
+}
+@keyframes arctic-enter {
+    0%   { transform: scale(1.08); opacity: 0; filter: brightness(1.6) saturate(0.2); }
+    50%  { transform: scale(1.02); opacity: 0.7; filter: brightness(1.2) saturate(0.7); }
+    100% { transform: scale(1); opacity: 1; filter: brightness(1) saturate(1); }
+}
+
+body[data-theme="arctic"] #tile-grid.page-exit-next,
+body[data-theme="arctic"] #tile-grid.page-exit-prev {
+    animation: arctic-exit 0.25s ease-in-out forwards;
+}
+body[data-theme="arctic"] #tile-grid.page-enter-next,
+body[data-theme="arctic"] #tile-grid.page-enter-prev {
+    animation: arctic-enter 0.35s ease-in-out forwards;
+}
+
+
+/* ============================================================================
+   PIXEL / 8-BIT / GAMEBOY — Hard cut (no smooth, stepped frames)
+   ============================================================================ */
+@keyframes pixel-exit {
+    0%   { transform: translateX(0); opacity: 1; }
+    33%  { transform: translateX(-8px); opacity: 0.6; }
+    66%  { transform: translateX(-16px); opacity: 0.3; }
+    100% { transform: translateX(-24px); opacity: 0; }
+}
+@keyframes pixel-enter {
+    0%   { transform: translateX(24px); opacity: 0; }
+    33%  { transform: translateX(16px); opacity: 0.3; }
+    66%  { transform: translateX(8px); opacity: 0.6; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+body[data-theme="pixel"] #tile-grid.page-exit-next,
+body[data-theme="pixel"] #tile-grid.page-exit-prev,
+body[data-theme="8bit"] #tile-grid.page-exit-next,
+body[data-theme="8bit"] #tile-grid.page-exit-prev,
+body[data-theme="gameboy"] #tile-grid.page-exit-next,
+body[data-theme="gameboy"] #tile-grid.page-exit-prev {
+    animation: pixel-exit 0.15s steps(4) forwards;
+}
+body[data-theme="pixel"] #tile-grid.page-enter-next,
+body[data-theme="pixel"] #tile-grid.page-enter-prev,
+body[data-theme="8bit"] #tile-grid.page-enter-next,
+body[data-theme="8bit"] #tile-grid.page-enter-prev,
+body[data-theme="gameboy"] #tile-grid.page-enter-next,
+body[data-theme="gameboy"] #tile-grid.page-enter-prev {
+    animation: pixel-enter 0.2s steps(4) forwards;
+}
+
+
+/* ============================================================================
+   3D — Flip depth (rotateY perspective)
+   ============================================================================ */
+@keyframes threed-exit-next {
+    0%   { transform: perspective(800px) rotateY(0deg); opacity: 1; }
+    100% { transform: perspective(800px) rotateY(-25deg) scale(0.9); opacity: 0; }
+}
+@keyframes threed-enter-next {
+    0%   { transform: perspective(800px) rotateY(25deg) scale(0.9); opacity: 0; }
+    100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+}
+@keyframes threed-exit-prev {
+    0%   { transform: perspective(800px) rotateY(0deg); opacity: 1; }
+    100% { transform: perspective(800px) rotateY(25deg) scale(0.9); opacity: 0; }
+}
+@keyframes threed-enter-prev {
+    0%   { transform: perspective(800px) rotateY(-25deg) scale(0.9); opacity: 0; }
+    100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+}
+
+body[data-theme="3d"] #tile-grid.page-exit-next  { animation: threed-exit-next  0.22s ease-in forwards; }
+body[data-theme="3d"] #tile-grid.page-exit-prev  { animation: threed-exit-prev  0.22s ease-in forwards; }
+body[data-theme="3d"] #tile-grid.page-enter-next { animation: threed-enter-next 0.3s ease-out forwards; }
+body[data-theme="3d"] #tile-grid.page-enter-prev { animation: threed-enter-prev 0.3s ease-out forwards; }
+
+
+/* ============================================================================
+   OCEAN — Wave roll (gentle Y bob + opacity)
+   ============================================================================ */
+@keyframes ocean-exit {
+    0%   { transform: translateY(0); opacity: 1; }
+    30%  { transform: translateY(-8px); }
+    60%  { transform: translateY(5px); opacity: 0.5; }
+    100% { transform: translateY(25px); opacity: 0; }
+}
+@keyframes ocean-enter {
+    0%   { transform: translateY(-25px); opacity: 0; }
+    30%  { transform: translateY(8px); opacity: 0.6; }
+    60%  { transform: translateY(-4px); opacity: 0.9; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+body[data-theme="ocean"] #tile-grid.page-exit-next,
+body[data-theme="ocean"] #tile-grid.page-exit-prev {
+    animation: ocean-exit 0.25s ease-in forwards;
+}
+body[data-theme="ocean"] #tile-grid.page-enter-next,
+body[data-theme="ocean"] #tile-grid.page-enter-prev {
+    animation: ocean-enter 0.35s ease-out forwards;
+}
+
+
+/* ============================================================================
+   DRACULA — Ghostly fade (deep opacity dip + slight scale)
+   ============================================================================ */
+@keyframes dracula-exit {
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1); }
+    40%  { transform: scale(0.98); opacity: 0.3; filter: brightness(0.6); }
+    100% { transform: scale(0.95); opacity: 0; filter: brightness(0.3); }
+}
+@keyframes dracula-enter {
+    0%   { transform: scale(1.05); opacity: 0; filter: brightness(0.3); }
+    50%  { transform: scale(1.01); opacity: 0.5; filter: brightness(0.7); }
+    100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="dracula"] #tile-grid.page-exit-next,
+body[data-theme="dracula"] #tile-grid.page-exit-prev {
+    animation: dracula-exit 0.25s ease-in forwards;
+}
+body[data-theme="dracula"] #tile-grid.page-enter-next,
+body[data-theme="dracula"] #tile-grid.page-enter-prev {
+    animation: dracula-enter 0.4s ease-out forwards;
+}
+
+
+/* ============================================================================
+   AMBER TERMINAL — CRT power off / on
+   ============================================================================ */
+@keyframes amber-exit {
+    0%   { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+    60%  { transform: scaleY(1) scaleX(0.98); opacity: 1; filter: brightness(2); }
+    80%  { transform: scaleY(0.005) scaleX(0.8); opacity: 1; filter: brightness(3); }
+    100% { transform: scaleY(0) scaleX(0); opacity: 0; filter: brightness(0); }
+}
+@keyframes amber-enter {
+    0%   { transform: scaleY(0) scaleX(0); opacity: 0; filter: brightness(0); }
+    20%  { transform: scaleY(0.005) scaleX(0.8); opacity: 1; filter: brightness(3); }
+    40%  { transform: scaleY(1) scaleX(0.98); filter: brightness(2); }
+    60%  { transform: scaleY(1) scaleX(1); filter: brightness(1.5); }
+    100% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="amber"] #tile-grid.page-exit-next,
+body[data-theme="amber"] #tile-grid.page-exit-prev,
+body[data-theme="amber_terminal"] #tile-grid.page-exit-next,
+body[data-theme="amber_terminal"] #tile-grid.page-exit-prev {
+    animation: amber-exit 0.25s ease-in forwards;
+}
+body[data-theme="amber"] #tile-grid.page-enter-next,
+body[data-theme="amber"] #tile-grid.page-enter-prev,
+body[data-theme="amber_terminal"] #tile-grid.page-enter-next,
+body[data-theme="amber_terminal"] #tile-grid.page-enter-prev {
+    animation: amber-enter 0.35s ease-out forwards;
+}
+
+
+/* ============================================================================
+   MIDNIGHT — Deep throb (heavy slow scale pulse)
+   ============================================================================ */
+@keyframes midnight-exit {
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1); }
+    40%  { transform: scale(1.02); filter: brightness(0.6); }
+    100% { transform: scale(0.9); opacity: 0; filter: brightness(0.2); }
+}
+@keyframes midnight-enter {
+    0%   { transform: scale(0.85); opacity: 0; filter: brightness(0.2); }
+    40%  { transform: scale(1.03); opacity: 0.7; filter: brightness(0.8); }
+    70%  { transform: scale(0.99); filter: brightness(1.1); }
+    100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="midnight"] #tile-grid.page-exit-next,
+body[data-theme="midnight"] #tile-grid.page-exit-prev {
+    animation: midnight-exit 0.25s ease-in forwards;
+}
+body[data-theme="midnight"] #tile-grid.page-enter-next,
+body[data-theme="midnight"] #tile-grid.page-enter-prev {
+    animation: midnight-enter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   LIGHT — Crisp fade (quick, clean, minimal)
+   ============================================================================ */
+@keyframes light-exit {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+@keyframes light-enter {
+    0%   { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+body[data-theme="light"] #tile-grid.page-exit-next,
+body[data-theme="light"] #tile-grid.page-exit-prev {
+    animation: light-exit 0.12s ease-in forwards;
+}
+body[data-theme="light"] #tile-grid.page-enter-next,
+body[data-theme="light"] #tile-grid.page-enter-prev {
+    animation: light-enter 0.2s ease-out forwards;
+}

@@ -1,0 +1,122 @@
+/* =========================================================================
+ * PAGE TAB BAR — CSS
+ * Insert into Config App styles/app.css
+ * ========================================================================= */
+
+/* --- Page Tab Bar Container --- */
+#page-tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 12px;
+    background: #0d0d1a;
+    border-bottom: 1px solid #2a2a3e;
+    min-height: 32px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-shrink: 0;
+}
+
+/* Scrollbar for many tabs */
+#page-tab-bar::-webkit-scrollbar {
+    height: 3px;
+}
+#page-tab-bar::-webkit-scrollbar-track {
+    background: transparent;
+}
+#page-tab-bar::-webkit-scrollbar-thumb {
+    background: #3a3a5e;
+    border-radius: 2px;
+}
+
+/* --- Individual Page Tab --- */
+.page-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    color: #888;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+    top: 1px;
+}
+
+.page-tab:hover {
+    background: #22223a;
+    color: #ccc;
+}
+
+.page-tab.active {
+    background: #1e1e3a;
+    color: #fff;
+    border-color: #00ff88;
+    border-bottom: 1px solid #1e1e3a;
+    z-index: 1;
+}
+
+.page-tab.active .page-tab-label {
+    color: #00ff88;
+}
+
+/* --- Tab Label --- */
+.page-tab-label {
+    font-weight: 500;
+    pointer-events: auto;
+}
+
+/* --- Tab Close Button --- */
+.page-tab-close {
+    font-size: 14px;
+    line-height: 1;
+    color: #666;
+    padding: 0 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.page-tab-close:hover {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.15);
+}
+
+/* --- Add Page Button --- */
+.page-tab-add {
+    font-size: 16px;
+    font-weight: 700;
+    color: #666;
+    padding: 3px 10px;
+    background: transparent;
+    border: 1px dashed #333;
+    border-bottom: none;
+}
+
+.page-tab-add:hover {
+    color: #00ff88;
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.05);
+}
+
+/* --- Rename Input --- */
+.page-tab-rename-input {
+    width: 80px;
+    font-size: 11px;
+    padding: 1px 4px;
+    border: 1px solid #00ff88;
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 3px;
+    outline: none;
+}
+
+.page-tab-rename-input:focus {
+    box-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+}
