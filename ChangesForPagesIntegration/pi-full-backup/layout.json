@@ -1,0 +1,290 @@
+{
+  "version": "1.0",
+  "grid": {
+    "cols": 4,
+    "rows": 4,
+    "cell_width": 180,
+    "cell_height": 120,
+    "gap": 10
+  },
+  "tiles": [
+    {
+      "id": "cpu_main",
+      "type": "cpu_graph",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "w": 2,
+        "h": 2
+      },
+      "data_source": "cpu.usage",
+      "style": {
+        "color": "",
+        "background": "",
+        "fill": true,
+        "graphStyle": "bar",
+        "labelColor": "",
+        "fontScale": 110
+      },
+      "config": {
+        "history_seconds": 60,
+        "show_cores": false
+      },
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+          "arguments": ""
+        },
+        "long_press": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\MaxScripts",
+          "arguments": ""
+        }
+      }
+    },
+    {
+      "id": "cpu_temp",
+      "type": "gauge",
+      "position": {
+        "x": 2,
+        "y": 0
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "cpu.usage",
+      "style": {
+        "color": "",
+        "warning_color": "#ffaa00",
+        "critical_color": "#ff0000",
+        "gaugeStyle": "circle",
+        "background": "",
+        "labelColor": "",
+        "fontScale": 100
+      },
+      "config": {
+        "min": 0,
+        "max": 100,
+        "units": "°C",
+        "threshold_warning": 70,
+        "threshold_critical": 85
+      },
+      "actions": {}
+    },
+    {
+      "id": "ram_display",
+      "type": "text_display",
+      "position": {
+        "x": 2,
+        "y": 1
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "ram.percent",
+      "style": {
+        "color": "",
+        "background": "",
+        "displayStyle": "number",
+        "fontScale": 150
+      },
+      "config": {
+        "label": "RAM",
+        "units": "%",
+        "decimals": 1,
+        "font_size": "large"
+      },
+      "actions": {
+        "tap": {
+          "type": "launch_app",
+          "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+          "arguments": ""
+        }
+      }
+    },
+    {
+      "id": "gpu_usage",
+      "type": "text_display",
+      "position": {
+        "x": 1,
+        "y": 3
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "gpu.usage",
+      "style": {
+        "color": "",
+        "background": "",
+        "fontScale": 150,
+        "labelColor": ""
+      },
+      "config": {
+        "label": "GPU",
+        "units": "%",
+        "decimals": 0,
+        "font_size": "large"
+      },
+      "actions": {}
+    },
+    {
+      "id": "tile_2",
+      "type": "network_graph",
+      "position": {
+        "x": 2,
+        "y": 2
+      },
+      "size": {
+        "w": 2,
+        "h": 2
+      },
+      "data_source": "network",
+      "style": {
+        "color": "",
+        "background": "",
+        "labelColor": "",
+        "fontScale": 100,
+        "networkStyle": "dual_line"
+      },
+      "config": {},
+      "actions": {}
+    },
+    {
+      "id": "tile_7",
+      "type": "text_display",
+      "position": {
+        "x": 3,
+        "y": 1
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "cpu.usage",
+      "style": {
+        "color": "",
+        "background": "",
+        "fontScale": 150
+      },
+      "config": {},
+      "actions": {}
+    },
+    {
+      "id": "tile_10",
+      "type": "text_display",
+      "position": {
+        "x": 3,
+        "y": 0
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "gpu.temp",
+      "style": {
+        "color": "",
+        "background": "",
+        "fontScale": 150,
+        "labelColor": ""
+      },
+      "config": {},
+      "actions": {}
+    },
+    {
+      "id": "tile_1",
+      "type": "page_prev",
+      "position": {
+        "x": 0,
+        "y": 2
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "",
+      "style": {
+        "color": "",
+        "background": "",
+        "navStyle": "arrow",
+        "labelColor": ""
+      },
+      "config": {
+        "label": ""
+      },
+      "actions": {}
+    },
+    {
+      "id": "tile_12",
+      "type": "page_next",
+      "position": {
+        "x": 1,
+        "y": 2
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "",
+      "style": {
+        "color": "",
+        "background": "",
+        "navStyle": "arrow"
+      },
+      "config": {
+        "label": ""
+      },
+      "actions": {}
+    },
+    {
+      "id": "tile_13",
+      "type": "text_display",
+      "position": {
+        "x": 0,
+        "y": 3
+      },
+      "size": {
+        "w": 1,
+        "h": 1
+      },
+      "data_source": "disk.read_speed",
+      "style": {
+        "color": "",
+        "background": ""
+      },
+      "config": {},
+      "actions": {}
+    }
+  ],
+  "theme": "synthwave",
+  "themeData": {
+    "id": "synthwave",
+    "name": "Synthwave",
+    "colors": {
+      "primary": "#ff00ff",
+      "secondary": "#00ffff",
+      "accent": "#ff1493",
+      "background": "#1a0033",
+      "surface": "#2d1b4e",
+      "text": "#ffffff",
+      "textSecondary": "#ff00ff",
+      "border": "#ff00ff",
+      "valueColor": "#00ffff"
+    },
+    "fonts": {
+      "main": "'Orbitron', 'Arial', sans-serif",
+      "mono": "'Courier New', monospace"
+    },
+    "effects": {
+      "glow": true,
+      "scanlines": false,
+      "pixelated": false,
+      "bevel": false
+    }
+  }
+}

@@ -463,33 +463,22 @@ class StatDeckApp {
             this.gridCanvas.toggleGridLines(toggleGrid.checked);
         });
         
-        // Populate theme dropdown dynamically
-        this.themeManager.populateDropdown('theme-selector');
-        
-        // Theme selector
+        // Theme dropdown
         const themeSelector = document.getElementById('theme-selector');
-        themeSelector.addEventListener('change', async () => {
-            const newTheme = themeSelector.value;
-            const currentTheme = this.layout.theme || 'dark';
-            
-            if (this.modified && newTheme !== currentTheme) {
-                const result = await ipcRenderer.invoke('show-message', {
-                    type: 'warning',
-                    buttons: ['Push & Change', 'Change Anyway', 'Cancel'],
-                    title: 'Theme Change Warning',
-                    message: 'Changing theme will reset tile colors to theme defaults. Push current layout first?'
-                });
-                
-                if (result.response === 0) {
-                    await this.exportToPi();
-                } else if (result.response === 2) {
-                    themeSelector.value = currentTheme;
-                    return;
-                }
-            }
-            
-            this.themeManager.setTheme(newTheme);
-            this.layout.theme = newTheme;
+        
+        // Populate theme dropdown
+        const themes = this.themeManager.getAllThemes();
+        themes.forEach(theme => {
+            const option = document.createElement('option');
+            option.value = theme.id;
+            option.textContent = theme.name;
+            themeSelector.appendChild(option);
+        });
+        
+        themeSelector.addEventListener('change', () => {
+            const themeId = themeSelector.value;
+            this.themeManager.setTheme(themeId);
+            this.layout.theme = themeId;
             this.markModified();
         });
         
