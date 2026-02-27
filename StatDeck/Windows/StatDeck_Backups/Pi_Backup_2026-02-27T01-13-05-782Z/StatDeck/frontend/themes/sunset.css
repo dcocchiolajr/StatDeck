@@ -1,0 +1,94 @@
+/**
+ * STATDECK MODULAR THEME: SUNSET
+ */
+body[data-theme="sunset"] {
+    background: #2d132c;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+    body[data-theme="sunset"] .tile,
+    body[data-theme="sunset"] .cpu-graph-tile,
+    body[data-theme="sunset"] .gauge-tile,
+    body[data-theme="sunset"] .text-display-tile,
+    body[data-theme="sunset"] .button-tile,
+    body[data-theme="sunset"] .network-graph-tile,
+    body[data-theme="sunset"] .page-nav-tile {
+        background: #3d1e36 !important;
+        border: 1px solid #ff6b6b !important;
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.3) !important;
+    }
+
+    body[data-theme="sunset"] .tile-value,
+    body[data-theme="sunset"] .gauge-value,
+    body[data-theme="sunset"] .text-display-value {
+        color: #feca57 !important;
+        text-shadow: 0 0 10px rgba(254, 202, 87, 0.8);
+        font-weight: 700;
+    }
+
+    body[data-theme="sunset"] .tile-label,
+    body[data-theme="sunset"] .gauge-label,
+    body[data-theme="sunset"] .text-display-label {
+        color: #ff6b6b !important;
+    }
+
+/* Sunset Glow Tap */
+@keyframes sunset-tap {
+    0% {
+        transform: scale(0.92);
+        opacity: 0.85;
+    }
+
+    50% {
+        transform: scale(1.03);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="sunset"] .tile.tap-flash {
+    animation: sunset-tap 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.8), 0 0 50px rgba(254, 202, 87, 0.5) !important;
+}
+
+/* Sunset Smooth Fade Transitions */
+@keyframes sunset-exit {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+        filter: brightness(0.5);
+    }
+}
+
+@keyframes sunset-enter {
+    0% {
+        opacity: 0;
+        transform: scale(1.05);
+        filter: brightness(1.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+body[data-theme="sunset"] #tile-grid.page-exit-next, body[data-theme="sunset"] #tile-grid.page-exit-prev {
+    animation: sunset-exit 0.3s forwards;
+}
+
+body[data-theme="sunset"] #tile-grid.page-enter-next, body[data-theme="sunset"] #tile-grid.page-enter-prev {
+    animation: sunset-enter 0.4s forwards;
+}

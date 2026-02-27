@@ -1,0 +1,108 @@
+/**
+ * STATDECK MODULAR THEME: DRACULA
+ */
+body[data-theme="dracula"] {
+    background: #282a36;
+    font-size: 13px;
+}
+
+    body[data-theme="dracula"] .tile {
+        border: 1px solid #bd93f9 !important;
+        background: rgba(40, 42, 54, 0.8) !important;
+    }
+
+/* Dracula Tap */
+@keyframes dracula-tap {
+    0% {
+        transform: scale(0.92);
+        opacity: 0.5;
+    }
+
+    30% {
+        transform: scale(1.02);
+        opacity: 1;
+    }
+
+    60% {
+        transform: scale(1.0);
+        opacity: 0.85;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="dracula"] .tile.tap-flash {
+    animation: dracula-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 35px rgba(80, 250, 123, 0.8), 0 0 70px rgba(189, 147, 249, 0.5), inset 0 0 12px rgba(80, 250, 123, 0.1) !important;
+}
+
+@keyframes dracula-hold {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(0.94);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.92);
+    }
+}
+
+body[data-theme="dracula"] .tile.long-press-ready {
+    animation: dracula-hold 0.7s ease-in-out infinite !important;
+    box-shadow: 0 0 40px rgba(189, 147, 249, 0.9), 0 0 80px rgba(80, 250, 123, 0.5) !important;
+}
+
+/* Shadow Melt Transitions */
+@keyframes dracula-exit {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: translateY(25px) scale(0.98);
+        opacity: 0.4;
+        filter: brightness(0.25);
+    }
+
+    100% {
+        transform: translateY(60px) scale(0.95);
+        opacity: 0;
+        filter: brightness(0);
+    }
+}
+
+@keyframes dracula-enter {
+    0% {
+        transform: translateY(60px) scale(0.95);
+        opacity: 0;
+        filter: brightness(0);
+    }
+
+    50% {
+        transform: translateY(15px) scale(0.98);
+        opacity: 0.4;
+        filter: brightness(0.45);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+body[data-theme="dracula"] #tile-grid.page-exit-next,
+body[data-theme="dracula"] #tile-grid.page-exit-prev {
+    animation: dracula-exit 0.35s steps(8) forwards;
+}
+
+body[data-theme="dracula"] #tile-grid.page-enter-next,
+body[data-theme="dracula"] #tile-grid.page-enter-prev {
+    animation: dracula-enter 0.6s steps(10) forwards;
+}

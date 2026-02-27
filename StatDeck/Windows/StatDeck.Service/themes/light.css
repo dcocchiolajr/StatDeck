@@ -1,0 +1,75 @@
+/**
+ * STATDECK MODULAR THEME: LIGHT
+ */
+body[data-theme="light"] {
+    font-size: 13px;
+    background: #f7fafc;
+    color: #1a202c;
+}
+
+    body[data-theme="light"] .tile, body[data-theme="light"] .cpu-graph-tile, body[data-theme="light"] .gauge-tile, body[data-theme="light"] .text-display-tile, body[data-theme="light"] .button-tile, body[data-theme="light"] .network-graph-tile, body[data-theme="light"] .page-nav-tile {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        color: #1a202c !important;
+    }
+
+    body[data-theme="light"] .tile-value, body[data-theme="light"] .gauge-value, body[data-theme="light"] .text-display-value {
+        color: #3b82f6 !important;
+        font-weight: 700;
+    }
+
+    body[data-theme="light"] .tile-label, body[data-theme="light"] .gauge-label, body[data-theme="light"] .text-display-label {
+        color: #718096 !important;
+    }
+
+@keyframes light-tap {
+    0% {
+        transform: scale(0.94);
+    }
+
+    35% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body[data-theme="light"] .tile.tap-flash {
+    animation: light-tap 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.6), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+@keyframes light-exit {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+@keyframes light-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body[data-theme="light"] #tile-grid.page-exit-next, body[data-theme="light"] #tile-grid.page-exit-prev {
+    animation: light-exit 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+body[data-theme="light"] #tile-grid.page-enter-next, body[data-theme="light"] #tile-grid.page-enter-prev {
+    animation: light-enter 0.35s cubic-bezier(0, 0, 0.2, 1) forwards;
+}

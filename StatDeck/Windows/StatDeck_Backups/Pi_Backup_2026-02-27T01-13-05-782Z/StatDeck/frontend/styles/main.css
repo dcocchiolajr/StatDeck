@@ -1,0 +1,403 @@
+/* StatDeck Modern Dashboard Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    transform: scaleX(-1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--theme-background, #0f0f23);
+    color: #ffffff;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#tile-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
+    grid-template-rows: repeat(var(--grid-rows, 3), 1fr);
+    gap: 10px;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Base Tile Styles */
+.tile {
+    background: var(--theme-surface, linear-gradient(135deg, #1a1a2e 0%, #16213e 100%));
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s, box-shadow 0.1s;
+    grid-column: span var(--tile-width);
+    grid-row: span var(--tile-height);
+    cursor: pointer;
+}
+
+.tile:active {
+    
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.tile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tile-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-text-secondary, #a0a0a0);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tile-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--theme-text, #ffffff);
+    line-height: 1;
+}
+
+.tile-units {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--theme-text-secondary, #a0a0a0);
+    margin-left: 4px;
+}
+
+    width: 100%;
+    height: 100%;
+}
+
+/* Button Tile */
+.button-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--theme-surface, linear-gradient(135deg, #2d3748 0%, #1a202c 100%));
+}
+
+.button-tile:active {
+    background: var(--theme-surface, linear-gradient(135deg, #1a202c 0%, #2d3748 100%));
+    opacity: 0.9;
+}
+
+.button-icon {
+    font-size: 32px;
+}
+
+.button-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Chart Container */
+.chart-container {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+}
+
+.chart-container canvas {
+    max-height: 100%;
+}
+
+/* Text Display Tile */
+.text-display-tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.text-display-label {
+    font-size: 14px;
+    color: var(--theme-text-secondary, #a0a0a0);
+    margin-bottom: 8px;
+}
+
+.text-display-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--theme-text, #ffffff);
+    line-height: 1;
+}
+
+/* Disconnected Overlay */
+#disconnected-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#disconnected-overlay.hidden {
+    display: none;
+}
+
+.disconnected-message {
+    text-align: center;
+    padding: 40px;
+}
+
+.status-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.disconnected-message h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.disconnected-message p {
+    font-size: 16px;
+    color: #a0a0a0;
+}
+
+/* Long Press Indicator */
+.long-press-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.8s linear;
+}
+
+.tile.long-pressing .long-press-indicator {
+    transform: scaleX(1);
+}
+
+/* Responsive font sizes for different tile sizes */
+.tile[data-width="1"] .tile-value {
+    font-size: 24px;
+}
+
+.tile[data-width="2"] .tile-value {
+    font-size: 32px;
+}
+
+.tile[data-width="3"] .tile-value {
+    font-size: 40px;
+}
+
+/* Warning/Critical Colors */
+.warning {
+    color: #ffa500 !important;
+}
+
+.critical {
+    color: #ff4444 !important;
+}
+
+/* Gauge Tile Styles */
+.gauge-container {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+    max-width: 80px;
+    max-height: 80px;
+}
+
+.tile-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.tile-value {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* Apply theme surface to all tile types */
+.cpu-graph-tile,
+.gauge-tile,
+.text-display-tile,
+.network-graph-tile {
+    background: var(--theme-surface, linear-gradient(135deg, #1a1a2e 0%, #16213e 100%));
+}
+
+/* Gauge label and value styling */
+.gauge-label {
+    color: var(--theme-text-secondary, #a0a0a0);
+}
+
+.gauge-value {
+    color: var(--theme-text, #ffffff);
+}
+
+.tile-label, .gauge-label, .text-display-label {
+    font-size: calc(14px * var(--grid-font-scale, 1));
+}
+
+.tile-units {
+    font-size: calc(18px * var(--grid-font-scale, 1));
+}
+
+.gauge-svg {
+    max-width: calc(80px * var(--grid-font-scale, 1));
+    max-height: calc(80px * var(--grid-font-scale, 1));
+}
+
+﻿/* v3.2.1 gauge and tile layout fixes */
+.tile {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Gauge layout: label, gauge, value share space proportionally */
+.tile .gauge-label {
+    flex: 0 0 auto;
+    font-size: calc(0.7em * var(--combined-scale, 1));
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile .gauge-container {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.tile .gauge-container .gauge-svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.tile .gauge-value {
+    flex: 0 0 auto;
+    font-size: calc(1.4em * var(--combined-scale, 1));
+    text-align: center;
+    line-height: 1;
+    padding: 2px 0;
+    white-space: nowrap;
+}
+
+/* Multi-line layout: everything in flex column, no overflow */
+.text-display-tile {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.text-display-tile .text-display-label {
+    flex: 0 0 auto;
+    font-size: calc(0.7em * var(--combined-scale, 1));
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-display-tile .text-display-multi {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.text-display-tile .text-display-value {
+    font-size: calc(1.4em * var(--combined-scale, 1));
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.text-display-tile .text-display-sub {
+    font-size: calc(0.85em * var(--combined-scale, 1));
+    white-space: nowrap;
+}
+
+.text-display-tile .text-display-tertiary {
+    font-size: calc(0.7em * var(--combined-scale, 1));
+    white-space: nowrap;
+}
+
+/* Page nav tiles */
+.page-nav-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.page-nav-tile:active {
+    opacity: 0.6;
+}
+
+
+/* v3.2.3 tap glow animation */
+@keyframes tapPulse {
+    0% { transform: scale(1); filter: brightness(1); }
+    35% { transform: scale(0.96); filter: brightness(1.4); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+.tile-tap-glow {
+    animation: tapPulse 0.3s ease-out;
+}
+/* end v3.2.3 */
+
+
+/* =============================================================
+   TOUCH-FIX-FINAL: pointer-events pass-through
+   Child elements inside tiles consumed first mouse event (hover),
+   preventing click from reaching .tile on first tap.
+   Fix: all children are click-transparent, only .tile receives events.
+   ============================================================= */
+.tile * {
+    pointer-events: none;
+}
+.tile {
+    pointer-events: auto;
+}

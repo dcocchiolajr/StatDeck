@@ -1,0 +1,51 @@
+{
+  "dark_red": {
+    "name": "Dark Red",
+    "builtin": false,
+    "colors": {
+      "primary": "#ff0000",
+      "secondary": "#ff0000",
+      "accent": "#ffffff",
+      "background": "#000000",
+      "surface": "#000000",
+      "text": "#ffffff",
+      "textSecondary": "#ffffff",
+      "border": "#ffffff"
+    },
+    "fonts": {
+      "main": "'Rajdhani', 'Arial', sans-serif",
+      "mono": "'Press Start 2P', 'Courier New', monospace"
+    },
+    "effects": {
+      "glow": true,
+      "scanlines": false,
+      "pixelated": false,
+      "bevel": false
+    }
+  },
+  "my_custom_theme": {
+    "name": "My Custom Theme",
+    "builtin": false,
+    "colors": {
+      "primary": "#00ff88",
+      "secondary": "#4ecdc4",
+      "accent": "#ff6b6b",
+      "background": "#0022ff",
+      "surface": "#1a1a2e",
+      "text": "#ffffff",
+      "textSecondary": "#a0aec0",
+      "border": "#2d3748",
+      "valueColor": "#00ff88"
+    },
+    "fonts": {
+      "main": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "mono": "'Courier New', monospace"
+    },
+    "effects": {
+      "glow": false,
+      "scanlines": false,
+      "pixelated": false,
+      "bevel": false
+    }
+  }
+}

@@ -1,0 +1,112 @@
+/**
+ * STATDECK MODULAR THEME: AMBER
+ */
+body[data-theme="amber"], body[data-theme="amber_terminal"] {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    background: #1a0f00;
+}
+
+    body[data-theme="amber"] .tile, body[data-theme="amber"] .cpu-graph-tile, body[data-theme="amber"] .gauge-tile, body[data-theme="amber"] .text-display-tile, body[data-theme="amber"] .button-tile, body[data-theme="amber"] .network-graph-tile, body[data-theme="amber"] .page-nav-tile {
+        border: 1px solid #ffb000 !important;
+        background: rgba(255, 176, 0, 0.05) !important;
+    }
+
+    body[data-theme="amber"] .tile-value, body[data-theme="amber"] .gauge-value, body[data-theme="amber"] .text-display-value {
+        color: #ffdc64 !important;
+        text-shadow: 0 0 10px #ffdc64, 0 0 20px #ffdc64;
+        font-weight: 700;
+    }
+
+    body[data-theme="amber"] .tile-label, body[data-theme="amber"] .gauge-label, body[data-theme="amber"] .text-display-label {
+        color: #ff8c00 !important;
+        text-shadow: 0 0 10px #ff8c00;
+        text-transform: uppercase;
+    }
+
+/* CRT Flicker Tap */
+@keyframes amber-tap {
+    0% {
+        transform: scale(0.92);
+        opacity: 0.6;
+    }
+
+    35% {
+        transform: scale(1.02);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="amber"] .tile.tap-flash {
+    animation: amber-tap 0.35s steps(6) !important;
+    box-shadow: 0 0 35px rgba(255, 220, 100, 0.8), 0 0 70px rgba(255, 176, 0, 0.5), inset 0 0 12px rgba(255, 220, 100, 0.1) !important;
+}
+
+@keyframes amber-hold {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+}
+
+body[data-theme="amber"] .tile.long-press-ready {
+    animation: amber-hold 0.4s steps(4) infinite !important;
+    transform: scale(0.94) !important;
+    box-shadow: 0 0 40px rgba(255, 176, 0, 0.9), 0 0 80px rgba(255, 140, 0, 0.5) !important;
+}
+
+/* CRT Power Transition */
+@keyframes amber-exit {
+    0% {
+        transform: scaleY(1) scaleX(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    60% {
+        transform: scaleY(1) scaleX(0.98);
+        opacity: 1;
+        filter: brightness(2);
+    }
+
+    100% {
+        transform: scaleY(0) scaleX(0);
+        opacity: 0;
+        filter: brightness(0);
+    }
+}
+
+@keyframes amber-enter {
+    0% {
+        transform: scaleY(0) scaleX(0);
+        opacity: 0;
+        filter: brightness(0);
+    }
+
+    40% {
+        transform: scaleY(1) scaleX(0.98);
+        filter: brightness(2);
+    }
+
+    100% {
+        transform: scaleY(1) scaleX(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+body[data-theme="amber"] #tile-grid.page-exit-next, body[data-theme="amber"] #tile-grid.page-exit-prev {
+    animation: amber-exit 0.3s steps(6) forwards;
+}
+
+body[data-theme="amber"] #tile-grid.page-enter-next, body[data-theme="amber"] #tile-grid.page-enter-prev {
+    animation: amber-enter 0.45s steps(8) forwards;
+}

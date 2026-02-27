@@ -1,0 +1,106 @@
+/**
+ * STATDECK MODULAR THEME: MIDNIGHT
+ */
+body[data-theme="midnight"] {
+    background: #0f0f1a;
+    font-size: 13px;
+}
+
+    body[data-theme="midnight"] .tile,
+    body[data-theme="midnight"] .cpu-graph-tile,
+    body[data-theme="midnight"] .gauge-tile,
+    body[data-theme="midnight"] .text-display-tile,
+    body[data-theme="midnight"] .button-tile,
+    body[data-theme="midnight"] .network-graph-tile,
+    body[data-theme="midnight"] .page-nav-tile {
+        border: 1px solid #8b5cf6 !important;
+        background: rgba(139, 92, 246, 0.05) !important;
+    }
+
+/* Midnight Tap (Deep Throb) */
+@keyframes midnight-tap {
+    0% {
+        transform: scale(0.90);
+    }
+
+    35% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body[data-theme="midnight"] .tile.tap-flash {
+    animation: midnight-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.8), 0 0 70px rgba(99, 102, 241, 0.5), inset 0 0 12px rgba(139, 92, 246, 0.15) !important;
+}
+
+@keyframes midnight-hold {
+    0%, 100% {
+        opacity: 0.9;
+        transform: scale(0.94);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(0.90);
+    }
+}
+
+body[data-theme="midnight"] .tile.long-press-ready {
+    animation: midnight-hold 0.8s ease-in-out infinite !important;
+    box-shadow: 0 0 45px rgba(139, 92, 246, 0.9), 0 0 90px rgba(99, 102, 241, 0.6) !important;
+}
+
+/* Eclipse Page Transitions */
+@keyframes midnight-exit {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(0.4);
+        opacity: 0.5;
+        filter: brightness(0.3);
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+        filter: brightness(0);
+    }
+}
+
+@keyframes midnight-enter {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+        filter: brightness(0);
+    }
+
+    50% {
+        transform: scale(0.6);
+        opacity: 0.5;
+        filter: brightness(0.6);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+body[data-theme="midnight"] #tile-grid.page-exit-next,
+body[data-theme="midnight"] #tile-grid.page-exit-prev {
+    animation: midnight-exit 0.35s steps(8) forwards;
+}
+
+body[data-theme="midnight"] #tile-grid.page-enter-next,
+body[data-theme="midnight"] #tile-grid.page-enter-prev {
+    animation: midnight-enter 0.6s steps(12) forwards;
+}

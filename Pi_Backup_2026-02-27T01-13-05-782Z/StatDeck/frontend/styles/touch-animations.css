@@ -1,0 +1,491 @@
+/* =============================================================================
+   StatDeck Touch Animations - v4 (Unique Per-Theme)
+   =============================================================================
+   GPU-accelerated: will-change + backface-visibility
+   Each theme has DISTINCT motion, not just different colors
+   All animation properties use !important to override injectThemeCSS
+   ============================================================================= */
+
+/* =============================================================
+   GPU COMPOSITING + BASE
+   ============================================================= */
+.tile {
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Z-index boost for tapped tile */
+.tile.tap-active {
+    z-index: 100 !important;
+}
+
+
+/* =============================================================
+   DEFAULT TAP (fallback for unmatched themes)
+   ============================================================= */
+@keyframes tap-burst {
+    0%   { transform: scale(0.92); opacity: 0.85; }
+    40%  { transform: scale(1.03); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.tile.tile.tap-flash {
+    animation: tap-burst 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.tile.tile.tap-flash.glow-theme {
+    box-shadow:
+        0 0 35px var(--theme-accent, rgba(255,0,255,0.8)),
+        0 0 70px var(--theme-primary, rgba(0,255,255,0.5)),
+        0 0 10px rgba(255,255,255,0.4) !important;
+}
+
+.tile.tile.tap-flash:not(.glow-theme) {
+    box-shadow:
+        0 0 25px var(--theme-accent, rgba(0,255,136,0.6)),
+        0 0 50px var(--theme-primary, rgba(0,255,136,0.3)),
+        0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* =============================================================
+   DEFAULT LONG PRESSING
+   ============================================================= */
+.tile.tile.long-pressing {
+    transform: scale(0.94) !important;
+    opacity: 0.8 !important;
+}
+
+.tile.tile.long-pressing.glow-theme {
+    box-shadow:
+        0 0 25px var(--theme-primary, rgba(255,0,255,0.6)),
+        0 0 50px var(--theme-secondary, rgba(0,255,255,0.3)) !important;
+}
+
+.tile.tile.long-pressing:not(.glow-theme) {
+    box-shadow:
+        0 0 15px var(--theme-primary, rgba(0,255,136,0.4)),
+        0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+
+/* =============================================================
+   DEFAULT LONG PRESS READY
+   ============================================================= */
+@keyframes glow-pulse {
+    0%, 100% { opacity: 1; transform: scale(0.94); }
+    50% { opacity: 0.6; transform: scale(0.92); }
+}
+
+.tile.tile.long-press-ready {
+    animation: glow-pulse 0.6s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+}
+
+.tile.tile.long-press-ready.glow-theme {
+    box-shadow:
+        0 0 40px var(--theme-accent, rgba(255,0,255,0.9)),
+        0 0 80px var(--theme-primary, rgba(0,255,255,0.6)),
+        0 0 10px rgba(255,255,255,0.3) !important;
+}
+
+.tile.tile.long-press-ready:not(.glow-theme) {
+    box-shadow:
+        0 0 30px var(--theme-accent, rgba(0,255,136,0.7)),
+        0 0 60px var(--theme-primary, rgba(0,255,136,0.4)) !important;
+}
+
+
+/* =============================================================
+   CYBERPUNK — Glitch jitter (X-axis shake + overshoot)
+   ============================================================= */
+@keyframes cyberpunk-tap {
+    0%   { transform: scale(0.88) translateX(0); }
+    12%  { transform: scale(0.91) translateX(4px); }
+    25%  { transform: scale(0.93) translateX(-5px); }
+    40%  { transform: scale(0.96) translateX(3px); }
+    55%  { transform: scale(1.04) translateX(-2px); }
+    75%  { transform: scale(1.02) translateX(1px); }
+    100% { transform: scale(1) translateX(0); }
+}
+
+body[data-theme="cyberpunk"] .tile.tile.tap-flash {
+    animation: cyberpunk-tap 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 35px rgba(255, 46, 151, 0.95),
+        0 0 70px rgba(255, 237, 0, 0.7),
+        0 0 15px rgba(255, 255, 255, 0.5) !important;
+}
+
+@keyframes cyberpunk-hold {
+    0%, 100% { transform: scale(0.94) translateX(0); opacity: 0.8; }
+    25% { transform: scale(0.93) translateX(1px); opacity: 0.75; }
+    50% { transform: scale(0.94) translateX(-1px); opacity: 0.85; }
+    75% { transform: scale(0.93) translateX(1px); opacity: 0.7; }
+}
+
+body[data-theme="cyberpunk"] .tile.tile.long-press-ready {
+    animation: cyberpunk-hold 0.5s linear infinite !important;
+    box-shadow:
+        0 0 40px rgba(0, 255, 249, 0.9),
+        0 0 80px rgba(255, 46, 151, 0.6),
+        0 0 15px rgba(255, 237, 0, 0.4) !important;
+}
+
+
+/* =============================================================
+   SYNTHWAVE — Neon bounce (big overshoot + elastic settle)
+   ============================================================= */
+@keyframes synthwave-tap {
+    0%   { transform: scale(0.86); }
+    25%  { transform: scale(1.06); }
+    45%  { transform: scale(0.97); }
+    65%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="synthwave"] .tile.tile.tap-flash {
+    animation: synthwave-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.9),
+        0 0 80px rgba(0, 255, 255, 0.5),
+        inset 0 0 20px rgba(0, 255, 255, 0.15) !important;
+}
+
+body[data-theme="synthwave"] .tile.tile.long-press-ready {
+    box-shadow:
+        0 0 45px rgba(255, 0, 255, 0.9),
+        0 0 90px rgba(0, 255, 255, 0.6) !important;
+}
+
+
+/* =============================================================
+   MATRIX — Rapid digital snap (very fast, hard edges)
+   ============================================================= */
+@keyframes matrix-tap {
+    0%   { transform: scale(0.88); opacity: 0.7; }
+    20%  { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+body[data-theme="matrix"] .tile.tile.tap-flash {
+    animation: matrix-tap 0.2s steps(3) !important;
+    box-shadow:
+        0 0 35px rgba(0, 255, 65, 0.95),
+        0 0 70px rgba(0, 255, 65, 0.5) !important;
+}
+
+@keyframes matrix-hold {
+    0%, 100% { opacity: 1; transform: scale(0.94); }
+    50% { opacity: 0.4; transform: scale(0.94); }
+}
+
+body[data-theme="matrix"] .tile.tile.long-press-ready {
+    animation: matrix-hold 0.4s steps(2) infinite !important;
+    box-shadow:
+        0 0 40px rgba(0, 255, 65, 0.95),
+        0 0 80px rgba(0, 255, 65, 0.6) !important;
+}
+
+
+/* =============================================================
+   NEON — Strobe flash (rapid opacity blink)
+   ============================================================= */
+@keyframes neon-tap {
+    0%   { transform: scale(0.90); opacity: 0.6; }
+    15%  { transform: scale(0.95); opacity: 1; }
+    30%  { transform: scale(0.92); opacity: 0.7; }
+    50%  { transform: scale(1.03); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+body[data-theme="neon"] .tile.tile.tap-flash {
+    animation: neon-tap 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 35px rgba(255, 0, 255, 0.9),
+        0 0 70px rgba(57, 255, 20, 0.6),
+        0 0 12px rgba(255, 255, 0, 0.4) !important;
+}
+
+
+/* =============================================================
+   EMBER — Heat shake (subtle X vibration + warm burst)
+   ============================================================= */
+@keyframes ember-tap {
+    0%   { transform: scale(0.92) translateX(0); }
+    15%  { transform: scale(0.94) translateX(2px); }
+    30%  { transform: scale(0.93) translateX(-2px); }
+    45%  { transform: scale(0.95) translateX(1px); }
+    60%  { transform: scale(1.02) translateX(0); }
+    100% { transform: scale(1) translateX(0); }
+}
+
+body[data-theme="ember"] .tile.tile.tap-flash {
+    animation: ember-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 35px rgba(255, 200, 60, 0.9),
+        0 0 70px rgba(239, 68, 68, 0.6),
+        inset 0 0 12px rgba(251, 146, 60, 0.15) !important;
+}
+
+
+/* =============================================================
+   ARCTIC — Slow smooth breathe (gentle scale, icy glow)
+   ============================================================= */
+@keyframes arctic-tap {
+    0%   { transform: scale(0.94); }
+    30%  { transform: scale(1.01); }
+    60%  { transform: scale(0.99); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="arctic"] .tile.tile.tap-flash {
+    animation: arctic-tap 0.4s ease-in-out !important;
+    box-shadow:
+        0 0 30px rgba(255, 255, 255, 0.7),
+        0 0 60px rgba(34, 211, 238, 0.5),
+        inset 0 0 12px rgba(255, 255, 255, 0.1) !important;
+}
+
+@keyframes arctic-hold {
+    0%, 100% { opacity: 1; transform: scale(0.95); }
+    50% { opacity: 0.85; transform: scale(0.93); }
+}
+
+body[data-theme="arctic"] .tile.tile.long-press-ready {
+    animation: arctic-hold 1s ease-in-out infinite !important;
+    box-shadow:
+        0 0 40px rgba(255, 255, 255, 0.8),
+        0 0 80px rgba(34, 211, 238, 0.5) !important;
+}
+
+
+/* =============================================================
+   PIXEL/GAMEBOY — Stepped chunky (frame-by-frame retro)
+   ============================================================= */
+@keyframes pixel-tap {
+    0%   { transform: scale(0.88); }
+    25%  { transform: scale(0.92); }
+    50%  { transform: scale(0.96); }
+    75%  { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="pixel"] .tile.tile.tap-flash,
+body[data-theme="gameboy"] .tile.tile.tap-flash {
+    animation: pixel-tap 0.3s steps(4) !important;
+    box-shadow:
+        0 0 0 5px rgba(0, 255, 0, 0.9),
+        0 0 0 10px rgba(139, 172, 15, 0.4),
+        6px 6px 0 rgba(15, 56, 15, 0.9) !important;
+}
+
+@keyframes pixel-hold {
+    0%, 100% { transform: scale(0.94); }
+    50% { transform: scale(0.90); }
+}
+
+body[data-theme="pixel"] .tile.tile.long-press-ready,
+body[data-theme="gameboy"] .tile.tile.long-press-ready {
+    animation: pixel-hold 0.5s steps(2) infinite !important;
+    box-shadow:
+        0 0 0 5px rgba(255, 0, 0, 0.9),
+        0 0 0 10px rgba(255, 255, 0, 0.4),
+        6px 6px 0 rgba(15, 56, 15, 0.9) !important;
+}
+
+
+/* =============================================================
+   3D — Physical button press (translateY + shadow collapse)
+   ============================================================= */
+@keyframes press-3d {
+    0%   { transform: scale(1) translateY(0); }
+    40%  { transform: scale(0.97) translateY(4px); }
+    100% { transform: scale(1) translateY(0); }
+}
+
+body[data-theme="3d"] .tile.tile.tap-flash {
+    animation: press-3d 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.6),
+        inset 0 3px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+body[data-theme="3d"] .tile.tile.long-press-ready {
+    transform: scale(0.96) translateY(3px) !important;
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.5),
+        inset 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+    animation: none !important;
+}
+
+
+/* =============================================================
+   OCEAN DEEP — Wave bob (gentle Y movement like floating)
+   Handles both 'ocean' and 'ocean_deep' theme IDs
+   ============================================================= */
+@keyframes ocean-tap {
+    0%   { transform: scale(0.92) translateY(0); }
+    30%  { transform: scale(1.01) translateY(-3px); }
+    60%  { transform: scale(0.99) translateY(1px); }
+    100% { transform: scale(1) translateY(0); }
+}
+
+body[data-theme="ocean"] .tile.tile.tap-flash,
+body[data-theme="ocean_deep"] .tile.tile.tap-flash {
+    animation: ocean-tap 0.4s ease-in-out !important;
+    box-shadow:
+        0 0 35px rgba(0, 229, 255, 0.8),
+        0 0 70px rgba(0, 188, 212, 0.5),
+        inset 0 0 15px rgba(0, 229, 255, 0.1) !important;
+}
+
+@keyframes ocean-hold {
+    0%, 100% { transform: scale(0.94) translateY(0); }
+    50% { transform: scale(0.93) translateY(-2px); }
+}
+
+body[data-theme="ocean"] .tile.tile.long-press-ready,
+body[data-theme="ocean_deep"] .tile.tile.long-press-ready {
+    animation: ocean-hold 0.8s ease-in-out infinite !important;
+    box-shadow:
+        0 0 40px rgba(0, 229, 255, 0.9),
+        0 0 80px rgba(0, 180, 216, 0.5) !important;
+}
+
+
+/* =============================================================
+   DRACULA — Ghostly fade (opacity-driven, eerie pulse)
+   ============================================================= */
+@keyframes dracula-tap {
+    0%   { transform: scale(0.92); opacity: 0.5; }
+    30%  { transform: scale(1.02); opacity: 1; }
+    60%  { transform: scale(1.0); opacity: 0.85; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+body[data-theme="dracula"] .tile.tile.tap-flash {
+    animation: dracula-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 35px rgba(80, 250, 123, 0.8),
+        0 0 70px rgba(189, 147, 249, 0.5),
+        inset 0 0 12px rgba(80, 250, 123, 0.1) !important;
+}
+
+@keyframes dracula-hold {
+    0%, 100% { opacity: 1; transform: scale(0.94); }
+    50% { opacity: 0.5; transform: scale(0.92); }
+}
+
+body[data-theme="dracula"] .tile.tile.long-press-ready {
+    animation: dracula-hold 0.7s ease-in-out infinite !important;
+    box-shadow:
+        0 0 40px rgba(189, 147, 249, 0.9),
+        0 0 80px rgba(80, 250, 123, 0.5) !important;
+}
+
+
+/* =============================================================
+   AMBER TERMINAL — CRT flicker (rapid opacity jitter)
+   Handles both 'amber' and 'amber_terminal' theme IDs
+   ============================================================= */
+@keyframes amber-tap {
+    0%   { transform: scale(0.92); opacity: 0.6; }
+    10%  { opacity: 1; }
+    20%  { opacity: 0.7; }
+    35%  { transform: scale(1.02); opacity: 1; }
+    50%  { opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+body[data-theme="amber"] .tile.tile.tap-flash,
+body[data-theme="amber_terminal"] .tile.tile.tap-flash {
+    animation: amber-tap 0.35s steps(6) !important;
+    box-shadow:
+        0 0 35px rgba(255, 220, 100, 0.8),
+        0 0 70px rgba(255, 176, 0, 0.5),
+        inset 0 0 12px rgba(255, 220, 100, 0.1) !important;
+}
+
+@keyframes amber-hold {
+    0%, 100% { opacity: 1; }
+    25% { opacity: 0.7; }
+    50% { opacity: 0.9; }
+    75% { opacity: 0.6; }
+}
+
+body[data-theme="amber"] .tile.tile.long-press-ready,
+body[data-theme="amber_terminal"] .tile.tile.long-press-ready {
+    animation: amber-hold 0.4s steps(4) infinite !important;
+    transform: scale(0.94) !important;
+    box-shadow:
+        0 0 40px rgba(255, 176, 0, 0.9),
+        0 0 80px rgba(255, 140, 0, 0.5) !important;
+}
+
+
+/* =============================================================
+   MIDNIGHT — Deep throb (slow, heavy scale pulse)
+   ============================================================= */
+@keyframes midnight-tap {
+    0%   { transform: scale(0.90); }
+    35%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="midnight"] .tile.tile.tap-flash {
+    animation: midnight-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 35px rgba(139, 92, 246, 0.8),
+        0 0 70px rgba(99, 102, 241, 0.5),
+        inset 0 0 12px rgba(139, 92, 246, 0.15) !important;
+}
+
+@keyframes midnight-hold {
+    0%, 100% { opacity: 0.9; transform: scale(0.94); }
+    50% { opacity: 0.6; transform: scale(0.90); }
+}
+
+body[data-theme="midnight"] .tile.tile.long-press-ready {
+    animation: midnight-hold 0.8s ease-in-out infinite !important;
+    box-shadow:
+        0 0 45px rgba(139, 92, 246, 0.9),
+        0 0 90px rgba(99, 102, 241, 0.6) !important;
+}
+
+
+/* =============================================================
+   DARK — Clean pop (quick, minimal, professional)
+   ============================================================= */
+@keyframes dark-tap {
+    0%   { transform: scale(0.92); }
+    40%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="dark"] .tile.tile.tap-flash {
+    animation: dark-tap 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 25px rgba(0, 255, 136, 0.7),
+        0 0 50px rgba(78, 205, 196, 0.4) !important;
+}
+
+
+/* =============================================================
+   LIGHT — Crisp tap (soft shadow shift, subtle)
+   ============================================================= */
+@keyframes light-tap {
+    0%   { transform: scale(0.94); }
+    35%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+body[data-theme="light"] .tile.tile.tap-flash {
+    animation: light-tap 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 0 25px rgba(59, 130, 246, 0.6),
+        0 0 50px rgba(139, 92, 246, 0.3),
+        0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}

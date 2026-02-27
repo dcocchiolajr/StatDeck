@@ -1,0 +1,74 @@
+/* StatDeck Theme System - Dynamic CSS Injection
+ * 
+ * VERSION: Unified Theme System
+ * 
+ * All theme-specific styles (colors, effects, fonts) are now injected
+ * dynamically by app.js based on themeData from the Config App.
+ * 
+ * This file only contains:
+ * - Global base styles that ALL themes need
+ * - CSS variable defaults (fallbacks if no theme is applied)
+ * - Structural styles for tile types
+ * 
+ * The Config App is the single source of truth for ALL themes.
+ * No hardcoded theme rules exist here anymore.
+ */
+
+/* ============================================
+   DEFAULT CSS VARIABLES (fallback to dark theme)
+   ============================================ */
+:root {
+    --theme-primary: #00ff88;
+    --theme-secondary: #4ecdc4;
+    --theme-accent: #ff6b6b;
+    --theme-background: #0a0e27;
+    --theme-surface: #1a1a2e;
+    --theme-text: #ffffff;
+    --theme-text-secondary: #a0aec0;
+    --theme-border: #2d3748;
+    --theme-font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ============================================
+   GLOBAL BASE STYLES
+   ============================================ */
+
+body {
+    background: var(--theme-background, #0a0e27);
+    color: var(--theme-text, #ffffff);
+    font-family: var(--theme-font-main, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+}
+
+#app {
+    background: var(--theme-background, #0a0e27);
+}
+
+/* ============================================
+   TILE BASE STYLES
+   ============================================ */
+
+/* Base tile appearance — overridden by injected theme CSS */
+.tile,
+.cpu-graph-tile,
+.gauge-tile,
+.text-display-tile,
+.button-tile,
+.network-graph-tile {
+    background: var(--theme-surface, #1a1a2e);
+    color: var(--theme-text, #ffffff);
+    border: 1px solid var(--theme-border, #2d3748);
+}
+
+/* Value text — uses theme primary by default */
+.tile-value,
+.gauge-value,
+.text-display-value {
+    color: var(--theme-primary, #00ff88);
+}
+
+/* Label text — uses theme text-secondary */
+.tile-label,
+.gauge-label,
+.text-display-label {
+    color: var(--theme-text-secondary, #a0aec0);
+}

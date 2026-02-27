@@ -1,0 +1,429 @@
+{
+    "usb_port": null,
+    "baud_rate": 115200,
+    "update_interval": 0.5,
+    "layout": {
+        "version": "4.0",
+        "theme": "synthwave",
+        "themeData": {
+            "id": "synthwave",
+            "name": "Synthwave",
+            "colors": {
+                "primary": "#ff00ff",
+                "secondary": "#00ffff",
+                "accent": "#ff1493",
+                "background": "#1a0033",
+                "surface": "#2d1b4e",
+                "text": "#ffffff",
+                "textSecondary": "#ff00ff",
+                "border": "#ff00ff",
+                "valueColor": "#00ffff"
+            },
+            "fonts": {
+                "main": "'Orbitron', 'Arial', sans-serif",
+                "mono": "'Courier New', monospace"
+            },
+            "effects": {
+                "glow": true,
+                "scanlines": false,
+                "pixelated": false,
+                "bevel": false
+            }
+        },
+        "pages": [
+            {
+                "id": "page_1",
+                "name": "Main",
+                "grid": {
+                    "cols": 4,
+                    "rows": 4,
+                    "cell_width": 180,
+                    "cell_height": 120,
+                    "gap": 10
+                },
+                "tiles": [
+                    {
+                        "id": "cpu_main",
+                        "type": "cpu_graph",
+                        "position": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "size": {
+                            "w": 2,
+                            "h": 2
+                        },
+                        "data_source": "cpu.usage",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fill": true,
+                            "graphStyle": "bar",
+                            "labelColor": "",
+                            "fontScale": 110
+                        },
+                        "config": {
+                            "history_seconds": 60,
+                            "show_cores": false
+                        },
+                        "actions": {
+                            "tap": {
+                                "type": "launch_app",
+                                "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+                                "arguments": ""
+                            },
+                            "long_press": {
+                                "type": "launch_app",
+                                "target": "C:\\Users\\dcocc\\Desktop\\MaxScripts",
+                                "arguments": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "cpu_temp",
+                        "type": "gauge",
+                        "position": {
+                            "x": 2,
+                            "y": 0
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "cpu.usage",
+                        "style": {
+                            "color": "",
+                            "warning_color": "#ffaa00",
+                            "critical_color": "#ff0000",
+                            "gaugeStyle": "circle",
+                            "background": "",
+                            "labelColor": "",
+                            "fontScale": 100
+                        },
+                        "config": {
+                            "min": 0,
+                            "max": 100,
+                            "units": "\u00b0C",
+                            "threshold_warning": 70,
+                            "threshold_critical": 85
+                        },
+                        "actions": {}
+                    },
+                    {
+                        "id": "ram_display",
+                        "type": "text_display",
+                        "position": {
+                            "x": 2,
+                            "y": 1
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "ram.percent",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "displayStyle": "number",
+                            "fontScale": 150
+                        },
+                        "config": {
+                            "label": "RAM",
+                            "units": "%",
+                            "decimals": 1,
+                            "font_size": "large"
+                        },
+                        "actions": {
+                            "tap": {
+                                "type": "launch_app",
+                                "target": "C:\\Users\\dcocc\\Desktop\\Chrome Remote Desktop.lnk",
+                                "arguments": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "gpu_usage",
+                        "type": "text_display",
+                        "position": {
+                            "x": 1,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "gpu.usage",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fontScale": 150,
+                            "labelColor": ""
+                        },
+                        "config": {
+                            "label": "GPU",
+                            "units": "%",
+                            "decimals": 0,
+                            "font_size": "large"
+                        },
+                        "actions": {
+                            "tap": {
+                                "type": "launch_app",
+                                "target": "C:\\Program Files\\Autodesk\\Maya2025\\bin\\maya.exe",
+                                "arguments": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "tile_10",
+                        "type": "text_display",
+                        "position": {
+                            "x": 3,
+                            "y": 0
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "gpu.temp",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fontScale": 150,
+                            "labelColor": ""
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_12",
+                        "type": "page_next",
+                        "position": {
+                            "x": 1,
+                            "y": 2
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "navStyle": "arrow"
+                        },
+                        "config": {
+                            "label": ""
+                        },
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_1",
+                        "type": "gauge",
+                        "position": {
+                            "x": 0,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "system.active_process",
+                        "style": {
+                            "color": "",
+                            "background": ""
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_1771722984431",
+                        "type": "button",
+                        "position": {
+                            "x": 3,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fontScale": 100
+                        },
+                        "config": {
+                            "iconBase64": "data:image/png;base64,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",
+                            "label": "Maya"
+                        },
+                        "actions": {
+                            "tap": {
+                                "type": "launch_app",
+                                "target": "C:\\Program Files\\Autodesk\\Maya2025\\bin\\maya.exe",
+                                "arguments": ""
+                            }
+                        }
+                    },
+                    {
+                        "id": "tile_1771725015598",
+                        "type": "text_display",
+                        "position": {
+                            "x": 0,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "system.active_process",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fontScale": 100
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_1771783418630",
+                        "type": "page_prev",
+                        "position": {
+                            "x": 0,
+                            "y": 2
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "fontScale": 100,
+                            "navStyle": "arrow"
+                        },
+                        "config": {
+                            "label": ""
+                        },
+                        "actions": {}
+                    }
+                ]
+            },
+            {
+                "id": "page_1771613883428",
+                "name": "Page 2",
+                "grid": {
+                    "cols": 4,
+                    "rows": 4,
+                    "cell_width": 180,
+                    "cell_height": 120,
+                    "gap": 10
+                },
+                "tiles": [
+                    {
+                        "id": "tile_14",
+                        "type": "cpu_graph",
+                        "position": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": ""
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_15",
+                        "type": "network_graph",
+                        "position": {
+                            "x": 3,
+                            "y": 0
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": ""
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_3",
+                        "type": "text_display",
+                        "position": {
+                            "x": 2,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": ""
+                        },
+                        "config": {},
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_4",
+                        "type": "page_prev",
+                        "position": {
+                            "x": 0,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "navStyle": "arrow"
+                        },
+                        "config": {
+                            "label": ""
+                        },
+                        "actions": {}
+                    },
+                    {
+                        "id": "tile_5",
+                        "type": "page_next",
+                        "position": {
+                            "x": 3,
+                            "y": 3
+                        },
+                        "size": {
+                            "w": 1,
+                            "h": 1
+                        },
+                        "data_source": "",
+                        "style": {
+                            "color": "",
+                            "background": "",
+                            "navStyle": "arrow"
+                        },
+                        "config": {
+                            "label": ""
+                        },
+                        "actions": {}
+                    }
+                ]
+            }
+        ]
+    },
+    "profile_debounce": 1.5
+}

@@ -1,0 +1,103 @@
+/**
+ * STATDECK MODULAR THEME: OCEAN / OCEAN DEEP
+ */
+body[data-theme="ocean"], body[data-theme="ocean_deep"] {
+    background: #001219;
+    font-size: 13px;
+}
+
+    body[data-theme="ocean"] .tile,
+    body[data-theme="ocean_deep"] .tile {
+        border: 1px solid #00e5ff !important;
+        background: rgba(0, 229, 255, 0.05) !important;
+    }
+
+/* Ocean Wave Tap */
+@keyframes ocean-tap {
+    0% {
+        transform: scale(0.92) translateY(0);
+    }
+
+    30% {
+        transform: scale(1.01) translateY(-3px);
+    }
+
+    60% {
+        transform: scale(0.99) translateY(1px);
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+    }
+}
+
+body[data-theme="ocean"] .tile.tap-flash,
+body[data-theme="ocean_deep"] .tile.tap-flash {
+    animation: ocean-tap 0.4s ease-in-out !important;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.8), 0 0 70px rgba(0, 188, 212, 0.5), inset 0 0 15px rgba(0, 229, 255, 0.1) !important;
+}
+
+@keyframes ocean-hold {
+    0%, 100% {
+        transform: scale(0.94) translateY(0);
+    }
+
+    50% {
+        transform: scale(0.93) translateY(-2px);
+    }
+}
+
+body[data-theme="ocean"] .tile.long-press-ready,
+body[data-theme="ocean_deep"] .tile.long-press-ready {
+    animation: ocean-hold 0.8s ease-in-out infinite !important;
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.9), 0 0 80px rgba(0, 180, 216, 0.5) !important;
+}
+
+/* Wave Roll Transitions */
+@keyframes ocean-exit {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(0px);
+        opacity: 0.65;
+    }
+
+    100% {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+}
+
+@keyframes ocean-enter {
+    0% {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateY(8px);
+        opacity: 0.65;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+body[data-theme="ocean"] #tile-grid.page-exit-next,
+body[data-theme="ocean"] #tile-grid.page-exit-prev,
+body[data-theme="ocean_deep"] #tile-grid.page-exit-next,
+body[data-theme="ocean_deep"] #tile-grid.page-exit-prev {
+    animation: ocean-exit 0.35s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+body[data-theme="ocean"] #tile-grid.page-enter-next,
+body[data-theme="ocean"] #tile-grid.page-enter-prev,
+body[data-theme="ocean_deep"] #tile-grid.page-enter-next,
+body[data-theme="ocean_deep"] #tile-grid.page-enter-prev {
+    animation: ocean-enter 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}

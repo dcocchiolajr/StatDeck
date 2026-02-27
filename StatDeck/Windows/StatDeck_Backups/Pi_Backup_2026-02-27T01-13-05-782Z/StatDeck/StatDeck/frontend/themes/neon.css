@@ -1,0 +1,95 @@
+/**
+ * STATDECK MODULAR THEME: NEON
+ */
+body[data-theme="neon"] {
+    font-size: 13px;
+    background: #000000;
+}
+
+    body[data-theme="neon"] .tile, body[data-theme="neon"] .cpu-graph-tile, body[data-theme="neon"] .gauge-tile, body[data-theme="neon"] .text-display-tile, body[data-theme="neon"] .button-tile, body[data-theme="neon"] .network-graph-tile, body[data-theme="neon"] .page-nav-tile {
+        border: 2px solid #00ff00 !important;
+        background: rgba(10, 10, 10, 0.8) !important;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.2) !important;
+    }
+
+    body[data-theme="neon"] .tile-value, body[data-theme="neon"] .gauge-value, body[data-theme="neon"] .text-display-value {
+        color: #00ff00 !important;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+        font-weight: 700;
+    }
+
+    body[data-theme="neon"] .tile-label, body[data-theme="neon"] .gauge-label, body[data-theme="neon"] .text-display-label {
+        color: #ff00ff !important;
+        text-shadow: 0 0 10px #ff00ff;
+        text-transform: uppercase;
+    }
+
+@keyframes neon-tap {
+    0% {
+        transform: scale(0.90);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.03);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="neon"] .tile.tap-flash {
+    animation: neon-tap 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 35px rgba(255, 0, 255, 0.9), 0 0 70px rgba(57, 255, 20, 0.6), 0 0 12px rgba(255, 255, 0, 0.4) !important;
+}
+
+@keyframes neon-exit {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    50% {
+        transform: scale(0.94);
+        opacity: 0.55;
+        filter: hue-rotate(180deg) brightness(2.2);
+    }
+
+    100% {
+        transform: scale(0.88);
+        opacity: 0;
+        filter: hue-rotate(360deg) brightness(0.5);
+    }
+}
+
+@keyframes neon-enter {
+    0% {
+        transform: scale(1.12);
+        opacity: 0;
+        filter: hue-rotate(360deg) brightness(0.5);
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: 0.55;
+        filter: hue-rotate(120deg) brightness(2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: hue-rotate(0deg) brightness(1);
+    }
+}
+
+body[data-theme="neon"] #tile-grid.page-exit-next, body[data-theme="neon"] #tile-grid.page-exit-prev {
+    animation: neon-exit 0.35s steps(12) forwards;
+}
+
+body[data-theme="neon"] #tile-grid.page-enter-next, body[data-theme="neon"] #tile-grid.page-enter-prev {
+    animation: neon-enter 0.55s steps(16) forwards;
+}

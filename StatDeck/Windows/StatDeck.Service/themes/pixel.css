@@ -1,0 +1,106 @@
+/**
+ * STATDECK MODULAR THEME: PIXEL (8-Bit)
+ */
+body[data-theme="pixel"], body[data-theme="8bit"] {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    background: #0f380f;
+}
+
+    body[data-theme="pixel"] .tile, body[data-theme="pixel"] .cpu-graph-tile, body[data-theme="pixel"] .gauge-tile, body[data-theme="pixel"] .text-display-tile, body[data-theme="pixel"] .button-tile, body[data-theme="pixel"] .network-graph-tile, body[data-theme="pixel"] .page-nav-tile {
+        border: 3px solid #8bac0f !important;
+        background: #306230 !important;
+        box-shadow: inset 0 0 0 2px #0f380f, 4px 4px 0 #0f380f !important;
+        image-rendering: pixelated;
+        border-radius: 0 !important;
+    }
+
+    body[data-theme="pixel"] .tile-value, body[data-theme="pixel"] .gauge-value, body[data-theme="pixel"] .text-display-value {
+        color: #ffffff !important;
+        font-weight: 700;
+    }
+
+    body[data-theme="pixel"] .tile-label, body[data-theme="pixel"] .gauge-label, body[data-theme="pixel"] .text-display-label {
+        color: #9bbc0f !important;
+    }
+
+@keyframes pixel-tap {
+    0% {
+        transform: scale(0.88);
+    }
+
+    50% {
+        transform: scale(0.96);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body[data-theme="pixel"] .tile.tap-flash {
+    animation: pixel-tap 0.3s steps(4) !important;
+    box-shadow: 0 0 0 5px rgba(0, 255, 0, 0.9), 0 0 0 10px rgba(139, 172, 15, 0.4), 6px 6px 0 rgba(15, 56, 15, 0.9) !important;
+}
+
+@keyframes pixel-hold {
+    0%, 100% {
+        transform: scale(0.94);
+    }
+
+    50% {
+        transform: scale(0.90);
+    }
+}
+
+body[data-theme="pixel"] .tile.long-press-ready {
+    animation: pixel-hold 0.5s steps(2) infinite !important;
+    box-shadow: 0 0 0 5px rgba(255, 0, 0, 0.9), 0 0 0 10px rgba(255, 255, 0, 0.4), 6px 6px 0 rgba(15, 56, 15, 0.9) !important;
+}
+
+@keyframes retro-exit {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(80px);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateY(200px);
+        opacity: 0;
+    }
+}
+
+@keyframes retro-enter {
+    0% {
+        transform: translateY(-200px);
+        opacity: 0;
+    }
+
+    55% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+body[data-theme="pixel"] #tile-grid.page-exit-next, body[data-theme="pixel"] #tile-grid.page-exit-prev {
+    animation: retro-exit 0.25s steps(6) forwards;
+}
+
+body[data-theme="pixel"] #tile-grid.page-enter-next, body[data-theme="pixel"] #tile-grid.page-enter-prev {
+    animation: retro-enter 0.6s steps(10) forwards;
+}

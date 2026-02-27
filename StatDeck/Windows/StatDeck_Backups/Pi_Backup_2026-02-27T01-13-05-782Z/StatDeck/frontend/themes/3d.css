@@ -1,0 +1,75 @@
+/**
+ * STATDECK MODULAR THEME: 3D CLASSIC
+ */
+body[data-theme="3d"] {
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+    font-size: 13px;
+    background: #c0c0c0;
+}
+
+    body[data-theme="3d"] .tile, body[data-theme="3d"] .cpu-graph-tile, body[data-theme="3d"] .gauge-tile, body[data-theme="3d"] .text-display-tile, body[data-theme="3d"] .button-tile, body[data-theme="3d"] .network-graph-tile, body[data-theme="3d"] .page-nav-tile {
+        background: #d4d4d4 !important;
+        border: none !important;
+        border-radius: 4px !important;
+        box-shadow: inset 2px 2px 0 rgba(255,255,255,0.8), inset -2px -2px 0 rgba(0,0,0,0.4), 3px 3px 6px rgba(0,0,0,0.25) !important;
+    }
+
+    body[data-theme="3d"] .tile-value, body[data-theme="3d"] .gauge-value, body[data-theme="3d"] .text-display-value {
+        color: #000000 !important;
+        font-weight: 700;
+    }
+
+    body[data-theme="3d"] .tile-label, body[data-theme="3d"] .gauge-label, body[data-theme="3d"] .text-display-label {
+        color: #404040 !important;
+    }
+
+@keyframes press-3d {
+    0% {
+        transform: scale(1) translateY(0);
+    }
+
+    40% {
+        transform: scale(0.97) translateY(4px);
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+    }
+}
+
+body[data-theme="3d"] .tile.tap-flash {
+    animation: press-3d 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4), inset -2px -2px 0 rgba(255,255,255,0.8), 1px 1px 3px rgba(0,0,0,0.15) !important;
+}
+
+@keyframes threed-exit-next {
+    0% {
+        transform: perspective(800px) rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: perspective(800px) rotateY(-30deg) scale(0.88);
+        opacity: 0;
+    }
+}
+
+@keyframes threed-enter-next {
+    0% {
+        transform: perspective(800px) rotateY(30deg) scale(0.88);
+        opacity: 0;
+    }
+
+    100% {
+        transform: perspective(800px) rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="3d"] #tile-grid.page-exit-next {
+    animation: threed-exit-next 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+body[data-theme="3d"] #tile-grid.page-enter-next {
+    animation: threed-enter-next 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}

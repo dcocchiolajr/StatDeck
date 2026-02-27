@@ -1,0 +1,228 @@
+/**
+ * STATDECK MODULAR THEME: CYBERPUNK
+ * Combines visuals, tap glitch physics, and terminal corruption transitions
+ */
+
+/* =============================================================
+   1. VISUALS
+   ============================================================= */
+body[data-theme="cyberpunk"] {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    background: #000000;
+}
+
+    body[data-theme="cyberpunk"] .tile,
+    body[data-theme="cyberpunk"] .cpu-graph-tile,
+    body[data-theme="cyberpunk"] .gauge-tile,
+    body[data-theme="cyberpunk"] .text-display-tile,
+    body[data-theme="cyberpunk"] .button-tile,
+    body[data-theme="cyberpunk"] .network-graph-tile,
+    body[data-theme="cyberpunk"] .page-nav-tile {
+        border: 1px solid #00fff9 !important;
+        background: rgba(0, 255, 249, 0.05) !important;
+        position: relative;
+    }
+
+        body[data-theme="cyberpunk"] .tile::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, #00fff9, #ff2e97, #ffed00, #00fff9);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        body[data-theme="cyberpunk"] .tile:hover::before {
+            opacity: 0.3;
+        }
+
+@keyframes borderRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+body[data-theme="cyberpunk"] .tile.selected {
+    box-shadow: 0 0 20px #00fff9, 0 0 40px #00fff9, inset 0 0 20px rgba(0, 255, 249, 0.1);
+}
+
+body[data-theme="cyberpunk"] button {
+    background: #00fff9;
+    color: #000;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* =============================================================
+   2. TAP & LONG PRESS GLITCH PHYSICS
+   ============================================================= */
+@keyframes cyberpunk-tap {
+    0% {
+        transform: scale(0.88) translateX(0);
+    }
+
+    12% {
+        transform: scale(0.91) translateX(4px);
+    }
+
+    25% {
+        transform: scale(0.93) translateX(-5px);
+    }
+
+    40% {
+        transform: scale(0.96) translateX(3px);
+    }
+
+    55% {
+        transform: scale(1.04) translateX(-2px);
+    }
+
+    75% {
+        transform: scale(1.02) translateX(1px);
+    }
+
+    100% {
+        transform: scale(1) translateX(0);
+    }
+}
+
+body[data-theme="cyberpunk"] .tile.tile.tap-flash {
+    animation: cyberpunk-tap 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 35px rgba(255, 46, 151, 0.95), 0 0 70px rgba(255, 237, 0, 0.7), 0 0 15px rgba(255, 255, 255, 0.5) !important;
+}
+
+@keyframes cyberpunk-hold {
+    0%, 100% {
+        transform: scale(0.94) translateX(0);
+        opacity: 0.8;
+    }
+
+    25% {
+        transform: scale(0.93) translateX(1px);
+        opacity: 0.75;
+    }
+
+    50% {
+        transform: scale(0.94) translateX(-1px);
+        opacity: 0.85;
+    }
+
+    75% {
+        transform: scale(0.93) translateX(1px);
+        opacity: 0.7;
+    }
+}
+
+body[data-theme="cyberpunk"] .tile.tile.long-press-ready {
+    animation: cyberpunk-hold 0.5s linear infinite !important;
+    box-shadow: 0 0 40px rgba(0, 255, 249, 0.9), 0 0 80px rgba(255, 46, 151, 0.6), 0 0 15px rgba(255, 237, 0, 0.4) !important;
+}
+
+/* =============================================================
+   3. PAGE TRANSITIONS (Terminal Corruption)
+   ============================================================= */
+@keyframes cyber-exit {
+    0% {
+        transform: translateX(0) skewX(0deg);
+        opacity: 1;
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    10% {
+        transform: translateX(15px) skewX(4deg);
+        filter: hue-rotate(30deg) brightness(1.8);
+    }
+
+    20% {
+        transform: translateX(-20px) skewX(-6deg);
+        filter: hue-rotate(-40deg) brightness(0.3);
+    }
+
+    35% {
+        transform: translateX(25px) skewX(8deg);
+        filter: hue-rotate(90deg) brightness(2.5);
+    }
+
+    50% {
+        transform: translateX(-10px) skewX(-3deg);
+        opacity: 0.6;
+        filter: hue-rotate(-60deg) brightness(0.4);
+    }
+
+    70% {
+        transform: translateX(30px) skewX(10deg);
+        opacity: 0.3;
+        filter: hue-rotate(120deg) brightness(3);
+    }
+
+    100% {
+        transform: translateX(-80px) skewX(-15deg);
+        opacity: 0;
+        filter: hue-rotate(180deg) brightness(0);
+    }
+}
+
+@keyframes cyber-enter {
+    0% {
+        transform: translateX(80px) skewX(15deg);
+        opacity: 0;
+        filter: hue-rotate(180deg) brightness(0);
+    }
+
+    15% {
+        transform: translateX(-30px) skewX(-8deg);
+        opacity: 0.2;
+        filter: hue-rotate(-90deg) brightness(2.5);
+    }
+
+    30% {
+        transform: translateX(20px) skewX(5deg);
+        opacity: 0.5;
+        filter: hue-rotate(60deg) brightness(0.5);
+    }
+
+    50% {
+        transform: translateX(-10px) skewX(-3deg);
+        opacity: 0.7;
+        filter: hue-rotate(-30deg) brightness(1.5);
+    }
+
+    70% {
+        transform: translateX(5px) skewX(1deg);
+        opacity: 0.9;
+        filter: hue-rotate(15deg) brightness(1.2);
+    }
+
+    85% {
+        transform: translateX(-2px) skewX(0deg);
+        filter: hue-rotate(-5deg) brightness(1.1);
+    }
+
+    100% {
+        transform: translateX(0) skewX(0deg);
+        opacity: 1;
+        filter: hue-rotate(0deg) brightness(1);
+    }
+}
+
+body[data-theme="cyberpunk"] #tile-grid.page-exit-next,
+body[data-theme="cyberpunk"] #tile-grid.page-exit-prev {
+    animation: cyber-exit 0.3s steps(8) forwards;
+}
+
+body[data-theme="cyberpunk"] #tile-grid.page-enter-next,
+body[data-theme="cyberpunk"] #tile-grid.page-enter-prev {
+    animation: cyber-enter 0.5s steps(10) forwards;
+}

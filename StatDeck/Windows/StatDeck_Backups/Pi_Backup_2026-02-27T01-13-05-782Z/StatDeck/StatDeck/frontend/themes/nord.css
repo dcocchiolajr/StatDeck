@@ -1,0 +1,86 @@
+/**
+ * STATDECK MODULAR THEME: NORD
+ */
+body[data-theme="nord"] {
+    background: #2e3440;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+    body[data-theme="nord"] .tile,
+    body[data-theme="nord"] .cpu-graph-tile,
+    body[data-theme="nord"] .gauge-tile,
+    body[data-theme="nord"] .text-display-tile,
+    body[data-theme="nord"] .button-tile,
+    body[data-theme="nord"] .network-graph-tile,
+    body[data-theme="nord"] .page-nav-tile {
+        background: #3b4252 !important;
+        border: 1px solid #4c566a !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    }
+
+    body[data-theme="nord"] .tile-value,
+    body[data-theme="nord"] .gauge-value,
+    body[data-theme="nord"] .text-display-value {
+        color: #88c0d0 !important;
+        font-weight: 700;
+    }
+
+    body[data-theme="nord"] .tile-label,
+    body[data-theme="nord"] .gauge-label,
+    body[data-theme="nord"] .text-display-label {
+        color: #d8dee9 !important;
+    }
+
+/* Nord Default Tap */
+@keyframes nord-tap {
+    0% {
+        transform: scale(0.94);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body[data-theme="nord"] .tile.tap-flash {
+    animation: nord-tap 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 20px rgba(136, 192, 208, 0.4) !important;
+}
+
+/* Standard Fade Transitions */
+@keyframes nord-exit {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+@keyframes nord-enter {
+    0% {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+body[data-theme="nord"] #tile-grid.page-exit-next, body[data-theme="nord"] #tile-grid.page-exit-prev {
+    animation: nord-exit 0.3s forwards;
+}
+
+body[data-theme="nord"] #tile-grid.page-enter-next, body[data-theme="nord"] #tile-grid.page-enter-prev {
+    animation: nord-enter 0.4s forwards;
+}

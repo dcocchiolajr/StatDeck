@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>StatDeck</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/fonts.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        /* 1. NUCLEAR CURSOR KILLER */
+        * {
+            cursor: none !important;
+        }
+
+        /* 2. STANDBY SCREEN STYLING */
+        #disconnected-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000; /* Pitch black to match the boot sequence */
+            display: flex !important; /* Overrides default hidden classes to allow smooth fading */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+            /* Smooth fade out when PC connects */
+            #disconnected-overlay.hidden {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+        .standby-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Animated Loading Ring */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #00ff88; /* Matches your StatDeck accent green */
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 25px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .standby-title {
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .standby-subtitle {
+            font-size: 12px;
+            color: #555555;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="tile-grid"></div>
+
+        <div id="disconnected-overlay">
+            <div class="standby-container">
+                <div class="spinner"></div>
+                <h2 class="standby-title">Waiting for Windows</h2>
+                <p class="standby-subtitle">StatDeck is in Standby</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="core/usb-client.js"></script>
+    <script src="core/layout-engine.js"></script>
+    <script src="core/touch-handler.js"></script>
+    <script src="core/tile-manager.js"></script>
+
+    <script src="tiles/base-tile.js"></script>
+    <script src="tiles/cpu-graph-tile.js"></script>
+    <script src="tiles/gauge-tile.js"></script>
+    <script src="tiles/text-display-tile.js"></script>
+    <script src="tiles/button-tile.js"></script>
+    <script src="tiles/network-graph-tile.js"></script>
+    <script src="tiles/page-nav-tile.js"></script>
+
+    <script src="core/app.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+/* ============================================================================
+   PAGE TRANSITIONS v4.0.3 — Theme-Dependent
+   
+   APPROACH:
+     - CHARACTER themes (Cyberpunk, Neon, Retro, Dracula, Midnight, Amber):
+       Use steps(N) for distinct held frames — Pi GPU renders each one
+     - SMOOTH themes (Dark, Synthwave, Matrix, Ember, Arctic, Ocean, 3D, Light):
+       Use ease curves with MORE keyframes so interpolation has clear targets
+       Longer durations so the Pi has time to render the full motion
+   
+   SAFETY: transform + opacity + filter only. No box-shadow. No :has().
+   Doubled ID selectors for specificity.
+   ============================================================================ */
+
+#tile-grid {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-origin: center center;
+}
+
+/* ============================================================================
+   DEFAULT — Clean fade + slide
+   ============================================================================ */
+@keyframes page-exit-next-default {
+    0%   { transform: translateX(0); opacity: 1; }
+    40%  { transform: translateX(-15px); opacity: 0.7; }
+    100% { transform: translateX(-50px); opacity: 0; }
+}
+@keyframes page-exit-prev-default {
+    0%   { transform: translateX(0); opacity: 1; }
+    40%  { transform: translateX(15px); opacity: 0.7; }
+    100% { transform: translateX(50px); opacity: 0; }
+}
+@keyframes page-enter-next-default {
+    0%   { transform: translateX(50px); opacity: 0; }
+    50%  { transform: translateX(8px); opacity: 0.6; }
+    80%  { transform: translateX(-2px); opacity: 0.9; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes page-enter-prev-default {
+    0%   { transform: translateX(-50px); opacity: 0; }
+    50%  { transform: translateX(-8px); opacity: 0.6; }
+    80%  { transform: translateX(2px); opacity: 0.9; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+#tile-grid#tile-grid.page-exit-next  { animation: page-exit-next-default 0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+#tile-grid#tile-grid.page-exit-prev  { animation: page-exit-prev-default 0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+#tile-grid#tile-grid.page-enter-next { animation: page-enter-next-default 0.45s cubic-bezier(0, 0, 0.2, 1) forwards; }
+#tile-grid#tile-grid.page-enter-prev { animation: page-enter-prev-default 0.45s cubic-bezier(0, 0, 0.2, 1) forwards; }
+
+
+/* ============================================================================
+   DARK — Smooth slide with blur bloom
+   More keyframes for fluid blur transition. Slight overshoot on enter.
+   ============================================================================ */
+@keyframes dark-exit-next {
+    0%   { transform: translateX(0); opacity: 1; filter: blur(0px); }
+    30%  { transform: translateX(-12px); opacity: 0.8; filter: blur(1px); }
+    60%  { transform: translateX(-30px); opacity: 0.4; filter: blur(3px); }
+    100% { transform: translateX(-60px); opacity: 0; filter: blur(5px); }
+}
+@keyframes dark-enter-next {
+    0%   { transform: translateX(60px); opacity: 0; filter: blur(5px); }
+    30%  { transform: translateX(20px); opacity: 0.4; filter: blur(3px); }
+    60%  { transform: translateX(2px); opacity: 0.8; filter: blur(1px); }
+    80%  { transform: translateX(-3px); opacity: 0.95; filter: blur(0px); }
+    100% { transform: translateX(0); opacity: 1; filter: blur(0px); }
+}
+@keyframes dark-exit-prev {
+    0%   { transform: translateX(0); opacity: 1; filter: blur(0px); }
+    30%  { transform: translateX(12px); opacity: 0.8; filter: blur(1px); }
+    60%  { transform: translateX(30px); opacity: 0.4; filter: blur(3px); }
+    100% { transform: translateX(60px); opacity: 0; filter: blur(5px); }
+}
+@keyframes dark-enter-prev {
+    0%   { transform: translateX(-60px); opacity: 0; filter: blur(5px); }
+    30%  { transform: translateX(-20px); opacity: 0.4; filter: blur(3px); }
+    60%  { transform: translateX(-2px); opacity: 0.8; filter: blur(1px); }
+    80%  { transform: translateX(3px); opacity: 0.95; filter: blur(0px); }
+    100% { transform: translateX(0); opacity: 1; filter: blur(0px); }
+}
+
+body[data-theme="dark"] #tile-grid#tile-grid.page-exit-next  { animation: dark-exit-next  0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+body[data-theme="dark"] #tile-grid#tile-grid.page-exit-prev  { animation: dark-exit-prev  0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+body[data-theme="dark"] #tile-grid#tile-grid.page-enter-next { animation: dark-enter-next 0.45s cubic-bezier(0, 0, 0.2, 1) forwards; }
+body[data-theme="dark"] #tile-grid#tile-grid.page-enter-prev { animation: dark-enter-prev 0.45s cubic-bezier(0, 0, 0.2, 1) forwards; }
+
+
+/* ============================================================================
+   CYBERPUNK — Terminal Corruption [STEPPED — keeping as-is, works great]
+   ============================================================================ */
+@keyframes cyber-exit {
+    0%    { transform: translateX(0) skewX(0deg); opacity: 1; filter: hue-rotate(0deg) brightness(1); }
+    10%   { transform: translateX(15px) skewX(4deg); filter: hue-rotate(30deg) brightness(1.8); }
+    20%   { transform: translateX(-20px) skewX(-6deg); filter: hue-rotate(-40deg) brightness(0.3); }
+    35%   { transform: translateX(25px) skewX(8deg); filter: hue-rotate(90deg) brightness(2.5); }
+    50%   { transform: translateX(-10px) skewX(-3deg); opacity: 0.6; filter: hue-rotate(-60deg) brightness(0.4); }
+    70%   { transform: translateX(30px) skewX(10deg); opacity: 0.3; filter: hue-rotate(120deg) brightness(3); }
+    100%  { transform: translateX(-80px) skewX(-15deg); opacity: 0; filter: hue-rotate(180deg) brightness(0); }
+}
+@keyframes cyber-enter {
+    0%    { transform: translateX(80px) skewX(15deg); opacity: 0; filter: hue-rotate(180deg) brightness(0); }
+    15%   { transform: translateX(-30px) skewX(-8deg); opacity: 0.2; filter: hue-rotate(-90deg) brightness(2.5); }
+    30%   { transform: translateX(20px) skewX(5deg); opacity: 0.5; filter: hue-rotate(60deg) brightness(0.5); }
+    50%   { transform: translateX(-10px) skewX(-3deg); opacity: 0.7; filter: hue-rotate(-30deg) brightness(1.5); }
+    70%   { transform: translateX(5px) skewX(1deg); opacity: 0.9; filter: hue-rotate(15deg) brightness(1.2); }
+    85%   { transform: translateX(-2px) skewX(0deg); filter: hue-rotate(-5deg) brightness(1.1); }
+    100%  { transform: translateX(0) skewX(0deg); opacity: 1; filter: hue-rotate(0deg) brightness(1); }
+}
+
+body[data-theme="cyberpunk"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="cyberpunk"] #tile-grid#tile-grid.page-exit-prev {
+    animation: cyber-exit 0.3s steps(8) forwards;
+}
+body[data-theme="cyberpunk"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="cyberpunk"] #tile-grid#tile-grid.page-enter-prev {
+    animation: cyber-enter 0.5s steps(10) forwards;
+}
+
+
+/* ============================================================================
+   SYNTHWAVE — Neon bloom [SMOOTH — enhanced with more keyframes]
+   Richer saturation arc, gentle overshoot on enter.
+   ============================================================================ */
+@keyframes synth-exit {
+    0%   { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) saturate(1); }
+    25%  { transform: scale(0.98) translateY(2px); opacity: 0.9; filter: brightness(1.2) saturate(1.4); }
+    50%  { transform: scale(0.95) translateY(5px); opacity: 0.6; filter: brightness(1.5) saturate(1.8); }
+    75%  { transform: scale(0.90) translateY(10px); opacity: 0.3; filter: brightness(1.8) saturate(2); }
+    100% { transform: scale(0.85) translateY(15px); opacity: 0; filter: brightness(2.2) saturate(2.2); }
+}
+@keyframes synth-enter {
+    0%   { transform: scale(1.15) translateY(-15px); opacity: 0; filter: brightness(2.2) saturate(2.2); }
+    25%  { transform: scale(1.08) translateY(-8px); opacity: 0.3; filter: brightness(1.8) saturate(1.8); }
+    50%  { transform: scale(1.03) translateY(-3px); opacity: 0.65; filter: brightness(1.4) saturate(1.4); }
+    75%  { transform: scale(0.99) translateY(1px); opacity: 0.9; filter: brightness(1.1) saturate(1.1); }
+    100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) saturate(1); }
+}
+
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-exit-prev {
+    animation: synth-exit 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-enter-prev {
+    animation: synth-enter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   MATRIX — Rain Dissolve [SMOOTH — directional fall/rise]
+   More intermediate keyframes for fluid acceleration/deceleration.
+   ============================================================================ */
+@keyframes matrix-exit {
+    0%   { transform: translateY(0); opacity: 1; filter: brightness(1); }
+    15%  { transform: translateY(4px); opacity: 0.95; filter: brightness(1.2); }
+    30%  { transform: translateY(15px); opacity: 0.8; filter: brightness(1.5); }
+    50%  { transform: translateY(40px); opacity: 0.55; filter: brightness(1.9); }
+    70%  { transform: translateY(75px); opacity: 0.3; filter: brightness(2.3); }
+    85%  { transform: translateY(110px); opacity: 0.1; filter: brightness(2.7); }
+    100% { transform: translateY(150px); opacity: 0; filter: brightness(3); }
+}
+@keyframes matrix-enter {
+    0%   { transform: translateY(-150px); opacity: 0; filter: brightness(3); }
+    15%  { transform: translateY(-100px); opacity: 0.15; filter: brightness(2.5); }
+    30%  { transform: translateY(-55px); opacity: 0.35; filter: brightness(2); }
+    50%  { transform: translateY(-20px); opacity: 0.6; filter: brightness(1.5); }
+    65%  { transform: translateY(-5px); opacity: 0.8; filter: brightness(1.2); }
+    80%  { transform: translateY(3px); opacity: 0.95; filter: brightness(1.05); }
+    100% { transform: translateY(0); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="matrix"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="matrix"] #tile-grid#tile-grid.page-exit-prev {
+    animation: matrix-exit 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+body[data-theme="matrix"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="matrix"] #tile-grid#tile-grid.page-enter-prev {
+    animation: matrix-enter 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+
+/* ============================================================================
+   NEON — Rainbow Strobe [STEPPED — needs steps() for visible color shifts]
+   ============================================================================ */
+@keyframes neon-exit {
+    0%    { transform: scale(1); opacity: 1; filter: hue-rotate(0deg) brightness(1); }
+    16%   { transform: scale(0.98); opacity: 0.9; filter: hue-rotate(60deg) brightness(1.6); }
+    33%   { transform: scale(0.96); opacity: 0.75; filter: hue-rotate(120deg) brightness(2); }
+    50%   { transform: scale(0.94); opacity: 0.55; filter: hue-rotate(180deg) brightness(2.2); }
+    66%   { transform: scale(0.92); opacity: 0.35; filter: hue-rotate(240deg) brightness(1.8); }
+    83%   { transform: scale(0.90); opacity: 0.15; filter: hue-rotate(300deg) brightness(1.4); }
+    100%  { transform: scale(0.88); opacity: 0; filter: hue-rotate(360deg) brightness(0.5); }
+}
+@keyframes neon-enter {
+    0%    { transform: scale(1.12); opacity: 0; filter: hue-rotate(360deg) brightness(0.5); }
+    12%   { transform: scale(1.10); opacity: 0.1; filter: hue-rotate(300deg) brightness(1.4); }
+    25%   { transform: scale(1.08); opacity: 0.25; filter: hue-rotate(240deg) brightness(2); }
+    37%   { transform: scale(1.06); opacity: 0.4; filter: hue-rotate(180deg) brightness(2.4); }
+    50%   { transform: scale(1.04); opacity: 0.55; filter: hue-rotate(120deg) brightness(2); }
+    62%   { transform: scale(1.03); opacity: 0.7; filter: hue-rotate(60deg) brightness(1.6); }
+    75%   { transform: scale(1.02); opacity: 0.85; filter: hue-rotate(30deg) brightness(1.3); }
+    87%   { transform: scale(1.01); opacity: 0.95; filter: hue-rotate(10deg) brightness(1.1); }
+    100%  { transform: scale(1); opacity: 1; filter: hue-rotate(0deg) brightness(1); }
+}
+
+body[data-theme="neon"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="neon"] #tile-grid#tile-grid.page-exit-prev {
+    animation: neon-exit 0.35s steps(12) forwards;
+}
+body[data-theme="neon"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="neon"] #tile-grid#tile-grid.page-enter-prev {
+    animation: neon-enter 0.55s steps(16) forwards;
+}
+
+
+/* ============================================================================
+   EMBER — Heat Shimmer [SMOOTH — enhanced fluidity]
+   More wobble keyframes, smoother sepia arc.
+   ============================================================================ */
+@keyframes ember-exit {
+    0%   { transform: translateX(0) scaleY(1); opacity: 1; filter: brightness(1) sepia(0); }
+    15%  { transform: translateX(-2px) scaleY(0.998); opacity: 0.9; filter: brightness(1.1) sepia(0.1); }
+    30%  { transform: translateX(3px) scaleY(0.995); opacity: 0.75; filter: brightness(1.3) sepia(0.25); }
+    50%  { transform: translateX(-4px) scaleY(0.99); opacity: 0.55; filter: brightness(1.5) sepia(0.4); }
+    70%  { transform: translateX(3px) scaleY(0.98); opacity: 0.3; filter: brightness(1.2) sepia(0.6); }
+    85%  { transform: translateX(-8px) scaleY(0.97); opacity: 0.15; filter: brightness(0.8) sepia(0.7); }
+    100% { transform: translateX(-20px) scaleY(0.95); opacity: 0; filter: brightness(0.5) sepia(0.8); }
+}
+@keyframes ember-enter {
+    0%   { transform: translateX(20px) scaleY(0.95); opacity: 0; filter: brightness(0.5) sepia(0.8); }
+    15%  { transform: translateX(10px) scaleY(0.97); opacity: 0.2; filter: brightness(0.8) sepia(0.6); }
+    30%  { transform: translateX(-3px) scaleY(0.985); opacity: 0.45; filter: brightness(1.2) sepia(0.4); }
+    50%  { transform: translateX(4px) scaleY(0.995); opacity: 0.65; filter: brightness(1.4) sepia(0.25); }
+    70%  { transform: translateX(-2px) scaleY(1); opacity: 0.85; filter: brightness(1.2) sepia(0.1); }
+    85%  { transform: translateX(1px) scaleY(1); opacity: 0.95; filter: brightness(1.05) sepia(0.03); }
+    100% { transform: translateX(0) scaleY(1); opacity: 1; filter: brightness(1) sepia(0); }
+}
+
+body[data-theme="ember"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="ember"] #tile-grid#tile-grid.page-exit-prev {
+    animation: ember-exit 0.35s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+body[data-theme="ember"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="ember"] #tile-grid#tile-grid.page-enter-prev {
+    animation: ember-enter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   ARCTIC — Frost Breathe [SMOOTH — enhanced with more keyframes]
+   Gentler, wider desaturation arc. Slight overshoot on enter.
+   ============================================================================ */
+@keyframes arctic-exit {
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1) saturate(1) blur(0px); }
+    25%  { transform: scale(0.99); opacity: 0.85; filter: brightness(1.1) saturate(0.8) blur(0.5px); }
+    50%  { transform: scale(0.97); opacity: 0.6; filter: brightness(1.3) saturate(0.5) blur(1px); }
+    75%  { transform: scale(0.94); opacity: 0.3; filter: brightness(1.5) saturate(0.3) blur(2px); }
+    100% { transform: scale(0.90); opacity: 0; filter: brightness(1.7) saturate(0.1) blur(3px); }
+}
+@keyframes arctic-enter {
+    0%   { transform: scale(1.10); opacity: 0; filter: brightness(1.7) saturate(0.1) blur(3px); }
+    20%  { transform: scale(1.06); opacity: 0.25; filter: brightness(1.5) saturate(0.3) blur(2px); }
+    40%  { transform: scale(1.03); opacity: 0.5; filter: brightness(1.3) saturate(0.5) blur(1px); }
+    60%  { transform: scale(1.01); opacity: 0.75; filter: brightness(1.15) saturate(0.75) blur(0.5px); }
+    80%  { transform: scale(0.995); opacity: 0.95; filter: brightness(1.03) saturate(0.95) blur(0px); }
+    100% { transform: scale(1); opacity: 1; filter: brightness(1) saturate(1) blur(0px); }
+}
+
+body[data-theme="arctic"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="arctic"] #tile-grid#tile-grid.page-exit-prev {
+    animation: arctic-exit 0.35s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+body[data-theme="arctic"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="arctic"] #tile-grid#tile-grid.page-enter-prev {
+    animation: arctic-enter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   8-BIT / GAMEBOY — Tetris Drop [STEPPED]
+   (No 'pixel' theme exists — only 8bit and gameboy)
+   ============================================================================ */
+@keyframes retro-exit {
+    0%    { transform: translateY(0); opacity: 1; }
+    20%   { transform: translateY(10px); opacity: 1; }
+    40%   { transform: translateY(35px); opacity: 0.9; }
+    60%   { transform: translateY(80px); opacity: 0.7; }
+    80%   { transform: translateY(140px); opacity: 0.4; }
+    100%  { transform: translateY(200px); opacity: 0; }
+}
+@keyframes retro-enter {
+    0%    { transform: translateY(-200px); opacity: 0; }
+    20%   { transform: translateY(-120px); opacity: 0.3; }
+    40%   { transform: translateY(-40px); opacity: 0.7; }
+    55%   { transform: translateY(0px); opacity: 1; }
+    65%   { transform: translateY(-20px); opacity: 1; }
+    75%   { transform: translateY(0px); opacity: 1; }
+    83%   { transform: translateY(-8px); opacity: 1; }
+    91%   { transform: translateY(0px); opacity: 1; }
+    96%   { transform: translateY(-3px); opacity: 1; }
+    100%  { transform: translateY(0px); opacity: 1; }
+}
+
+body[data-theme="8bit"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="8bit"] #tile-grid#tile-grid.page-exit-prev,
+body[data-theme="gameboy"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="gameboy"] #tile-grid#tile-grid.page-exit-prev {
+    animation: retro-exit 0.25s steps(6) forwards;
+}
+body[data-theme="8bit"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="8bit"] #tile-grid#tile-grid.page-enter-prev,
+body[data-theme="gameboy"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="gameboy"] #tile-grid#tile-grid.page-enter-prev {
+    animation: retro-enter 0.6s steps(10) forwards;
+}
+
+
+/* ============================================================================
+   3D — Flip Depth [SMOOTH — enhanced with more keyframes]
+   Smoother perspective rotation with slight bounce on enter.
+   ============================================================================ */
+@keyframes threed-exit-next {
+    0%   { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+    30%  { transform: perspective(800px) rotateY(-8deg) scale(0.97); opacity: 0.8; }
+    60%  { transform: perspective(800px) rotateY(-18deg) scale(0.93); opacity: 0.4; }
+    100% { transform: perspective(800px) rotateY(-30deg) scale(0.88); opacity: 0; }
+}
+@keyframes threed-enter-next {
+    0%   { transform: perspective(800px) rotateY(30deg) scale(0.88); opacity: 0; }
+    30%  { transform: perspective(800px) rotateY(12deg) scale(0.94); opacity: 0.4; }
+    60%  { transform: perspective(800px) rotateY(2deg) scale(0.99); opacity: 0.8; }
+    80%  { transform: perspective(800px) rotateY(-2deg) scale(1.01); opacity: 0.95; }
+    100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+}
+@keyframes threed-exit-prev {
+    0%   { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+    30%  { transform: perspective(800px) rotateY(8deg) scale(0.97); opacity: 0.8; }
+    60%  { transform: perspective(800px) rotateY(18deg) scale(0.93); opacity: 0.4; }
+    100% { transform: perspective(800px) rotateY(30deg) scale(0.88); opacity: 0; }
+}
+@keyframes threed-enter-prev {
+    0%   { transform: perspective(800px) rotateY(-30deg) scale(0.88); opacity: 0; }
+    30%  { transform: perspective(800px) rotateY(-12deg) scale(0.94); opacity: 0.4; }
+    60%  { transform: perspective(800px) rotateY(-2deg) scale(0.99); opacity: 0.8; }
+    80%  { transform: perspective(800px) rotateY(2deg) scale(1.01); opacity: 0.95; }
+    100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+}
+
+body[data-theme="3d"] #tile-grid#tile-grid.page-exit-next  { animation: threed-exit-next  0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+body[data-theme="3d"] #tile-grid#tile-grid.page-exit-prev  { animation: threed-exit-prev  0.3s cubic-bezier(0.4, 0, 1, 1) forwards; }
+body[data-theme="3d"] #tile-grid#tile-grid.page-enter-next { animation: threed-enter-next 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+body[data-theme="3d"] #tile-grid#tile-grid.page-enter-prev { animation: threed-enter-prev 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+
+/* ============================================================================
+   OCEAN — Wave Roll [SMOOTH — enhanced wave motion]
+   More intermediate frames for fluid wave-like bob.
+   ============================================================================ */
+@keyframes ocean-exit {
+    0%   { transform: translateY(0); opacity: 1; }
+    15%  { transform: translateY(-6px); opacity: 0.95; }
+    30%  { transform: translateY(-10px); opacity: 0.85; }
+    50%  { transform: translateY(0px); opacity: 0.65; }
+    70%  { transform: translateY(12px); opacity: 0.4; }
+    85%  { transform: translateY(20px); opacity: 0.2; }
+    100% { transform: translateY(30px); opacity: 0; }
+}
+@keyframes ocean-enter {
+    0%   { transform: translateY(-30px); opacity: 0; }
+    15%  { transform: translateY(-18px); opacity: 0.2; }
+    30%  { transform: translateY(-5px); opacity: 0.45; }
+    45%  { transform: translateY(8px); opacity: 0.65; }
+    60%  { transform: translateY(2px); opacity: 0.8; }
+    75%  { transform: translateY(-4px); opacity: 0.92; }
+    88%  { transform: translateY(1px); opacity: 0.98; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+body[data-theme="ocean"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="ocean"] #tile-grid#tile-grid.page-exit-prev,
+body[data-theme="ocean_deep"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="ocean_deep"] #tile-grid#tile-grid.page-exit-prev {
+    animation: ocean-exit 0.35s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+body[data-theme="ocean"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="ocean"] #tile-grid#tile-grid.page-enter-prev,
+body[data-theme="ocean_deep"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="ocean_deep"] #tile-grid#tile-grid.page-enter-prev {
+    animation: ocean-enter 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+/* ============================================================================
+   DRACULA — Shadow Melt [STEPPED — needs held frames for visible darkening]
+   ============================================================================ */
+@keyframes dracula-exit {
+    0%    { transform: translateY(0) scale(1); opacity: 1; filter: brightness(1); }
+    15%   { transform: translateY(5px) scale(0.995); opacity: 0.85; filter: brightness(0.7); }
+    30%   { transform: translateY(12px) scale(0.99); opacity: 0.65; filter: brightness(0.45); }
+    50%   { transform: translateY(25px) scale(0.98); opacity: 0.4; filter: brightness(0.25); }
+    70%   { transform: translateY(40px) scale(0.97); opacity: 0.2; filter: brightness(0.1); }
+    100%  { transform: translateY(60px) scale(0.95); opacity: 0; filter: brightness(0); }
+}
+@keyframes dracula-enter {
+    0%    { transform: translateY(60px) scale(0.95); opacity: 0; filter: brightness(0); }
+    12%   { transform: translateY(45px) scale(0.96); opacity: 0.1; filter: brightness(0.1); }
+    25%   { transform: translateY(30px) scale(0.97); opacity: 0.2; filter: brightness(0.25); }
+    40%   { transform: translateY(15px) scale(0.98); opacity: 0.4; filter: brightness(0.45); }
+    55%   { transform: translateY(5px) scale(0.99); opacity: 0.6; filter: brightness(0.65); }
+    70%   { transform: translateY(0px) scale(0.995); opacity: 0.8; filter: brightness(0.8); }
+    85%   { transform: translateY(-3px) scale(1.005); opacity: 0.95; filter: brightness(0.95); }
+    100%  { transform: translateY(0) scale(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="dracula"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="dracula"] #tile-grid#tile-grid.page-exit-prev {
+    animation: dracula-exit 0.35s steps(8) forwards;
+}
+body[data-theme="dracula"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="dracula"] #tile-grid#tile-grid.page-enter-prev {
+    animation: dracula-enter 0.6s steps(10) forwards;
+}
+
+
+/* ============================================================================
+   AMBER TERMINAL — CRT Power Off / On [STEPPED — iconic]
+   ============================================================================ */
+@keyframes amber-exit {
+    0%   { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+    60%  { transform: scaleY(1) scaleX(0.98); opacity: 1; filter: brightness(2); }
+    80%  { transform: scaleY(0.005) scaleX(0.8); opacity: 1; filter: brightness(3); }
+    100% { transform: scaleY(0) scaleX(0); opacity: 0; filter: brightness(0); }
+}
+@keyframes amber-enter {
+    0%   { transform: scaleY(0) scaleX(0); opacity: 0; filter: brightness(0); }
+    20%  { transform: scaleY(0.005) scaleX(0.8); opacity: 1; filter: brightness(3); }
+    40%  { transform: scaleY(1) scaleX(0.98); filter: brightness(2); }
+    60%  { transform: scaleY(1) scaleX(1); filter: brightness(1.5); }
+    100% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="amber"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="amber"] #tile-grid#tile-grid.page-exit-prev,
+body[data-theme="amber_terminal"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="amber_terminal"] #tile-grid#tile-grid.page-exit-prev {
+    animation: amber-exit 0.3s steps(6) forwards;
+}
+body[data-theme="amber"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="amber"] #tile-grid#tile-grid.page-enter-prev,
+body[data-theme="amber_terminal"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="amber_terminal"] #tile-grid#tile-grid.page-enter-prev {
+    animation: amber-enter 0.45s steps(8) forwards;
+}
+
+
+/* ============================================================================
+   MIDNIGHT — Eclipse [STEPPED — needs held frames for visible collapse]
+   ============================================================================ */
+@keyframes midnight-exit {
+    0%    { transform: scale(1); opacity: 1; filter: brightness(1); }
+    15%   { transform: scale(0.85); opacity: 0.9; filter: brightness(0.7); }
+    30%   { transform: scale(0.65); opacity: 0.75; filter: brightness(0.5); }
+    50%   { transform: scale(0.4); opacity: 0.5; filter: brightness(0.3); }
+    70%   { transform: scale(0.2); opacity: 0.3; filter: brightness(0.15); }
+    85%   { transform: scale(0.08); opacity: 0.1; filter: brightness(0.05); }
+    100%  { transform: scale(0); opacity: 0; filter: brightness(0); }
+}
+@keyframes midnight-enter {
+    0%    { transform: scale(0); opacity: 0; filter: brightness(0); }
+    10%   { transform: scale(0.05); opacity: 0.1; filter: brightness(0.1); }
+    25%   { transform: scale(0.2); opacity: 0.2; filter: brightness(0.25); }
+    40%   { transform: scale(0.5); opacity: 0.4; filter: brightness(0.5); }
+    55%   { transform: scale(0.75); opacity: 0.6; filter: brightness(0.7); }
+    70%   { transform: scale(0.9); opacity: 0.8; filter: brightness(0.85); }
+    82%   { transform: scale(1.04); opacity: 0.95; filter: brightness(1.1); }
+    92%   { transform: scale(0.99); opacity: 1; filter: brightness(1.02); }
+    100%  { transform: scale(1); opacity: 1; filter: brightness(1); }
+}
+
+body[data-theme="midnight"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="midnight"] #tile-grid#tile-grid.page-exit-prev {
+    animation: midnight-exit 0.35s steps(8) forwards;
+}
+body[data-theme="midnight"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="midnight"] #tile-grid#tile-grid.page-enter-prev {
+    animation: midnight-enter 0.6s steps(12) forwards;
+}
+
+
+/* ============================================================================
+   LIGHT — Crisp Fade [SMOOTH — minimal, fast, clean]
+   ============================================================================ */
+@keyframes light-exit {
+    0%   { opacity: 1; transform: translateY(0); }
+    50%  { opacity: 0.5; transform: translateY(2px); }
+    100% { opacity: 0; transform: translateY(4px); }
+}
+@keyframes light-enter {
+    0%   { opacity: 0; transform: translateY(8px); }
+    40%  { opacity: 0.5; transform: translateY(3px); }
+    70%  { opacity: 0.85; transform: translateY(0px); }
+    90%  { opacity: 0.97; transform: translateY(-1px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+body[data-theme="light"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="light"] #tile-grid#tile-grid.page-exit-prev {
+    animation: light-exit 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+body[data-theme="light"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="light"] #tile-grid#tile-grid.page-enter-prev {
+    animation: light-enter 0.35s cubic-bezier(0, 0, 0.2, 1) forwards;
+}

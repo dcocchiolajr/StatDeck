@@ -1,0 +1,165 @@
+/**
+ * STATDECK MODULAR THEME: SYNTHWAVE
+ * Combines visuals, tap physics, and page transitions
+ */
+
+/* =============================================================
+   1. VISUALS & NEON GLOW
+   ============================================================= */
+body[data-theme="synthwave"] {
+    background: linear-gradient(180deg, #1a0033 0%, #2d1b4e 100%);
+    font-size: 13px;
+}
+
+    body[data-theme="synthwave"] .tile,
+    body[data-theme="synthwave"] .cpu-graph-tile,
+    body[data-theme="synthwave"] .gauge-tile,
+    body[data-theme="synthwave"] .text-display-tile,
+    body[data-theme="synthwave"] .button-tile,
+    body[data-theme="synthwave"] .network-graph-tile,
+    body[data-theme="synthwave"] .page-nav-tile {
+        background: linear-gradient(135deg, var(--theme-surface) 0%, #110924 100%) !important;
+        border: 2px solid var(--theme-primary) !important;
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(255, 0, 255, 0.1) !important;
+    }
+
+    body[data-theme="synthwave"] .toolbar {
+        background: linear-gradient(90deg, #2d1b4e 0%, #1a0033 100%);
+        border-bottom: 2px solid #ff00ff;
+    }
+
+    body[data-theme="synthwave"] button {
+        background: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%);
+        color: #000;
+        font-weight: 700;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Glowing Text - CORRECTED TO CYAN */
+    body[data-theme="synthwave"] .tile-value,
+    body[data-theme="synthwave"] .gauge-value,
+    body[data-theme="synthwave"] .text-display-value {
+        color: var(--theme-secondary) !important;
+        text-shadow: 0 0 10px var(--theme-secondary), 0 0 20px var(--theme-secondary), 0 0 30px rgba(0, 255, 255, 0.5);
+        font-weight: 700;
+    }
+
+    body[data-theme="synthwave"] .tile-label,
+    body[data-theme="synthwave"] .gauge-label,
+    body[data-theme="synthwave"] .text-display-label {
+        color: var(--theme-text-secondary) !important;
+        text-shadow: 0 0 10px var(--theme-text-secondary), 0 0 20px rgba(255, 0, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+/* =============================================================
+   2. TAP & LONG PRESS PHYSICS
+   ============================================================= */
+@keyframes synthwave-tap {
+    0% {
+        transform: scale(0.86);
+    }
+
+    25% {
+        transform: scale(1.06);
+    }
+
+    45% {
+        transform: scale(0.97);
+    }
+
+    65% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body[data-theme="synthwave"] .tile.tile.tap-flash {
+    animation: synthwave-tap 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.9), 0 0 80px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.15) !important;
+}
+
+body[data-theme="synthwave"] .tile.tile.long-press-ready {
+    box-shadow: 0 0 45px rgba(255, 0, 255, 0.9), 0 0 90px rgba(0, 255, 255, 0.6) !important;
+}
+
+/* =============================================================
+   3. PAGE TRANSITIONS
+   ============================================================= */
+@keyframes synth-exit {
+    0% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        filter: brightness(1) saturate(1);
+    }
+
+    25% {
+        transform: scale(0.98) translateY(2px);
+        opacity: 0.9;
+        filter: brightness(1.2) saturate(1.4);
+    }
+
+    50% {
+        transform: scale(0.95) translateY(5px);
+        opacity: 0.6;
+        filter: brightness(1.5) saturate(1.8);
+    }
+
+    75% {
+        transform: scale(0.90) translateY(10px);
+        opacity: 0.3;
+        filter: brightness(1.8) saturate(2);
+    }
+
+    100% {
+        transform: scale(0.85) translateY(15px);
+        opacity: 0;
+        filter: brightness(2.2) saturate(2.2);
+    }
+}
+
+@keyframes synth-enter {
+    0% {
+        transform: scale(1.15) translateY(-15px);
+        opacity: 0;
+        filter: brightness(2.2) saturate(2.2);
+    }
+
+    25% {
+        transform: scale(1.08) translateY(-8px);
+        opacity: 0.3;
+        filter: brightness(1.8) saturate(1.8);
+    }
+
+    50% {
+        transform: scale(1.03) translateY(-3px);
+        opacity: 0.65;
+        filter: brightness(1.4) saturate(1.4);
+    }
+
+    75% {
+        transform: scale(0.99) translateY(1px);
+        opacity: 0.9;
+        filter: brightness(1.1) saturate(1.1);
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        filter: brightness(1) saturate(1);
+    }
+}
+
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-exit-next,
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-exit-prev {
+    animation: synth-exit 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-enter-next,
+body[data-theme="synthwave"] #tile-grid#tile-grid.page-enter-prev {
+    animation: synth-enter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}

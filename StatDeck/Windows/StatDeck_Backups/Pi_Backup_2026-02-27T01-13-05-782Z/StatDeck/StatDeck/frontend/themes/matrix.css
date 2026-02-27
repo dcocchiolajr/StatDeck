@@ -1,0 +1,114 @@
+/**
+ * STATDECK MODULAR THEME: MATRIX
+ */
+body[data-theme="matrix"] {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    background: #000000;
+}
+
+    body[data-theme="matrix"] .tile, body[data-theme="matrix"] .cpu-graph-tile, body[data-theme="matrix"] .gauge-tile, body[data-theme="matrix"] .text-display-tile, body[data-theme="matrix"] .button-tile, body[data-theme="matrix"] .network-graph-tile, body[data-theme="matrix"] .page-nav-tile {
+        border: 1px solid #00ff41 !important;
+        background: rgba(0, 255, 65, 0.05) !important;
+    }
+
+    body[data-theme="matrix"] .tile-value, body[data-theme="matrix"] .gauge-value, body[data-theme="matrix"] .text-display-value {
+        color: #00ff41 !important;
+        text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+        font-weight: 700;
+    }
+
+    body[data-theme="matrix"] .tile-label, body[data-theme="matrix"] .gauge-label, body[data-theme="matrix"] .text-display-label {
+        color: #008f11 !important;
+        text-shadow: 0 0 10px #008f11;
+        text-transform: uppercase;
+    }
+
+/* Digital Snap Tap */
+@keyframes matrix-tap {
+    0% {
+        transform: scale(0.88);
+        opacity: 0.7;
+    }
+
+    20% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body[data-theme="matrix"] .tile.tap-flash {
+    animation: matrix-tap 0.2s steps(3) !important;
+    box-shadow: 0 0 35px rgba(0, 255, 65, 0.95), 0 0 70px rgba(0, 255, 65, 0.5) !important;
+}
+
+@keyframes matrix-hold {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(0.94);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: scale(0.94);
+    }
+}
+
+body[data-theme="matrix"] .tile.long-press-ready {
+    animation: matrix-hold 0.4s steps(2) infinite !important;
+    box-shadow: 0 0 40px rgba(0, 255, 65, 0.95), 0 0 80px rgba(0, 255, 65, 0.6) !important;
+}
+
+/* Rain Dissolve Transition */
+@keyframes matrix-exit {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: translateY(40px);
+        opacity: 0.55;
+        filter: brightness(1.9);
+    }
+
+    100% {
+        transform: translateY(150px);
+        opacity: 0;
+        filter: brightness(3);
+    }
+}
+
+@keyframes matrix-enter {
+    0% {
+        transform: translateY(-150px);
+        opacity: 0;
+        filter: brightness(3);
+    }
+
+    50% {
+        transform: translateY(-20px);
+        opacity: 0.6;
+        filter: brightness(1.5);
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+body[data-theme="matrix"] #tile-grid.page-exit-next, body[data-theme="matrix"] #tile-grid.page-exit-prev {
+    animation: matrix-exit 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+body[data-theme="matrix"] #tile-grid.page-enter-next, body[data-theme="matrix"] #tile-grid.page-enter-prev {
+    animation: matrix-enter 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
