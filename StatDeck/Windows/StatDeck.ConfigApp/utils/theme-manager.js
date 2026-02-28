@@ -1,13 +1,6 @@
 /**
  * Theme Manager - StatDeck Config App
- * VERSION: Unified Theme System v3.1
- * 
- * Changes:
- * - Synthwave restored: valueColor=#00ffff (cyan values), textSecondary=#ff00ff (magenta labels)
- * - valueColor on every theme matching original Pi appearance
- * - 4 new themes: Ocean Deep, Dracula, Amber Terminal, Midnight
- * - --color-value CSS variable for accurate preview
- * - labelColor support for per-tile label overrides
+ * VERSION: Unified Theme System v3.3 - Gradients!
  */
 
 const fs = require('fs');
@@ -16,378 +9,181 @@ const path = require('path');
 class ThemeManager {
     constructor() {
         this.currentTheme = 'dark';
-        
+
         this.builtinThemes = {
             dark: {
-                name: 'Dark',
-                builtin: true,
-                colors: {
-                    primary: '#00ff88',
-                    secondary: '#4ecdc4',
-                    accent: '#ff6b6b',
-                    background: '#0a0e27',
-                    surface: '#1a1a2e',
-                    text: '#ffffff',
-                    textSecondary: '#a0aec0',
-                    border: '#2d3748',
-                    valueColor: '#00ff88'
-                },
-                fonts: {
-                    main: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Dark', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#00ff88', secondary: '#4ecdc4', accent: '#ff6b6b', background: '#0a0e27', surface: '#1a1a2e', text: '#ffffff', textSecondary: '#a0aec0', border: '#2d3748', valueColor: '#00ff88' },
+                fonts: { main: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: false, scanlines: false, pixelated: false, bevel: false }
             },
             light: {
-                name: 'Light',
-                builtin: true,
-                colors: {
-                    primary: '#3b82f6',
-                    secondary: '#8b5cf6',
-                    accent: '#f59e0b',
-                    background: '#f7fafc',
-                    surface: '#ffffff',
-                    text: '#1a202c',
-                    textSecondary: '#718096',
-                    border: '#e2e8f0',
-                    valueColor: '#3b82f6'
-                },
-                fonts: {
-                    main: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Light', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#3b82f6', secondary: '#8b5cf6', accent: '#f59e0b', background: '#f7fafc', surface: '#ffffff', text: '#1a202c', textSecondary: '#718096', border: '#e2e8f0', valueColor: '#3b82f6' },
+                fonts: { main: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: false, scanlines: false, pixelated: false, bevel: false }
             },
             synthwave: {
-                name: 'Synthwave',
-                builtin: true,
-                colors: {
-                    primary: '#ff00ff',
-                    secondary: '#00ffff',
-                    accent: '#ff1493',
-                    background: '#1a0033',
-                    surface: '#2d1b4e',
-                    text: '#ffffff',
-                    textSecondary: '#ff00ff',
-                    border: '#ff00ff',
-                    valueColor: '#00ffff'
-                },
-                fonts: {
-                    main: "'Orbitron', 'Arial', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Synthwave', builtin: true, shape: 'square', bgStyle: 'linear',
+                colors: { primary: '#ff00ff', secondary: '#00ffff', accent: '#ff1493', background: '#1a0033', surface: '#2d1b4e', text: '#ffffff', textSecondary: '#ff00ff', border: '#ff00ff', valueColor: '#00ffff' },
+                fonts: { main: "'Orbitron', 'Arial', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             cyberpunk: {
-                name: 'Cyberpunk',
-                builtin: true,
-                colors: {
-                    primary: '#00fff9',
-                    secondary: '#ff2e97',
-                    accent: '#ffed00',
-                    background: '#000000',
-                    surface: '#0a0a0a',
-                    text: '#00fff9',
-                    textSecondary: '#ff2e97',
-                    border: '#00fff9',
-                    valueColor: '#00fff9'
-                },
-                fonts: {
-                    main: "'Rajdhani', 'Arial', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Cyberpunk', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#00fff9', secondary: '#ff2e97', accent: '#ffed00', background: '#000000', surface: '#0a0a0a', text: '#00fff9', textSecondary: '#ff2e97', border: '#00fff9', valueColor: '#00fff9' },
+                fonts: { main: "'Rajdhani', 'Arial', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             pixel: {
-                name: '8-Bit',
-                builtin: true,
-                colors: {
-                    primary: '#ff71ce',
-                    secondary: '#01cdfe',
-                    accent: '#fffb96',
-                    background: '#0d0221',
-                    surface: '#1a0a3e',
-                    text: '#ffffff',
-                    textSecondary: '#b967ff',
-                    border: '#05ffa1',
-                    valueColor: '#01cdfe'
-                },
-                fonts: {
-                    main: "'Press Start 2P', 'Courier New', monospace",
-                    mono: "'Press Start 2P', monospace"
-                },
+                name: '8-Bit', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#ff71ce', secondary: '#01cdfe', accent: '#fffb96', background: '#0d0221', surface: '#1a0a3e', text: '#ffffff', textSecondary: '#b967ff', border: '#05ffa1', valueColor: '#01cdfe' },
+                fonts: { main: "'Press Start 2P', 'Courier New', monospace", mono: "'Press Start 2P', monospace" },
                 effects: { glow: true, scanlines: true, pixelated: false, bevel: false }
             },
             neon: {
-                name: 'Neon',
-                builtin: true,
-                colors: {
-                    primary: '#00ff00',
-                    secondary: '#ff00ff',
-                    accent: '#00ffff',
-                    background: '#000000',
-                    surface: '#0a0a0a',
-                    text: '#00ff00',
-                    textSecondary: '#ff00ff',
-                    border: '#00ff00',
-                    valueColor: '#00ff00'
-                },
-                fonts: {
-                    main: "'Teko', 'Arial', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Neon', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#00ff00', secondary: '#ff00ff', accent: '#00ffff', background: '#000000', surface: '#0a0a0a', text: '#00ff00', textSecondary: '#ff00ff', border: '#00ff00', valueColor: '#00ff00' },
+                fonts: { main: "'Teko', 'Arial', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             matrix: {
-                name: 'Matrix',
-                builtin: true,
-                colors: {
-                    primary: '#00ff41',
-                    secondary: '#008f11',
-                    accent: '#00ff41',
-                    background: '#0d0208',
-                    surface: '#1a1a1a',
-                    text: '#00ff41',
-                    textSecondary: '#008f11',
-                    border: '#00ff41',
-                    valueColor: '#00ff41'
-                },
-                fonts: {
-                    main: "'Courier New', monospace",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Matrix', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#00ff41', secondary: '#008f11', accent: '#00ff41', background: '#0d0208', surface: '#1a1a1a', text: '#00ff41', textSecondary: '#008f11', border: '#00ff41', valueColor: '#00ff41' },
+                fonts: { main: "'Courier New', monospace", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             nord: {
-                name: 'Nord',
-                builtin: true,
-                colors: {
-                    primary: '#88c0d0',
-                    secondary: '#81a1c1',
-                    accent: '#bf616a',
-                    background: '#2e3440',
-                    surface: '#3b4252',
-                    text: '#eceff4',
-                    textSecondary: '#d8dee9',
-                    border: '#4c566a',
-                    valueColor: '#88c0d0'
-                },
-                fonts: {
-                    main: "'Inter', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Nord', builtin: true, shape: 'rounded', bgStyle: 'solid',
+                colors: { primary: '#88c0d0', secondary: '#81a1c1', accent: '#bf616a', background: '#2e3440', surface: '#3b4252', text: '#eceff4', textSecondary: '#d8dee9', border: '#4c566a', valueColor: '#88c0d0' },
+                fonts: { main: "'Inter', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: false, scanlines: false, pixelated: false, bevel: false }
             },
             sunset: {
-                name: 'Sunset',
-                builtin: true,
-                colors: {
-                    primary: '#ff6b6b',
-                    secondary: '#feca57',
-                    accent: '#ee5a6f',
-                    background: '#2d132c',
-                    surface: '#3d1e36',
-                    text: '#ffffff',
-                    textSecondary: '#feca57',
-                    border: '#ff6b6b',
-                    valueColor: '#ff6b6b'
-                },
-                fonts: {
-                    main: "'Inter', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Sunset', builtin: true, shape: 'square', bgStyle: 'linear',
+                colors: { primary: '#ff6b6b', secondary: '#feca57', accent: '#ee5a6f', background: '#2d132c', surface: '#3d1e36', text: '#ffffff', textSecondary: '#feca57', border: '#ff6b6b', valueColor: '#ff6b6b' },
+                fonts: { main: "'Inter', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             gameboy: {
-                name: 'GameBoy',
-                builtin: true,
-                colors: {
-                    primary: '#9bbc0f',
-                    secondary: '#8bac0f',
-                    accent: '#cadc09',
-                    background: '#0f380f',
-                    surface: '#1e4a1e',
-                    text: '#9bbc0f',
-                    textSecondary: '#8bac0f',
-                    border: '#306230',
-                    valueColor: '#9bbc0f'
-                },
-                fonts: {
-                    main: "'Press Start 2P', 'Courier New', monospace",
-                    mono: "'Press Start 2P', monospace"
-                },
+                name: 'GameBoy', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#9bbc0f', secondary: '#8bac0f', accent: '#cadc09', background: '#0f380f', surface: '#1e4a1e', text: '#9bbc0f', textSecondary: '#8bac0f', border: '#306230', valueColor: '#9bbc0f' },
+                fonts: { main: "'Press Start 2P', 'Courier New', monospace", mono: "'Press Start 2P', monospace" },
                 effects: { glow: false, scanlines: true, pixelated: true, bevel: false }
             },
             '3d': {
-                name: '3D Classic',
-                builtin: true,
-                colors: {
-                    primary: '#5a9fd4',
-                    secondary: '#7ab8e8',
-                    accent: '#ff9500',
-                    background: '#c0c0c0',
-                    surface: '#d4d4d4',
-                    text: '#000000',
-                    textSecondary: '#404040',
-                    border: '#808080',
-                    valueColor: '#000000'
-                },
-                fonts: {
-                    main: "'Segoe UI', 'Tahoma', 'Arial', sans-serif",
-                    mono: "'Consolas', 'Courier New', monospace"
-                },
+                name: '3D Classic', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#5a9fd4', secondary: '#7ab8e8', accent: '#ff9500', background: '#c0c0c0', surface: '#d4d4d4', text: '#000000', textSecondary: '#404040', border: '#808080', valueColor: '#000000' },
+                fonts: { main: "'Segoe UI', 'Tahoma', 'Arial', sans-serif", mono: "'Consolas', 'Courier New', monospace" },
                 effects: { glow: false, scanlines: false, pixelated: false, bevel: true }
             },
             ocean: {
-                name: 'Ocean Deep',
-                builtin: true,
-                colors: {
-                    primary: '#00b4d8',
-                    secondary: '#0077b6',
-                    accent: '#90e0ef',
-                    background: '#03071e',
-                    surface: '#023e8a',
-                    text: '#caf0f8',
-                    textSecondary: '#48cae4',
-                    border: '#0077b6',
-                    valueColor: '#00b4d8'
-                },
-                fonts: {
-                    main: "'Inter', 'Arial', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Ocean Deep', builtin: true, shape: 'rounded', bgStyle: 'linear',
+                colors: { primary: '#00b4d8', secondary: '#0077b6', accent: '#90e0ef', background: '#03071e', surface: '#023e8a', text: '#caf0f8', textSecondary: '#48cae4', border: '#0077b6', valueColor: '#00b4d8' },
+                fonts: { main: "'Inter', 'Arial', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             },
             dracula: {
-                name: 'Dracula',
-                builtin: true,
-                colors: {
-                    primary: '#bd93f9',
-                    secondary: '#ff79c6',
-                    accent: '#50fa7b',
-                    background: '#282a36',
-                    surface: '#44475a',
-                    text: '#f8f8f2',
-                    textSecondary: '#6272a4',
-                    border: '#6272a4',
-                    valueColor: '#bd93f9'
-                },
-                fonts: {
-                    main: "'Inter', 'Segoe UI', sans-serif",
-                    mono: "'Fira Code', 'Courier New', monospace"
-                },
+                name: 'Dracula', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#bd93f9', secondary: '#ff79c6', accent: '#50fa7b', background: '#282a36', surface: '#44475a', text: '#f8f8f2', textSecondary: '#6272a4', border: '#6272a4', valueColor: '#bd93f9' },
+                fonts: { main: "'Inter', 'Segoe UI', sans-serif", mono: "'Fira Code', 'Courier New', monospace" },
                 effects: { glow: false, scanlines: false, pixelated: false, bevel: false }
             },
             amber: {
-                name: 'Amber Terminal',
-                builtin: true,
-                colors: {
-                    primary: '#ffb000',
-                    secondary: '#ff8800',
-                    accent: '#ffcc00',
-                    background: '#0a0800',
-                    surface: '#1a1400',
-                    text: '#ffb000',
-                    textSecondary: '#996600',
-                    border: '#ffb000',
-                    valueColor: '#ffb000'
-                },
-                fonts: {
-                    main: "'Courier New', monospace",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Amber Terminal', builtin: true, shape: 'square', bgStyle: 'solid',
+                colors: { primary: '#ffb000', secondary: '#ff8800', accent: '#ffcc00', background: '#0a0800', surface: '#1a1400', text: '#ffb000', textSecondary: '#996600', border: '#ffb000', valueColor: '#ffb000' },
+                fonts: { main: "'Courier New', monospace", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: true, pixelated: false, bevel: false }
             },
             midnight: {
-                name: 'Midnight',
-                builtin: true,
-                colors: {
-                    primary: '#e0aaff',
-                    secondary: '#c77dff',
-                    accent: '#9d4edd',
-                    background: '#10002b',
-                    surface: '#240046',
-                    text: '#e0aaff',
-                    textSecondary: '#7b2cbf',
-                    border: '#9d4edd',
-                    valueColor: '#e0aaff'
-                },
-                fonts: {
-                    main: "'Inter', 'Arial', sans-serif",
-                    mono: "'Courier New', monospace"
-                },
+                name: 'Midnight', builtin: true, shape: 'circle', bgStyle: 'radial',
+                colors: { primary: '#e0aaff', secondary: '#c77dff', accent: '#9d4edd', background: '#10002b', surface: '#240046', text: '#e0aaff', textSecondary: '#7b2cbf', border: '#9d4edd', valueColor: '#e0aaff' },
+                fonts: { main: "'Inter', 'Arial', sans-serif", mono: "'Courier New', monospace" },
                 effects: { glow: true, scanlines: false, pixelated: false, bevel: false }
             }
         };
-        
+
         this.customThemes = {};
         this.themes = {};
         this.loadCustomThemes();
         this.rebuildThemes();
     }
-    
+
     getCustomThemesPath() {
         return path.join(__dirname, '..', 'custom-themes.json');
     }
-    
+
     loadCustomThemes() {
         try {
             const filePath = this.getCustomThemesPath();
             if (fs.existsSync(filePath)) {
                 const data = fs.readFileSync(filePath, 'utf8');
                 this.customThemes = JSON.parse(data) || {};
-                console.log(`Loaded ${Object.keys(this.customThemes).length} custom theme(s)`);
             }
-        } catch (err) {
-            console.error('Failed to load custom themes:', err.message);
-            this.customThemes = {};
-        }
+        } catch (err) { this.customThemes = {}; }
     }
-    
+
     saveCustomThemes() {
-        try {
-            fs.writeFileSync(this.getCustomThemesPath(), JSON.stringify(this.customThemes, null, 2), 'utf8');
-        } catch (err) {
-            console.error('Failed to save custom themes:', err.message);
-        }
+        try { fs.writeFileSync(this.getCustomThemesPath(), JSON.stringify(this.customThemes, null, 2), 'utf8'); }
+        catch (err) { console.error('Failed to save custom themes:', err.message); }
     }
 
     exportThemeToFolder(themeId, themeData) {
-        // 1. Generate the hidden META tag for the Config App
+        const shape = themeData.shape || 'square';
+        const bgStyle = themeData.bgStyle || 'solid';
+
         const meta = {
             name: themeData.name,
+            shape: shape,
+            bgStyle: bgStyle,
             colors: themeData.colors,
             fonts: themeData.fonts,
             effects: themeData.effects
         };
         const metaTag = `/* META: ${JSON.stringify(meta)} */\n`;
 
-        // 2. Extract settings
         const c = themeData.colors || {};
         const eff = themeData.effects || {};
         const valColor = c.valueColor || c.primary || '#ffffff';
 
-        // 3. Generate the actual CSS for the Raspberry Pi!
-        let css = metaTag + `\n/* Auto-generated custom theme: ${themeData.name} */\n`;
-        css += `body[data-theme="${themeId}"] {\n    font-family: ${themeData.fonts ? themeData.fonts.main : 'sans-serif'};\n    background: ${c.background || '#000000'};\n}\n\n`;
+        let bgCss = `    background: ${c.background || '#000000'} !important;\n`;
+        if (bgStyle === 'linear') {
+            bgCss = `    background: linear-gradient(135deg, ${c.background} 0%, ${c.surface} 100%) !important;\n    background-attachment: fixed !important;\n`;
+        } else if (bgStyle === 'radial') {
+            bgCss = `    background: radial-gradient(circle at center, ${c.surface} 0%, ${c.background} 100%) !important;\n    background-attachment: fixed !important;\n`;
+        }
 
-        // Build the Tile Borders & Backgrounds
+        let css = metaTag + `\n/* Auto-generated custom theme: ${themeData.name} */\n`;
+        css += `body[data-theme="${themeId}"] {\n    font-family: ${themeData.fonts ? themeData.fonts.main : 'sans-serif'};\n${bgCss}}\n\n`;
+
         css += `body[data-theme="${themeId}"] .tile, body[data-theme="${themeId}"] .cpu-graph-tile, body[data-theme="${themeId}"] .gauge-tile, body[data-theme="${themeId}"] .text-display-tile, body[data-theme="${themeId}"] .button-tile, body[data-theme="${themeId}"] .network-graph-tile, body[data-theme="${themeId}"] .page-nav-tile {\n`;
-        if (eff.glow) {
-            css += `    background: linear-gradient(135deg, ${c.surface} 0%, #000000 100%) !important;\n    border: 2px solid ${c.primary} !important;\n    box-shadow: 0 0 15px ${c.primary}80, inset 0 0 10px ${c.primary}20 !important;\n`;
-        } else if (eff.bevel) {
-            css += `    background: ${c.surface} !important;\n    border: none !important;\n    border-radius: 4px !important;\n    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3), 3px 3px 6px rgba(0,0,0,0.25) !important;\n`;
+
+        if (shape === 'borderless') {
+            css += `    background: transparent !important;\n    border: none !important;\n    box-shadow: none !important;\n`;
         } else {
-            css += `    background: ${c.surface} !important;\n    border: 1px solid ${c.border} !important;\n`;
+            if (eff.glow) css += `    background: linear-gradient(135deg, ${c.surface} 0%, #000000 100%) !important;\n    border: 2px solid ${c.primary} !important;\n    box-shadow: 0 0 15px ${c.primary}80, inset 0 0 10px ${c.primary}20 !important;\n`;
+            else if (eff.bevel) css += `    background: ${c.surface} !important;\n    border: none !important;\n    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.3), 3px 3px 6px rgba(0,0,0,0.25) !important;\n`;
+            else css += `    background: ${c.surface} !important;\n    border: 1px solid ${c.border} !important;\n`;
+
+            if (shape === 'circle') css += `    border-radius: 100px !important;\n`;
+            else if (shape === 'rounded') css += `    border-radius: 15px !important;\n`;
+            else if (shape === 'square') css += `    border-radius: 0px !important;\n`;
+            else css += `    border-radius: 4px !important;\n`;
         }
         css += `}\n\n`;
 
-        // Build the Text Colors & Glows
-        css += `body[data-theme="${themeId}"] .tile-value, body[data-theme="${themeId}"] .gauge-value, body[data-theme="${themeId}"] .text-display-value {\n    color: ${valColor} !important;\n`;
-        if (eff.glow) css += `    text-shadow: 0 0 10px ${valColor}, 0 0 20px ${valColor}80;\n    font-weight: 700;\n`;
-        css += `}\n\n`;
+        // THE FIX: Graph-specific overrides for the Pill/Circle shape
+        if (shape === 'circle') {
+            // Keep the graphs at a safe 15px border radius
+            css += `body[data-theme="${themeId}"] .cpu-graph-tile, body[data-theme="${themeId}"] .network-graph-tile {\n    border-radius: 15px !important;\n}\n`;
+            // Force the labels to the top center so they don't clip the rounded corners
+            css += `body[data-theme="${themeId}"] .cpu-graph-tile .tile-label, body[data-theme="${themeId}"] .network-graph-tile .tile-label {\n    width: 100% !important;\n    left: 0 !important;\n    text-align: center !important;\n    padding-left: 0 !important;\n    display: block !important;\n}\n\n`;
+        }
 
-        // Add smooth default Tap Animations & Page Transitions
+        css += `body[data-theme="${themeId}"] .tile-value, body[data-theme="${themeId}"] .gauge-value, body[data-theme="${themeId}"] .text-display-value {\n    color: ${valColor} !important;\n`;
+        if (eff.glow && shape !== 'borderless') css += `    text-shadow: 0 0 10px ${valColor}, 0 0 20px ${valColor}80;\n`;
+        css += `    font-weight: 700;\n}\n\n`;
+
         css += `@keyframes custom-tap-${themeId} { 0% { transform: scale(0.92); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }\n`;
         css += `body[data-theme="${themeId}"] .tile.tap-flash { animation: custom-tap-${themeId} 0.3s ease !important; }\n\n`;
         css += `@keyframes custom-exit-${themeId} { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.95); } }\n`;
@@ -395,15 +191,11 @@ class ThemeManager {
         css += `body[data-theme="${themeId}"] #tile-grid.page-exit-next, body[data-theme="${themeId}"] #tile-grid.page-exit-prev { animation: custom-exit-${themeId} 0.3s forwards; }\n`;
         css += `body[data-theme="${themeId}"] #tile-grid.page-enter-next, body[data-theme="${themeId}"] #tile-grid.page-enter-prev { animation: custom-enter-${themeId} 0.4s forwards; }\n`;
 
-        // 4. Send it to main.js to save as a real .css file!
         require('electron').ipcRenderer.invoke('save-theme-file', themeId, css).catch(err => console.error(err));
     }
 
-    
-    rebuildThemes() {
-        this.themes = { ...this.builtinThemes, ...this.customThemes };
-    }
-    
+    rebuildThemes() { this.themes = { ...this.builtinThemes, ...this.customThemes }; }
+
     createCustomTheme(id, themeData) {
         if (!id) id = themeData.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
         if (this.builtinThemes[id]) id = 'custom_' + id;
@@ -415,12 +207,10 @@ class ThemeManager {
         this.customThemes[uniqueId] = themeData;
         this.saveCustomThemes();
         this.rebuildThemes();
-
         this.exportThemeToFolder(uniqueId, themeData);
-
         return uniqueId;
     }
-    
+
     updateCustomTheme(id, themeData) {
         if (this.builtinThemes[id]) return false;
         if (!this.customThemes[id]) return false;
@@ -429,22 +219,19 @@ class ThemeManager {
         this.customThemes[id] = themeData;
         this.saveCustomThemes();
         this.rebuildThemes();
-
         this.exportThemeToFolder(id, themeData);
-
         return true;
     }
-    
+
     deleteCustomTheme(id) {
-        if (this.builtinThemes[id]) return false;
-        if (!this.customThemes[id]) return false;
+        if (this.builtinThemes[id] || !this.customThemes[id]) return false;
         delete this.customThemes[id];
         this.saveCustomThemes();
         this.rebuildThemes();
         if (this.currentTheme === id) this.setTheme('dark');
         return true;
     }
-    
+
     duplicateTheme(sourceId, newName) {
         const source = this.themes[sourceId];
         if (!source) return null;
@@ -453,26 +240,25 @@ class ThemeManager {
         newTheme.builtin = false;
         return this.createCustomTheme(null, newTheme);
     }
-    
+
     exportTheme(id) {
         const theme = this.themes[id];
         if (!theme) return null;
         return { statdeck_theme: true, version: '1.0', id, theme: JSON.parse(JSON.stringify(theme)) };
     }
-    
+
     importTheme(data) {
         try {
-            if (!data.statdeck_theme || !data.theme) return null;
+            if (!data.statdeck_theme || !data.theme || !data.theme.name) return null;
             data.theme.builtin = false;
-            if (!data.theme.name || !data.theme.colors || !data.theme.fonts || !data.theme.effects) return null;
             return this.createCustomTheme(data.id || null, data.theme);
         } catch (err) { return null; }
     }
-    
+
     getCurrentTheme() { return this.themes[this.currentTheme]; }
     getTheme(themeName) { return this.themes[themeName] || this.themes.dark; }
     isBuiltin(themeId) { return !!this.builtinThemes[themeId]; }
-    
+
     setTheme(themeName) {
         if (this.themes[themeName]) {
             this.currentTheme = themeName;
@@ -481,67 +267,106 @@ class ThemeManager {
         }
         return false;
     }
-    
+
     applyTheme(themeName) {
         const theme = this.themes[themeName];
         if (!theme) return;
+
         const root = document.documentElement;
-        
-        root.style.setProperty('--color-primary', theme.colors.primary);
-        root.style.setProperty('--color-secondary', theme.colors.secondary);
-        root.style.setProperty('--color-accent', theme.colors.accent);
-        root.style.setProperty('--color-background', theme.colors.background);
-        root.style.setProperty('--color-surface', theme.colors.surface);
-        root.style.setProperty('--color-text', theme.colors.text);
-        root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
-        root.style.setProperty('--color-border', theme.colors.border);
-        root.style.setProperty('--color-value', theme.colors.valueColor || theme.colors.primary);
-        
-        root.style.setProperty('--font-main', theme.fonts.main);
-        root.style.setProperty('--font-mono', theme.fonts.mono);
-        
-        root.setAttribute('data-theme', themeName);
-        root.setAttribute('data-glow', theme.effects.glow ? 'true' : 'false');
-        root.setAttribute('data-scanlines', theme.effects.scanlines ? 'true' : 'false');
-        root.setAttribute('data-pixelated', theme.effects.pixelated ? 'true' : 'false');
-        root.setAttribute('data-bevel', theme.effects.bevel ? 'true' : 'false');
-        
-        document.dispatchEvent(new CustomEvent('themeChanged', { 
-            detail: { theme: themeName, themeData: theme, colors: theme.colors } 
+        const dark = this.builtinThemes.dark;
+
+        root.style.setProperty('--color-primary', dark.colors.primary);
+        root.style.setProperty('--color-secondary', dark.colors.secondary);
+        root.style.setProperty('--color-accent', dark.colors.accent);
+        root.style.setProperty('--color-background', dark.colors.background);
+        root.style.setProperty('--color-surface', dark.colors.surface);
+        root.style.setProperty('--color-text', dark.colors.text);
+        root.style.setProperty('--color-text-secondary', dark.colors.textSecondary);
+        root.style.setProperty('--color-border', dark.colors.border);
+        root.style.setProperty('--font-main', dark.fonts.main);
+        root.style.setProperty('--font-mono', dark.fonts.mono);
+        root.removeAttribute('data-shape');
+
+        const targets = [
+            document.getElementById('grid-canvas'),
+            document.getElementById('tile-palette'),
+            document.getElementById('properties-panel')
+        ];
+
+        targets.forEach(target => {
+            if (!target) return;
+            target.style.setProperty('--color-primary', theme.colors.primary);
+            target.style.setProperty('--color-secondary', theme.colors.secondary);
+            target.style.setProperty('--color-accent', theme.colors.accent);
+            target.style.setProperty('--color-surface', theme.colors.surface);
+            target.style.setProperty('--color-text', theme.colors.text);
+            target.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
+            target.style.setProperty('--color-border', theme.colors.border);
+            target.style.setProperty('--color-value', theme.colors.valueColor || theme.colors.primary);
+
+            target.style.setProperty('--font-main', theme.fonts.main);
+            target.style.setProperty('--font-mono', theme.fonts.mono);
+
+            const bgStyle = theme.bgStyle || 'solid';
+
+            // We force the background color to clear out so inline hex codes don't overwrite the gradient during profile swaps!
+            if (bgStyle === 'linear') {
+                target.style.background = `linear-gradient(135deg, ${theme.colors.background} 0%, ${theme.colors.surface} 100%)`;
+                target.style.backgroundColor = 'transparent';
+            } else if (bgStyle === 'radial') {
+                target.style.background = `radial-gradient(circle at center, ${theme.colors.surface} 0%, ${theme.colors.background} 100%)`;
+                target.style.backgroundColor = 'transparent';
+            } else {
+                target.style.background = 'none';
+                target.style.backgroundColor = theme.colors.background;
+            }
+            target.style.backgroundAttachment = 'fixed';
+
+            target.setAttribute('data-theme', themeName);
+            target.setAttribute('data-glow', theme.effects.glow ? 'true' : 'false');
+            target.setAttribute('data-scanlines', theme.effects.scanlines ? 'true' : 'false');
+            target.setAttribute('data-pixelated', theme.effects.pixelated ? 'true' : 'false');
+            target.setAttribute('data-bevel', theme.effects.bevel ? 'true' : 'false');
+            target.setAttribute('data-shape', theme.shape || 'square');
+        });
+
+        document.dispatchEvent(new CustomEvent('themeChanged', {
+            detail: { theme: themeName, themeData: theme, colors: theme.colors }
         }));
     }
-    
+
     getAvailableThemes() {
         const themes = [];
-        for (const [key, theme] of Object.entries(this.builtinThemes))
-            themes.push({ id: key, name: theme.name, builtin: true });
-        for (const [key, theme] of Object.entries(this.customThemes))
-            themes.push({ id: key, name: theme.name, builtin: false });
+        for (const [key, theme] of Object.entries(this.builtinThemes)) themes.push({ id: key, name: theme.name, builtin: true });
+        for (const [key, theme] of Object.entries(this.customThemes)) themes.push({ id: key, name: theme.name, builtin: false });
         return themes;
     }
-    
+
     getThemeDataForPush() {
         const theme = this.getCurrentTheme();
         if (!theme) return { name: 'dark' };
         return {
             id: this.currentTheme,
             name: theme.name,
+            shape: theme.shape || 'square',
+            bgStyle: theme.bgStyle || 'solid',
             colors: { ...theme.colors },
             fonts: { ...theme.fonts },
             effects: { ...theme.effects }
         };
     }
-    
+
     loadFromConfig(config) {
         if (config && config.theme) {
-            if (typeof config.theme === 'string') {
-                this.setTheme(config.theme);
-            } else if (typeof config.theme === 'object' && config.theme.id) {
+            if (typeof config.theme === 'string') this.setTheme(config.theme);
+            else if (typeof config.theme === 'object' && config.theme.id) {
                 const themeId = config.theme.id;
                 if (!this.themes[themeId] && config.theme.colors) {
                     this.customThemes[themeId] = {
                         name: config.theme.name || themeId,
                         builtin: false,
+                        shape: config.theme.shape || 'square',
+                        bgStyle: config.theme.bgStyle || 'solid',
                         colors: config.theme.colors,
                         fonts: config.theme.fonts || { main: "'Inter', sans-serif", mono: "'Courier New', monospace" },
                         effects: config.theme.effects || { glow: false, scanlines: false, pixelated: false, bevel: false }
@@ -553,54 +378,37 @@ class ThemeManager {
             }
         }
     }
-    
+
     getConfigData() { return { theme: this.currentTheme }; }
-    
+
     getBlankTheme() {
         return {
-            name: 'My Custom Theme',
-            builtin: false,
-            colors: {
-                primary: '#00ff88', secondary: '#4ecdc4', accent: '#ff6b6b',
-                background: '#0a0e27', surface: '#1a1a2e', text: '#ffffff',
-                textSecondary: '#a0aec0', border: '#2d3748', valueColor: '#00ff88'
-            },
+            name: 'My Custom Theme', builtin: false, shape: 'square', bgStyle: 'solid',
+            colors: { primary: '#00ff88', secondary: '#4ecdc4', accent: '#ff6b6b', background: '#0a0e27', surface: '#1a1a2e', text: '#ffffff', textSecondary: '#a0aec0', border: '#2d3748', valueColor: '#00ff88' },
             fonts: { main: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", mono: "'Courier New', monospace" },
             effects: { glow: false, scanlines: false, pixelated: false, bevel: false }
         };
     }
-    
+
     async populateDropdown(selectElementOrId) {
-        const selectElement = (typeof selectElementOrId === 'string')
-            ? document.getElementById(selectElementOrId) : selectElementOrId;
+        const selectElement = (typeof selectElementOrId === 'string') ? document.getElementById(selectElementOrId) : selectElementOrId;
         if (!selectElement) return;
 
         const currentValue = selectElement.value;
         selectElement.innerHTML = '';
-
-        // 1. Rebuild the base themes so we have a clean slate
         this.rebuildThemes();
 
-        // 2. Ask main.js what .css files are in the folder
         let folderThemes = [];
         try {
             const result = await require('electron').ipcRenderer.invoke('list-themes');
             if (result && result.success) folderThemes = result.themes;
         } catch (e) { console.error("Could not read folder", e); }
 
-        const builtinGroup = document.createElement('optgroup');
-        builtinGroup.label = 'Built-in Themes';
-        const customGroup = document.createElement('optgroup');
-        customGroup.label = 'Custom / Folder Themes';
+        const builtinGroup = document.createElement('optgroup'); builtinGroup.label = 'Built-in Themes';
+        const customGroup = document.createElement('optgroup'); customGroup.label = 'Custom / Folder Themes';
 
-        const emojiMap = {
-            dark: '🌙', light: '☀️', synthwave: '🌆', cyberpunk: '🤖',
-            pixel: '🎮', neon: '💚', matrix: '🟢', nord: '🔵',
-            sunset: '🌅', gameboy: '🕹️', '3d': '🧊',
-            ocean: '🌊', dracula: '🧛', amber: '🟠', midnight: '🔮'
-        };
+        const emojiMap = { dark: '🌙', light: '☀️', synthwave: '🌆', cyberpunk: '🤖', pixel: '🎮', neon: '💚', matrix: '🟢', nord: '🔵', sunset: '🌅', gameboy: '🕹️', '3d': '🧊', ocean: '🌊', dracula: '🧛', amber: '🟠', midnight: '🔮' };
 
-        // 3. Add our built-in UI themes
         for (const [key, theme] of Object.entries(this.builtinThemes)) {
             const opt = document.createElement('option');
             opt.value = key;
@@ -611,7 +419,6 @@ class ThemeManager {
 
         const addedCustoms = new Set();
 
-        // 4. Add custom themes you made in the Theme Builder UI
         for (const [key, theme] of Object.entries(this.customThemes)) {
             const opt = document.createElement('option');
             opt.value = key;
@@ -620,18 +427,21 @@ class ThemeManager {
             addedCustoms.add(key);
         }
 
-        // 5. THE FALLBACK FIX: Add raw .css files found in the folder
         folderThemes.forEach(folderTheme => {
             const themeId = folderTheme.id;
-            const meta = folderTheme.meta; // Grab the extracted metadata!
+            const meta = folderTheme.meta;
 
-            if (!this.builtinThemes[themeId] && !addedCustoms.has(themeId)) {
+            // THE FIX: Force the file name to lowercase before checking so "Dark.css" matches "dark"
+            const checkId = themeId.toLowerCase();
 
-                // If the CSS file has a META tag, use those colors! Otherwise, use Dark mode.
+            // Check against checkId instead of themeId
+            if (!this.builtinThemes[checkId] && !addedCustoms.has(themeId) && !addedCustoms.has(checkId)) {
                 this.themes[themeId] = {
                     name: meta && meta.name ? meta.name : themeId.charAt(0).toUpperCase() + themeId.slice(1),
                     builtin: false,
                     isFolderOnly: true,
+                    shape: meta && meta.shape ? meta.shape : 'square',
+                    bgStyle: meta && meta.bgStyle ? meta.bgStyle : 'solid',
                     colors: meta && meta.colors ? meta.colors : this.builtinThemes['dark'].colors,
                     fonts: meta && meta.fonts ? meta.fonts : this.builtinThemes['dark'].fonts,
                     effects: this.builtinThemes['dark'].effects
@@ -644,11 +454,7 @@ class ThemeManager {
             }
         });
 
-        if (customGroup.children.length > 0) {
-            selectElement.appendChild(customGroup);
-        }
-
-        // Restore the previously selected theme if it still exists
+        if (customGroup.children.length > 0) selectElement.appendChild(customGroup);
         if (currentValue && this.themes[currentValue]) selectElement.value = currentValue;
         else selectElement.value = this.currentTheme;
     }

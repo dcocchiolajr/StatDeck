@@ -6,15 +6,10 @@ const { NodeSSH } = require('node-ssh'); // PORTABLE SSH MODULE
 let mainWindow;
 
 // PORTABLE PATH DETECTION
-// UNIVERSAL DOCUMENTS PATH DETECTION
-const STATDECK_DIR = path.join(require('os').homedir(), 'Documents', 'StatDeck');
-
-if (!fs.existsSync(STATDECK_DIR)) { fs.mkdirSync(STATDECK_DIR, { recursive: true }); }
-
-const LAYOUTS_DIR = path.join(STATDECK_DIR, 'layouts');
+const LAYOUTS_DIR = path.join(app.getAppPath(), '..', 'StatDeck.Service', 'layouts');
 if (!fs.existsSync(LAYOUTS_DIR)) { fs.mkdirSync(LAYOUTS_DIR, { recursive: true }); }
 
-const THEMES_DIR = path.join(STATDECK_DIR, 'themes');
+const THEMES_DIR = path.join(app.getAppPath(), '..', 'StatDeck.Service', 'themes');
 if (!fs.existsSync(THEMES_DIR)) { fs.mkdirSync(THEMES_DIR, { recursive: true }); }
 
 function createWindow() {
@@ -169,13 +164,6 @@ ipcMain.handle('save-dialog', async (event, defaultPath) => {
         filters: [{ name: 'JSON Layouts', extensions: ['json'] }]
     });
     return result;
-});
-
-ipcMain.handle('open-dialog', async () => {
-    return await dialog.showOpenDialog(mainWindow, {
-        properties: ['openFile'],
-        filters: [{ name: 'JSON Themes & Layouts', extensions: ['json'] }]
-    });
 });
 
 ipcMain.handle('write-file', async (event, filepath, data) => {
