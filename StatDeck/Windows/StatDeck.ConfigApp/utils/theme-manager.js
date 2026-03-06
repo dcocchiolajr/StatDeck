@@ -172,12 +172,12 @@ class ThemeManager {
         }
         css += `}\n\n`;
 
-        // THE FIX: Graph-specific overrides for the Pill/Circle shape
+        // Pill/Circle shape: center ALL labels and cap graph border-radius
         if (shape === 'circle') {
-            // Keep the graphs at a safe 15px border radius
+            // Keep graphs at a safe 15px radius so chart content isn't clipped
             css += `body[data-theme="${themeId}"] .cpu-graph-tile, body[data-theme="${themeId}"] .network-graph-tile {\n    border-radius: 15px !important;\n}\n`;
-            // Force the labels to the top center so they don't clip the rounded corners
-            css += `body[data-theme="${themeId}"] .cpu-graph-tile .tile-label, body[data-theme="${themeId}"] .network-graph-tile .tile-label {\n    width: 100% !important;\n    left: 0 !important;\n    text-align: center !important;\n    padding-left: 0 !important;\n    display: block !important;\n}\n\n`;
+            // Center labels on ALL tile types so text doesn't clip rounded corners
+            css += `body[data-theme="${themeId}"] .tile-label, body[data-theme="${themeId}"] .gauge-label, body[data-theme="${themeId}"] .text-display-label, body[data-theme="${themeId}"] .button-label {\n    width: 100% !important;\n    left: 0 !important;\n    text-align: center !important;\n    padding-left: 0 !important;\n    display: block !important;\n}\n\n`;
         }
 
         css += `body[data-theme="${themeId}"] .tile-value, body[data-theme="${themeId}"] .gauge-value, body[data-theme="${themeId}"] .text-display-value {\n    color: ${valColor} !important;\n`;

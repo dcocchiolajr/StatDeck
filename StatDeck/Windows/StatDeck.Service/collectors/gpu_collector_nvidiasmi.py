@@ -7,6 +7,8 @@ from .base_collector import BaseCollector
 import subprocess
 import re
 
+# Magic flag to tell Windows to NEVER open a cmd window
+CREATE_NO_WINDOW = 0x08000000
 
 class GPUCollector(BaseCollector):
     """
@@ -24,7 +26,8 @@ class GPUCollector(BaseCollector):
             result = subprocess.run(['nvidia-smi'], 
                                   capture_output=True, 
                                   text=True, 
-                                  timeout=2)
+                                  timeout=2,
+                                  creationflags=CREATE_NO_WINDOW) # <-- Flag added here
             return result.returncode == 0
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
@@ -51,7 +54,7 @@ class GPUCollector(BaseCollector):
                 'nvidia-smi',
                 '--query-gpu=utilization.gpu,utilization.memory,temperature.gpu,memory.used,memory.total',
                 '--format=csv,noheader,nounits'
-            ], capture_output=True, text=True, timeout=2)
+            ], capture_output=True, text=True, timeout=2, creationflags=CREATE_NO_WINDOW) # <-- Flag added here
             
             if result.returncode != 0:
                 return self._get_zero_stats()

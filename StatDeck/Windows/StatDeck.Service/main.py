@@ -8,8 +8,14 @@ import time
 import json
 import socket
 import logging
+import threading
+import sys
+import os
+import subprocess
+import winreg
 from datetime import datetime
 from threading import Thread, Lock
+
 from collectors.cpu_collector import CPUCollector
 from collectors.system_collector import SystemCollector
 from profile_manager import ProfileManager
@@ -20,12 +26,25 @@ from collectors.network_collector import NetworkCollector
 from actions.action_executor import ActionExecutor
 from http_server import StatsHTTPServer
 
+import pystray
+from PIL import Image, ImageDraw
+
+
+# 1. Get the path to the user's Documents/StatDeck folder
+docs_folder = os.path.join(os.path.expanduser('~'), 'Documents', 'StatDeck')
+
+# 2. Make sure the folder exists so it doesn't crash on the first run
+os.makedirs(docs_folder, exist_ok=True)
+
+# 3. Define the exact path for the log file
+log_file_path = os.path.join(docs_folder, 'statdeck_service.log')
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('statdeck_service.log'),
+        logging.FileHandler(log_file_path), # <--- Now safely writes to Documents
         logging.StreamHandler()
     ]
 )
@@ -36,7 +55,7 @@ logger = logging.getLogger(__name__)
 CONFIG_SERVER_PORT = 5555
 
 # ==================================================================
-# NEW: High-Speed TCP Network Manager (Replaces USBManager)
+# High-Speed TCP Network Manager
 # ==================================================================
 class PiNetworkManager:
     """Handles direct TCP communication with the Pi over USB Gadget Mode."""
@@ -54,7 +73,7 @@ class PiNetworkManager:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.settimeout(2.0)
             self.sock.connect((self.host, self.port))
-            self.sock.settimeout(0.01)  # Fast timeout for reading non-blocking
+            self.sock.settimeout(0.01)
             logger.info(f"Connected to Pi Network at {self.host}:{self.port}")
             return True
         except Exception as e:
@@ -102,12 +121,24 @@ class PiNetworkManager:
         return None
 
 # ==================================================================
+# MAIN STATDECK SERVICE
+# ==================================================================
+
+
+def get_documents_dir():
+    r"""Finds or creates C:\Users\YourName\Documents\StatDeck"""
+    documents_dir = os.path.join(os.path.expanduser('~'), 'Documents')
+    statdeck_dir = os.path.join(documents_dir, 'StatDeck')
+    if not os.path.exists(statdeck_dir):
+        os.makedirs(statdeck_dir)
+        os.makedirs(os.path.join(statdeck_dir, 'layouts'))
+    return statdeck_dir
 
 class StatDeckService:
-    """Main service class that orchestrates stats collection and communication."""
-    
     def __init__(self, config_path='config.json'):
-        self.config_path = config_path
+        # Universal Documents Routing
+        self.app_dir = get_documents_dir()
+        self.config_path = os.path.join(self.app_dir, 'config.json')
         self.config = self.load_config()
         
         self.collectors = {
@@ -119,7 +150,6 @@ class StatDeckService:
             'system': SystemCollector()
         }
         
-        # NEW: Initialize Network connection instead of Serial COM Port
         self.usb = PiNetworkManager(
             host=self.config.get('pi_host', 'missioncontrol.local'),
             port=5556
@@ -131,11 +161,11 @@ class StatDeckService:
         
         self.layout_cache = self.config.get('layout', {})
         self.layout_lock = Lock()
-        
         self.config_server = None
         self.config_server_thread = None
         
         self.running = False
+        self.is_paused = False
         self.update_interval = self.config.get('update_interval', 0.5)
         
     def load_config(self):
@@ -144,17 +174,12 @@ class StatDeckService:
                 return json.load(f)
         except FileNotFoundError:
             logger.warning(f"Config file {self.config_path} not found, using defaults")
-            return {
-                'pi_host': 'missioncontrol.local',
-                'update_interval': 0.5,
-                'layout': {}
-            }
+            return {'pi_host': 'missioncontrol.local', 'update_interval': 0.5, 'layout': {}}
         
     def broadcast_layout(self, layout_data, profile_name):
-            import os
             logger.info(f"Switching to profile: {profile_name}")
             try:
-                layout_path = os.path.join('layouts', f"{profile_name}.json")
+                layout_path = os.path.join(self.app_dir, 'layouts', f"{profile_name}.json")
                 if os.path.exists(layout_path):
                     with open(layout_path, 'r', encoding='utf-8') as f:
                         layout_data = json.load(f) 
@@ -162,39 +187,29 @@ class StatDeckService:
                 logger.error(f"Error reading layout file: {e}")
 
             if hasattr(self, 'usb') and self.usb:
-                payload = {
-                    "type": "config",
-                    "layout": layout_data
-                }
-                self.usb.send_message(payload)
-            
+                self.usb.send_message({"type": "config", "layout": layout_data})
             if hasattr(self, 'action_executor'):
                 self.action_executor.update_layout(layout_data)
     
     def collect_stats(self):
         stats = {}
         for name, collector in self.collectors.items():
-            try:
-                stats[name] = collector.collect()
-            except Exception as e:
-                stats[name] = {}
+            try: stats[name] = collector.collect()
+            except Exception: stats[name] = {}
         return stats
     
     def send_stats(self, stats):
-        message = {
+        self.usb.send_message({
             'type': 'stats',
             'timestamp': int(datetime.now().timestamp() * 1000),
             'data': stats
-        }
-        self.usb.send_message(message)
+        })
     
     def handle_pi_message(self, message):
         msg_type = message.get('type')
         if msg_type == 'action':
-            try:
-                self.action_executor.execute(message.get('tile_id'), message.get('action_type'))
-            except Exception as e:
-                logger.error(f"Error executing action: {e}")
+            try: self.action_executor.execute(message.get('tile_id'), message.get('action_type'))
+            except Exception as e: logger.error(f"Error executing action: {e}")
         elif msg_type == 'config_request':
             self.send_config()
         elif msg_type == 'layout_response':
@@ -204,16 +219,12 @@ class StatDeckService:
                     self.layout_cache = layout
                     self.config['layout'] = layout
                 self.action_executor.update_layout(layout)
-        elif msg_type == 'status':
-            logger.debug(f"Pi status: {message}")
     
     def send_config(self):
         with self.layout_lock:
             layout = self.layout_cache
-        message = {'type': 'config', 'layout': layout}
-        self.usb.send_message(message)
+        self.usb.send_message({'type': 'config', 'layout': layout})
 
-    # TCP CONFIG SERVER for Config App (Unchanged)
     def start_config_server(self):
         try:
             self.config_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -223,7 +234,6 @@ class StatDeckService:
             self.config_server.listen(2)
             self.config_server_thread = Thread(target=self._config_server_loop, daemon=True)
             self.config_server_thread.start()
-            logger.info(f"Config server listening on localhost:{CONFIG_SERVER_PORT}")
         except Exception as e:
             logger.error(f"Failed to start config server: {e}")
     
@@ -232,10 +242,8 @@ class StatDeckService:
             try:
                 client, addr = self.config_server.accept()
                 Thread(target=self._handle_config_client, args=(client,), daemon=True).start()
-            except socket.timeout:
-                continue
-            except OSError:
-                break
+            except socket.timeout: continue
+            except OSError: break
     
     def _handle_config_client(self, client):
         client.settimeout(0.5)
@@ -249,26 +257,16 @@ class StatDeckService:
                     while '\n' in buffer:
                         line, buffer = buffer.split('\n', 1)
                         if line.strip(): self._process_config_message(client, line.strip())
-                except socket.timeout:
-                    continue
-                except ConnectionResetError:
-                    break
+                except socket.timeout: continue
+                except ConnectionResetError: break
         finally:
             client.close()
     
     def _process_config_message(self, client, line):
-            # DEBUG: Print exactly what raw text just arrived
-            print(f"DEBUG: Raw data received from Config App: {line}")
-        
-            try: 
-                message = json.loads(line)
-            except Exception as e:
-                print(f"DEBUG: JSON Parse Error: {e}")
-                return
+            try: message = json.loads(line)
+            except Exception: return
         
             msg_type = message.get('type')
-            print(f"DEBUG: Message Type detected: {msg_type}") # Confirm it's 'update_tuning'
-
             if msg_type == 'get_layout':
                 with self.layout_lock: layout = self.layout_cache
                 self._send_to_config_client(client, {'type': 'layout_data', 'layout': layout})
@@ -281,30 +279,20 @@ class StatDeckService:
                     self.action_executor.update_layout(layout)
                     success = self.usb.send_message({'type': 'config', 'layout': layout})
                     self._send_to_config_client(client, {'type': 'config_ack', 'success': bool(success)})
-        
             elif msg_type == 'update_tuning':
                 rate_ms = message.get('stats_rate_ms', 500)
                 debounce_ms = message.get('debounce_ms', 1500)
-            
                 safe_rate_ms = max(100, int(rate_ms))
                 safe_debounce_ms = max(500, int(debounce_ms))
-            
                 self.update_interval = safe_rate_ms / 1000.0
                 if hasattr(self, 'profile_mgr'):
                     self.profile_mgr.debounce_time = safe_debounce_ms / 1000.0
-                
                 self.config['update_interval'] = self.update_interval
                 self.config['profile_debounce'] = safe_debounce_ms / 1000.0
-            
                 try:
-                    with open(self.config_path, 'w') as f:
-                        json.dump(self.config, f, indent=4)
-                    print(f"SUCCESS: Tuning updated! Rate={safe_rate_ms}ms, Debounce={safe_debounce_ms}ms")
-                except Exception as e:
-                    print(f"ERROR: Failed to save config: {e}")
-                
+                    with open(self.config_path, 'w') as f: json.dump(self.config, f, indent=4)
+                except Exception: pass
                 self._send_to_config_client(client, {'type': 'tuning_ack', 'success': True})        
-        
             elif msg_type == 'get_status':
                 with self.layout_lock: tiles = len(self.layout_cache.get('tiles', []))
                 self._send_to_config_client(client, {'type': 'status', 'usb_connected': self.usb.is_connected(), 'pi_layout_tiles': tiles})
@@ -317,9 +305,8 @@ class StatDeckService:
         logger.info("StatDeck Service starting...")
         self.http_server.start()
         
-        # Connect to Pi over Network
         if not self.usb.connect():
-            logger.error("Failed to connect to Pi Network. Will keep trying in background...")
+            logger.error("Failed to connect to Pi Network.")
         else:
             self.usb.send_message({'type': 'get_layout', 'timestamp': int(datetime.now().timestamp() * 1000)})
             time.sleep(0.5)
@@ -330,13 +317,15 @@ class StatDeckService:
         
         try:
             while self.running:
-                current_time = time.time()
-                if current_time - last_update >= self.update_interval:
-                    stats = self.collect_stats()
-                    if hasattr(self, 'profile_mgr'):
-                        self.profile_mgr.update(stats.get('system', {}))
-                    self.send_stats(stats)
-                    last_update = current_time
+                # FIXED: Only collect stats if not paused, but ALWAYS keep reading Pi messages
+                if not self.is_paused:
+                    current_time = time.time()
+                    if current_time - last_update >= self.update_interval:
+                        stats = self.collect_stats()
+                        if hasattr(self, 'profile_mgr'):
+                            self.profile_mgr.update(stats.get('system', {}))
+                        self.send_stats(stats)
+                        last_update = current_time
                 
                 message = self.usb.receive_message()
                 if message:
@@ -355,6 +344,90 @@ class StatDeckService:
         self.http_server.stop()
         self.usb.disconnect()
 
+# ==================================================================
+# SYSTEM TRAY & REGISTRY INTEGRATION
+# ==================================================================
+APP_NAME = "StatDeckService"
+REG_PATH = r"Software\Microsoft\Windows\CurrentVersion\Run"
+statdeck_service = None
+
+def is_startup_enabled():
+    try:
+        registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, REG_PATH, 0, winreg.KEY_READ)
+        winreg.QueryValueEx(registry_key, APP_NAME)
+        winreg.CloseKey(registry_key)
+        return True
+    except WindowsError: return False
+
+def toggle_startup(icon, item):
+    enabled = is_startup_enabled()
+    try:
+        registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, REG_PATH, 0, winreg.KEY_SET_VALUE)
+        if enabled:
+            winreg.DeleteValue(registry_key, APP_NAME)
+        else:
+            if getattr(sys, 'frozen', False): app_path = sys.executable
+            else: app_path = os.path.abspath(__file__)
+            winreg.SetValueEx(registry_key, APP_NAME, 0, winreg.REG_SZ, f'"{app_path}"')
+        winreg.CloseKey(registry_key)
+    except WindowsError as e: print(f"Tray Error: Failed to toggle startup: {e}")
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try: base_path = sys._MEIPASS
+    except Exception: base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def create_image():
+    """Loads icon.ico if it exists, otherwise draws a placeholder square."""
+    try:
+        return Image.open(resource_path("icon.ico"))
+    except Exception:
+        image = Image.new('RGB', (64, 64), color=(0, 255, 136))
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((16, 16, 48, 48), fill=(0, 0, 0))
+        return image
+
+def open_settings(icon, item):
+    """Looks for StatDeckConfig.exe in the same folder and runs it."""
+    if getattr(sys, 'frozen', False): base_dir = os.path.dirname(sys.executable)
+    else: base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    config_app_path = os.path.join(base_dir, "StatDeckConfig.exe")
+    if os.path.exists(config_app_path): subprocess.Popen([config_app_path])
+    else: print(f"Tray Error: Could not find {config_app_path}")
+
+def run_service_in_background():
+    global statdeck_service
+    statdeck_service = StatDeckService()
+    statdeck_service.run()
+
+def on_start(icon, item):
+    global statdeck_service
+    if statdeck_service: statdeck_service.is_paused = False
+
+def on_stop(icon, item):
+    global statdeck_service
+    if statdeck_service: statdeck_service.is_paused = True
+
+def on_exit(icon, item):
+    global statdeck_service
+    if statdeck_service: statdeck_service.stop()
+    icon.stop()
+
 if __name__ == '__main__':
-    service = StatDeckService()
-    service.run()
+    engine_thread = threading.Thread(target=run_service_in_background, daemon=True)
+    engine_thread.start()
+    
+    menu = pystray.Menu(
+        pystray.MenuItem('Open Settings', open_settings, default=True), # Opens your Config app!
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem('Start Service', on_start),
+        pystray.MenuItem('Stop Service', on_stop),
+        pystray.MenuItem('Run on Startup', toggle_startup, checked=lambda item: is_startup_enabled()),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem('Exit StatDeck', on_exit)
+    )
+    
+    tray_icon = pystray.Icon("StatDeck", create_image(), "StatDeck Service", menu)
+    tray_icon.run()

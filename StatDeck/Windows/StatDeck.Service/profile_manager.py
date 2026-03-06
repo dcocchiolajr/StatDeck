@@ -15,12 +15,18 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DEBOUNCE = 1.0
 
+def get_documents_layouts_dir():
+    r"""Finds the C:\Users\YourName\Documents\StatDeck\layouts folder"""
+    documents_dir = os.path.join(os.path.expanduser('~'), 'Documents')
+    return os.path.join(documents_dir, 'StatDeck', 'layouts')
+
 
 class ProfileManager:
-    """Monitors active app and triggers layout switches with debounce."""
+    r"""Monitors active app and triggers layout switches with debounce."""
 
-    def __init__(self, layouts_dir='layouts', debounce=DEFAULT_DEBOUNCE, on_switch=None):
-        self.layouts_dir = layouts_dir
+    def __init__(self, layouts_dir=None, debounce=DEFAULT_DEBOUNCE, on_switch=None):
+        # Now defaults to the Documents folder!
+        self.layouts_dir = layouts_dir or get_documents_layouts_dir()
         self.debounce = debounce
         self.on_switch = on_switch
         self.lock = Lock()
@@ -37,7 +43,7 @@ class ProfileManager:
             else:
                 print(f'  No layouts in {self.layouts_dir}/ — profile switching inactive')
         else:
-            print(f'  No layouts/ directory — profile switching inactive')
+            print(f'  No layouts/ directory found at {self.layouts_dir} — profile switching inactive')
             
     @property
     def debounce_time(self):
@@ -74,7 +80,7 @@ class ProfileManager:
             return None
 
         try:
-            with open(filepath, 'r') as f:
+            with open(filepath, 'r', encoding='utf-8') as f:
                 layout = json.load(f)
             self._layout_cache[profile_name] = layout
             return layout

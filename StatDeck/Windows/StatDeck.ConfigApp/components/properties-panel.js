@@ -432,13 +432,16 @@ class PropertiesPanel {
     
     updateButtonConfig(updates) {
         if (!this.currentTile) return;
-        
+
         if (!this.currentTile.config) {
             this.currentTile.config = {};
         }
-        
+
         Object.assign(this.currentTile.config, updates);
-        this.app.gridCanvas.updateTileElement(this.currentTile);
+
+        // THE FIX: Call the GridCanvas sync logic so the Tab updates too!
+        this.app.gridCanvas.updateTileConfig(this.currentTile.id, { config: updates });
+
         this.app.markModified();
     }
     

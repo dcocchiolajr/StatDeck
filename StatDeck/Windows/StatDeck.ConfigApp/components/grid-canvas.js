@@ -140,11 +140,50 @@ class GridCanvas {
             tileConfig.config = { label: '' };
         }
 
+        // ==========================================
+        // FOLDER MAGIC: Electron-Safe Generator
+        // ==========================================
+        if (tileType === 'folder') {
+            const shortId = Date.now().toString().slice(-4);
+            const folderName = `Folder ${shortId}`; // No prompt, uses unique ID
+            const folderId = `folder_${Date.now()}`;
+
+            const folderPage = {
+                id: folderId,
+                name: folderName,
+                isFolder: true,
+                grid: { ...this.app.layout.grid },
+                tiles: []
+            };
+
+            const backBtn = {
+                id: `tile_back_${Date.now()}`,
+                type: 'button',
+                position: { x: folderPage.grid.cols - 1, y: folderPage.grid.rows - 1 },
+                size: { w: 1, h: 1 },
+                data_source: '',
+                style: { color: '#ff6b6b', background: 'rgba(255,107,107,0.1)', fontScale: 100 },
+                config: { label: '🔙 Back' },
+                actions: { tap: { type: 'ui_folder_close' } }
+            };
+            folderPage.tiles.push(backBtn);
+            this.app.layout.pages.push(folderPage);
+
+            tileConfig.type = 'button';
+            tileConfig.config = { label: `📁 ${folderName}`, targetPage: folderId };
+            tileConfig.actions = { tap: { type: 'ui_folder_open', target: folderId } };
+        }
+
         // Add to layout
         this.app.getCurrentPage().tiles.push(tileConfig);
         this.addTile(tileConfig);
         this.app.markModified();
         this.app.undoManager.recordAction('add', tileConfig);
+
+        // Refresh tabs so the new hidden page is registered in the UI
+        if (tileType === 'folder' && typeof this.app.renderPageTabs === 'function') {
+            this.app.renderPageTabs();
+        }
     }
     
     addTile(tileConfig) {
@@ -288,8 +327,33 @@ class GridCanvas {
     updateTileConfig(tileId, updates) {
         const tile = this.tiles.get(tileId);
         if (!tile) return;
-        
-        Object.assign(tile.config, updates);
+
+        // Apply updates to the main config
+        if (updates.config) {
+            Object.assign(tile.config.config, updates.config);
+        } else {
+            Object.assign(tile.config, updates);
+        }
+
+        // --- TAB SYNC ---
+        // Find the target page ID from the tile's actions
+        const targetPageId = tile.config.actions?.tap?.target;
+
+        if (targetPageId && (updates.label || (updates.config && updates.config.label))) {
+            const targetPage = this.app.layout.pages.find(p => p.id === targetPageId);
+            const newLabel = updates.label || updates.config.label;
+
+            if (targetPage) {
+                // Sync tab name (strip emoji for cleanliness)
+                targetPage.name = newLabel.replace('📁', '').trim();
+
+                // Refresh the actual Tab UI at the top
+                if (typeof this.app.renderPageTabs === 'function') {
+                    this.app.renderPageTabs();
+                }
+            }
+        }
+
         this.updateTileElement(tileId);
         this.app.markModified();
     }

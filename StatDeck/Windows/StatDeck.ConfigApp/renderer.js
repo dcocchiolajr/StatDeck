@@ -234,7 +234,7 @@ class StatDeckApp {
             // 1. Force a refresh of the internal tiles array from the live GridCanvas component
             if (this.gridCanvas && this.gridCanvas.tiles) {
                 // Map the live component data back to a clean JSON array
-                const liveTiles = this.gridCanvas.tiles.map(t => t.serialize ? t.serialize() : t.data);
+                const liveTiles = Array.from(this.gridCanvas.tiles.values()).map(t => t.serialize ? t.serialize() : (t.config || t.data));
                 this.getCurrentPage().tiles = liveTiles;
             }
 

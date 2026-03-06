@@ -892,3 +892,19 @@ input[type="range"]::-moz-range-thumb {
 .page-tab-rename-input:focus {
     box-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
 }
+
+
+/* =========================================================================
+   THEME BUILDER TRANSITION RECEIVER
+   ========================================================================= */
+
+/* 1. This rule activates the 0.5s slide ONLY for custom saved themes */
+body, .grid-tile, .panel, .toolbar, button {
+    transition: var(--theme-transition, none) !important;
+}
+
+    /* 2. PROTECTION: This keeps Cyberpunk and Pixel themes sharp and glitchy */
+    body[data-theme="cyberpunk"] *,
+    body[data-theme="pixel"] * {
+        transition: none !important;
+    }

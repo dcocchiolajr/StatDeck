@@ -84,6 +84,18 @@ class ThemeBuilder {
             return;
         }
 
+        // --- NEW: INJECT DEFAULT TRANSITION ---
+        // This ensures the custom theme slides colors instead of snapping
+        if (!this.workingTheme.transitions) {
+            this.workingTheme.transitions = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+        }
+
+        if (this.editingThemeId && !this.themeManager.isBuiltin(this.editingThemeId)) {
+            this.themeManager.updateCustomTheme(this.editingThemeId, this.workingTheme);
+        } else {
+            this.editingThemeId = this.themeManager.createCustomTheme(null, this.workingTheme);
+        }
+
         if (this.editingThemeId && !this.themeManager.isBuiltin(this.editingThemeId)) {
             this.themeManager.updateCustomTheme(this.editingThemeId, this.workingTheme);
         } else {
